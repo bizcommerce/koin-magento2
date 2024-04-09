@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">koin_payment_installments_rules_form.installments_rules_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">General Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save" class="Koin\Payment\Block\Adminhtml\InstallmentsRules\Edit\SaveButton"/>
+            <button name="delete" class="Koin\Payment\Block\Adminhtml\InstallmentsRules\Edit\DeleteButton"/>
+            <button name="back" class="Koin\Payment\Block\Adminhtml\InstallmentsRules\Edit\BackButton"/>
+        </buttons>
+        <namespace>koin_payment_installments_rules_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>koin_payment_installments_rules_form.installments_rules_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="installments_rules_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="*/*/save"/>
+        </settings>
+
+        <dataProvider class="Koin\Payment\Model\InstallmentsRules\DataProvider" name="installments_rules_form_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general">
+        <settings>
+            <label>Rule Information</label>
+            <collapsible>true</collapsible>
+            <opened>true</opened>
+        </settings>
+
+        <field name="entity_id" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <dataScope>entity_id</dataScope>
+            </settings>
+        </field>
+
+        <field name="status" sortOrder="1" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                    <item name="default" xsi:type="number">1</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Enable Rule</label>
+                <dataScope>status</dataScope>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+
+        <field name="title" formElement="input" sortOrder="2">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Rule Title</label>
+                <dataScope>title</dataScope>
+            </settings>
+        </field>
+
+        <field name="account_number" formElement="input" sortOrder="3">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="no-marginal-whitespace" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Account Number</label>
+                <notice translate="true">Fill if that rule uses a different account number, otherwise it's not necessary</notice>
+                <dataScope>account_number</dataScope>
+            </settings>
+        </field>
+
+        <field name="store_ids" formElement="multiselect" class="Magento\Store\Ui\Component\Form\Field\StoreView" sortOrder="4">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                    <item name="default" xsi:type="number">0</item>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>int</dataType>
+                <tooltip>
+                    <link>https://docs.magento.com/user-guide/configuration/scope.html</link>
+                    <description>What is this?</description>
+                </tooltip>
+                <label translate="true">Store View</label>
+                <dataScope>store_ids</dataScope>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <options class="Magento\Store\Ui\Component\Listing\Column\Store\Options"/>
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+
+        <field name="min_installments" sortOrder="40" formElement="input">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                    <rule name="validate-digits" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Minimum Installments</label>
+                <dataScope>min_installments</dataScope>
+            </settings>
+        </field>
+
+        <field name="max_installments" sortOrder="50" formElement="input">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                    <rule name="validate-digits" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Maximum Installments</label>
+                <dataScope>max_installments</dataScope>
+            </settings>
+        </field>
+
+        <field name="max_installments_without_interest" sortOrder="60" formElement="input">
+            <settings>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                    <rule name="validate-digits" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Maximum Installments Without Interest</label>
+                <dataScope>max_installments_without_interest</dataScope>
+            </settings>
+        </field>
+
+        <field name="minimum_installment_amount" sortOrder="70" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Minimum Installment Amount</label>
+                <notice translate="true">Use dot as a decimal separator, e.g.: 100.00</notice>
+                <dataScope>minimum_installment_amount</dataScope>
+            </settings>
+        </field>
+
+        <field name="has_interest" sortOrder="80" formElement="checkbox">
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Has Interest</label>
+                <dataScope>has_interest</dataScope>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+
+        <field name="interest_type" sortOrder="90" formElement="select">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Interest Type</label>
+                <dataScope>interest_type</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Koin\Payment\Model\Config\Source\InterestType"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+
+        <field name="interest_rate" sortOrder="100" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Interest Rate</label>
+                <notice translate="true">Use dot as a decimal separator, e.g.: 100.00</notice>
+                <dataScope>interest_rate</dataScope>
+            </settings>
+        </field>
+
+    </fieldset>
+
+    <fieldset name="conditions">
+        <settings>
+            <label>Conditions</label>
+            <collapsible>true</collapsible>
+            <opened>false</opened>
+        </settings>
+
+        <field name="start_date" sortOrder="5" formElement="date">
+            <settings>
+                <dataType>date</dataType>
+                <label translate="true">Start Date</label>
+                <dataScope>start_date</dataScope>
+            </settings>
+        </field>
+
+        <field name="end_date" sortOrder="6" formElement="date">
+            <settings>
+                <dataType>date</dataType>
+                <label translate="true">End Date</label>
+                <dataScope>end_date</dataScope>
+            </settings>
+        </field>
+
+        <field name="payment_methods" sortOrder="30" formElement="textarea">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Payment Methods BINs</label>
+                <notice translate="true">It's possible to add the Credit Card BINs separated with a pipe, like: '555566|444433', or add a regex with the required BINs</notice>
+                <dataScope>payment_methods</dataScope>
+            </settings>
+        </field>
+
+        <field name="except_payment_methods" sortOrder="31" formElement="textarea">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Payment Methods BINs to exclude</label>
+                <notice translate="true">Adding Credit Card BINs, like: '555566|444433', or add a regex with the required BINs, those BINs will deny the rule, applying the rule only if the BINs do not match this field</notice>
+                <dataScope>except_payment_methods</dataScope>
+            </settings>
+        </field>
+
+        <field name="minimum_amount" sortOrder="110" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Minimum Order Amount</label>
+                <notice translate="true">Use dot as a decimal separator, e.g.: 100.00</notice>
+                <dataScope>minimum_amount</dataScope>
+            </settings>
+        </field>
+
+        <field name="maximum_amount" sortOrder="120" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Maximum Order Amount</label>
+                <notice translate="true">Use dot as a decimal separator, e.g.: 100.00</notice>
+                <dataScope>maximum_amount</dataScope>
+            </settings>
+        </field>
+
+    </fieldset>
+</form>

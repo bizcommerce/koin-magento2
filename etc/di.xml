@@ -1,0 +1,462 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Koin\Payment\Api\Data\CallbackInterface" type="Koin\Payment\Model\Callback"/>
+    <preference for="Koin\Payment\Api\CallbackRepositoryInterface" type="Koin\Payment\Model\ResourceModel\CallbackRepository"/>
+    <preference for="Koin\Payment\Api\Data\CallbackSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
+    <preference for="Koin\Payment\Api\Data\AntifraudInterface" type="Koin\Payment\Model\Antifraud"/>
+    <preference for="Koin\Payment\Api\AntifraudRepositoryInterface" type="Koin\Payment\Model\ResourceModel\AntifraudRepository"/>
+    <preference for="Koin\Payment\Api\Data\AntifraudSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
+    <preference for="Koin\Payment\Api\Data\QueueInterface" type="Koin\Payment\Model\Queue"/>
+    <preference for="Koin\Payment\Api\QueueRepositoryInterface" type="Koin\Payment\Model\ResourceModel\QueueRepository"/>
+    <preference for="Koin\Payment\Api\Data\QueueSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
+    <preference for="Koin\Payment\Api\Data\RequestInterface" type="Koin\Payment\Model\Request"/>
+    <preference for="Koin\Payment\Api\RequestRepositoryInterface" type="Koin\Payment\Model\ResourceModel\RequestRepository"/>
+    <preference for="Koin\Payment\Api\Data\RequestSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
+    <preference for="Koin\Payment\Api\Data\InstallmentsRulesInterface" type="Koin\Payment\Model\InstallmentsRules"/>
+    <preference for="Koin\Payment\Api\InstallmentsRulesRepositoryInterface" type="Koin\Payment\Model\ResourceModel\InstallmentsRulesRepository"/>
+    <preference for="Koin\Payment\Api\Data\InstallmentsRulesSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
+    <!-- Plugins -->
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="koin_antifraud_to_sales_order" type="Koin\Payment\Plugin\AddDataToSaleOrder" />
+    </type>
+    <type name="Magento\Sales\Model\Order\Payment">
+        <plugin name="koin_order_payment_can_void" type="Koin\Payment\Plugin\Order\Payment" />
+    </type>
+
+    <!-- LOG -->
+    <type name="Koin\Payment\Logger\Handler\System">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Koin\Payment\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">koin</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Koin\Payment\Logger\Handler\System</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="KoinRedirectFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\Koin\Payment\Model\Ui\Redirect\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Koin\Payment\Block\Info\Redirect</argument>
+            <argument name="valueHandlerPool" xsi:type="object">KoinRedirectValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">KoinRedirectValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">KoinRedirectCommandPool</argument>
+        </arguments>
+    </virtualType>
+    <!-- Configuration reader -->
+    <virtualType name="KoinRedirectConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\Koin\Payment\Model\Ui\Redirect\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="KoinPixFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\Koin\Payment\Model\Ui\Pix\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Koin\Payment\Block\Info\Pix</argument>
+            <argument name="valueHandlerPool" xsi:type="object">KoinPixValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">KoinPixValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">KoinPixCommandPool</argument>
+        </arguments>
+    </virtualType>
+    <!-- Configuration reader -->
+    <virtualType name="KoinPixConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\Koin\Payment\Model\Ui\Pix\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Payment Method Facade configuration -->
+    <virtualType name="KoinPaymentCreditCardFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">\Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Koin\Payment\Block\Info\CreditCard</argument>
+            <argument name="valueHandlerPool" xsi:type="object">KoinCreditCardValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">KoinCreditCardValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">KoinCreditCardCommandPool</argument>
+        </arguments>
+    </virtualType>
+    <!-- Configuration reader -->
+    <virtualType name="KoinCreditCardConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">\Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Commands infrastructure -->
+    <virtualType name="KoinRedirectCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="order" xsi:type="string">KoinRedirectOrderCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="order" xsi:type="string">KoinPixOrderCommand</item>
+                <item name="void" xsi:type="string">KoinPaymentRefundCommand</item>
+                <item name="cancel" xsi:type="string">KoinPaymentRefundCommand</item>
+                <item name="refund" xsi:type="string">KoinPaymentRefundCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="order" xsi:type="string">KoinCreditCardOrderCommand</item>
+                <item name="capture" xsi:type="string">KoinPaymentCaptureCommand</item>
+                <item name="void" xsi:type="string">KoinPaymentRefundCommand</item>
+                <item name="cancel" xsi:type="string">KoinPaymentRefundCommand</item>
+                <item name="refund" xsi:type="string">KoinPaymentRefundCommand</item>
+                <item name="fetch_transaction_information" xsi:type="string">KoinPaymentFetchInfoCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Redirect order command  -->
+    <virtualType name="KoinRedirectClientTransaction" type="Koin\Payment\Gateway\Http\Client\Payments\Transaction">
+        <arguments>
+            <argument name="methodCode" xsi:type="string">koin_redirect</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinRedirectOrderCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">KoinRedirectOrderRequest</argument>
+            <argument name="handler" xsi:type="object">KoinRedirectResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Koin\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">KoinRedirectValidator</argument>
+            <argument name="client" xsi:type="object">KoinRedirectClientTransaction</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KoinPixClientTransaction" type="Koin\Payment\Gateway\Http\Client\Payments\Transaction">
+        <arguments>
+            <argument name="methodCode" xsi:type="string">koin_pix</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixOrderCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">KoinPixOrderRequest</argument>
+            <argument name="handler" xsi:type="object">KoinPixResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Koin\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">KoinPixValidator</argument>
+            <argument name="client" xsi:type="object">KoinPixClientTransaction</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KoinCreditCardClientTransaction" type="Koin\Payment\Gateway\Http\Client\Payments\Transaction">
+        <arguments>
+            <argument name="methodCode" xsi:type="string">koin_cc</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardOrderCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">KoinCreditCardOrderRequest</argument>
+            <argument name="handler" xsi:type="object">KoinCreditCardResponseHandlerComposite</argument>
+            <argument name="transferFactory" xsi:type="object">Koin\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="validator" xsi:type="object">KoinCreditCardValidator</argument>
+            <argument name="client" xsi:type="object">KoinCreditCardClientTransaction</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Refund command -->
+    <virtualType name="KoinPaymentRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">Koin\Payment\Gateway\Request\RefundRequest</argument>
+            <argument name="handler" xsi:type="object">Koin\Payment\Gateway\Response\RefundHandler</argument>
+            <argument name="transferFactory" xsi:type="object">Koin\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Koin\Payment\Gateway\Http\Client\Payments\Refund</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture -->
+    <virtualType name="KoinPaymentCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">Koin\Payment\Gateway\Request\CaptureRequest</argument>
+            <argument name="handler" xsi:type="object">Koin\Payment\Gateway\Response\CaptureHandler</argument>
+            <argument name="transferFactory" xsi:type="object">Koin\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Koin\Payment\Gateway\Http\Client\Payments\Capture</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- FetchInfo -->
+    <virtualType name="KoinPaymentFetchInfoCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">Koin\Payment\Gateway\Request\FetchInfoRequest</argument>
+            <argument name="handler" xsi:type="object">Koin\Payment\Gateway\Response\FetchInfoHandler</argument>
+            <argument name="transferFactory" xsi:type="object">Koin\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Koin\Payment\Gateway\Http\Client\Payments\FetchInfo</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Order Request -->
+    <virtualType name="KoinRedirectOrderRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">KoinRedirectTransactionRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixOrderRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">KoinPixTransactionRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardOrderRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">KoinCreditCardTransactionRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Transaction Request -->
+    <virtualType name="KoinRedirectTransactionRequest" type="Koin\Payment\Gateway\Request\Redirect\TransactionRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinRedirectConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixTransactionRequest" type="Koin\Payment\Gateway\Request\Pix\TransactionRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinPixConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardTransactionRequest" type="Koin\Payment\Gateway\Request\CreditCard\TransactionRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinCreditCardConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Validators Pool -->
+    <virtualType name="KoinRedirectValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">KoinRedirectCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinRedirectCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinRedirectConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KoinPixValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">KoinPixCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinPixConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="KoinCreditCardValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">KoinCreditCardCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinCreditCardConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Validators -->
+    <virtualType name="KoinRedirectValidator" type="Magento\Payment\Gateway\Validator\ValidatorComposite">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="responseCode" xsi:type="string">Koin\Payment\Gateway\Validator\ResponseCodeValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixValidator" type="Magento\Payment\Gateway\Validator\ValidatorComposite">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="responseCode" xsi:type="string">Koin\Payment\Gateway\Validator\ResponseCodeValidator</item>
+                <item name="opened" xsi:type="string">Koin\Payment\Gateway\Validator\PixValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardValidator" type="Magento\Payment\Gateway\Validator\ValidatorComposite">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="responseCode" xsi:type="string">Koin\Payment\Gateway\Validator\ResponseCodeValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Response handlers -->
+    <virtualType name="KoinRedirectResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction" xsi:type="string">Koin\Payment\Gateway\Response\Redirect\TransactionHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction" xsi:type="string">Koin\Payment\Gateway\Response\Pix\TransactionHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardResponseHandlerComposite" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="transaction" xsi:type="string">Koin\Payment\Gateway\Response\CreditCard\TransactionHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Value handlers infrastructure -->
+    <virtualType name="KoinRedirectValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">KoinRedirectConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">KoinPixConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">KoinCreditCardConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Value handlers -->
+    <virtualType name="KoinRedirectConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">KoinRedirectConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPixConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">KoinPixConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinCreditCardConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">KoinCreditCardConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Info Blocks -->
+    <type name="Koin\Payment\Block\Info\Redirect">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinRedirectConfig</argument>
+        </arguments>
+    </type>
+    <type name="Koin\Payment\Block\Info\Pix">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinPixConfig</argument>
+        </arguments>
+    </type>
+    <type name="Koin\Payment\Block\Info\CreditCard">
+        <arguments>
+            <argument name="config" xsi:type="object">KoinCreditCardConfig</argument>
+        </arguments>
+    </type>
+
+    <!-- Admin Grids -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="koin_payment_callback_listing_data_source" xsi:type="string">KoinPaymentCallbackCollection</item>
+                <item name="koin_payment_fraudanalysis_listing_data_source" xsi:type="string">KoinPaymentFraudAnalysisCollection</item>
+                <item name="koin_payment_queue_listing_data_source" xsi:type="string">KoinPaymentQueueCollection</item>
+                <item name="koin_payment_request_listing_data_source" xsi:type="string">KoinPaymentRequestCollection</item>
+                <item name="koin_payment_installments_rules_listing_data_source" xsi:type="string">KoinPaymentInstallmentsRulesCollection</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="KoinPaymentCallbackCollection" type="Koin\Payment\Ui\DataProvider\Callback\Listing\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">koin_callback</argument>
+            <argument name="resourceModel" xsi:type="string">Koin\Payment\Model\ResourceModel\Callback</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPaymentFraudAnalysisCollection" type="Koin\Payment\Ui\DataProvider\Fraudanalysis\Listing\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">koin_antifraud</argument>
+            <argument name="resourceModel" xsi:type="string">Koin\Payment\Model\ResourceModel\Antifraud</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPaymentQueueCollection" type="Koin\Payment\Ui\DataProvider\Queue\Listing\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">koin_queue</argument>
+            <argument name="resourceModel" xsi:type="string">Koin\Payment\Model\ResourceModel\Queue</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPaymentRequestCollection" type="Koin\Payment\Ui\DataProvider\Request\Listing\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">koin_request</argument>
+            <argument name="resourceModel" xsi:type="string">Koin\Payment\Model\ResourceModel\Request</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="KoinPaymentInstallmentsRulesCollection" type="Koin\Payment\Ui\DataProvider\InstallmentsRules\Listing\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">koin_installments_rules</argument>
+            <argument name="resourceModel" xsi:type="string">Koin\Payment\Model\ResourceModel\InstallmentsRules</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Antifraud status order grid column -->
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid">
+        <arguments>
+            <argument name="columns" xsi:type="array">
+                <item name="koin_antifraud_status" xsi:type="string">sales_order.koin_antifraud_status</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Refund when creditmemo is created from order -->
+    <type name="Magento\Sales\Model\Order\CreditmemoRepository">
+        <plugin name="koin_refund_order_creditmemo" type="Koin\Payment\Plugin\Order\Creditmemo" />
+    </type>
+</config>

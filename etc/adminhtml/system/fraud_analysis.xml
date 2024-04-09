@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="koin_fraud_analysis" translate="label comment" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>Fraud Analysis (Other Payment Methods)</label>
+        <comment>To work with Fraud Analysis, it's mandatory to enable Magento Cron functions, the fraud analysis are sent to koin through crontab</comment>
+
+        <field id="active" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>koin/fraud_analysis/active</config_path>
+        </field>
+
+        <field id="payment_methods" translate="label comment" type="multiselect" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Payment Methods</label>
+            <source_model>Koin\Payment\Model\Config\Source\FraudAnalysis\PaymentMethods</source_model>
+            <comment>Payment Methods selected to send to analysis</comment>
+            <config_path>koin/fraud_analysis/payment_methods</config_path>
+        </field>
+
+        <field id="order_status" translate="label comment" type="multiselect" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Order Status</label>
+            <source_model>Magento\Sales\Model\Config\Source\Order\Status\Newprocessing</source_model>
+            <comment>Status used to fraud analysis</comment>
+            <config_path>koin/fraud_analysis/order_status</config_path>
+        </field>
+
+        <field id="cancel_denied_orders" translate="label comment" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Cancel Denied Orders</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>koin/fraud_analysis/cancel_denied_orders</config_path>
+            <comment>If 'yes', it'll trigger a refund command to payment method provider, it depends on availability of the payment method to send refund commands to the issuer</comment>
+        </field>
+
+        <field id="denied_cancelled_status" translate="label comment" type="select" sortOrder="121" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Denied Cancelled Order Status</label>
+            <source_model>Koin\Payment\Model\Config\Source\Order\Cancelled</source_model>
+            <config_path>koin/fraud_analysis/denied_cancelled_status</config_path>
+            <depends>
+                <field id="cancel_denied_orders">1</field>
+            </depends>
+            <comment>When the order is denied by Koin and cancelled at the store, it'll update the order to that status</comment>
+        </field>
+
+        <field id="change_status_denied" translate="label comment" type="select" sortOrder="122" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Change Status Denied Orders</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>koin/fraud_analysis/change_status_denied</config_path>
+            <depends>
+                <field id="cancel_denied_orders">0</field>
+            </depends>
+            <comment>When the order is denied by Koin, it'll update the chosen status</comment>
+        </field>
+
+        <field id="denied_status" translate="label comment" type="select" sortOrder="123" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Denied Order Status</label>
+            <source_model>Magento\Sales\Model\Config\Source\Order\Status\Newprocessing</source_model>
+            <comment>Status used to denied but not cancelled orders</comment>
+            <config_path>koin/fraud_analysis/denied_status</config_path>
+            <depends>
+                <field id="cancel_denied_orders">0</field>
+                <field id="change_status_denied">1</field>
+            </depends>
+        </field>
+
+        <field id="capture_approved_orders" translate="label comment" type="select" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Capture Approved Orders</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>koin/fraud_analysis/capture_approved_orders</config_path>
+            <comment>If 'yes', it'll trigger a capture command to payment method provider, it depends on availability of the payment method to send capture commands to the issuer</comment>
+        </field>
+
+        <field id="change_status_approved" translate="label comment" type="select" sortOrder="131" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Change Status Approved Orders</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>koin/fraud_analysis/change_status_approved</config_path>
+            <comment>When the order is approved by Koin, it'll update the order status</comment>
+        </field>
+
+        <field id="approved_status" translate="label comment" type="select" sortOrder="132" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Aproved Order Status</label>
+            <source_model>Koin\Payment\Model\Config\Source\Order\ProcessingComplete</source_model>
+            <config_path>koin/fraud_analysis/approved_status</config_path>
+            <depends>
+                <field id="change_status_approved">1</field>
+            </depends>
+            <comment>Status used to approved orders</comment>
+        </field>
+
+        <field id="sla_date" translate="label comment" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Resolve evaluation after how many minutes?</label>
+            <comment>It'll send a date (sla_date) that the evaluation is expected to be resolved based on the config</comment>
+            <config_path>koin/fraud_analysis/sla_date</config_path>
+            <validate>validate-number validate-zero-or-greater</validate>
+        </field>
+
+        <field id="min_order_total" translate="label comment" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Minimum Order Amount</label>
+            <validate>validate-number validate-zero-or-greater</validate>
+            <config_path>koin/fraud_analysis/min_order_total</config_path>
+            <comment>It'll send to Koin only order with a grand total value higher than (or equal) the minimum amount</comment>
+        </field>
+    </group>
+</include>

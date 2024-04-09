@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <koin>
+            <general>
+                <refund_on_cancel>1</refund_on_cancel>
+                <show_payment_info>0</show_payment_info>
+            </general>
+            <payments>
+                <private_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <commerce>adobe</commerce>
+            </payments>
+            <address>
+                <street>0</street>
+                <number>1</number>
+                <complement>2</complement>
+                <district>3</district>
+            </address>
+            <endpoints>
+                <tokenize_uri>https://api-secure.koin.com.br/</tokenize_uri>
+                <payments_uri>https://api-payments.koin.com.br/</payments_uri>
+                <payments_uri_sandbox>https://api-sandbox.koin.com.br/</payments_uri_sandbox>
+                <antifraud_uri>https://api-antifraud.koin.com.br/</antifraud_uri>
+                <antifraud_uri_sandbox>https://api-sandbox.koin.com.br/</antifraud_uri_sandbox>
+                <secure>
+                    <tokenize>/v1/payment/tokenize</tokenize>
+                </secure>
+                <payments>
+                    <create>v1/payment/orders</create>
+                    <tokenize>v1/payment/tokenize</tokenize>
+                    <search>v1/payment/orders</search>
+                    <get>v1/payment/orders/{order_id}</get>
+                    <fetch>v1/payment/orders/?reference_id={order_id}</fetch>
+                    <update>v1/payment/orders/{order_id}</update>
+                    <cancel>v1/payment/orders/{order_id}/cancel</cancel>
+                    <capture>v1/payment/orders/{order_id}/capture</capture>
+                    <refund>v1/payment/orders/{order_id}/refund</refund>
+                    <notifications>v1/payment/notifications/{order_id}</notifications>
+                </payments>
+                <risk>
+                    <evaluations>v1/antifraud/evaluations</evaluations>
+                    <get_status>v1/antifraud/evaluations/{evaluation_id}</get_status>
+                    <cancel>v1/antifraud/evaluations/{evaluation_id}</cancel>
+                    <notifications>v1/antifraud/notifications/{evaluation_id}</notifications>
+                </risk>
+            </endpoints>
+            <customer>
+                <customer_type_company_value>pj</customer_type_company_value>
+            </customer>
+        </koin>
+        <payment>
+            <koin_redirect>
+                <active>0</active>
+                <model>KoinRedirectFacade</model>
+                <code>BNPL</code>
+                <title>BNPL</title>
+                <expiration_time>3600</expiration_time>
+                <use_default_checkout_instructions>1</use_default_checkout_instructions>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <paid_order_status>processing</paid_order_status>
+                <paid_virtual_order_status>complete</paid_virtual_order_status>
+                <cancel_unapproved_orders>1</cancel_unapproved_orders>
+                <cancelled_order_status>canceled</cancelled_order_status>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <min_order_total>50</min_order_total>
+                <show_logo_on_checkout>1</show_logo_on_checkout>
+                <use_default_checkout_instructions>1</use_default_checkout_instructions>
+                <text_email_validation>Seu pedido foi recebido, e estamos aguardando a confirmação do seu e-mail para análise</text_email_validation>
+                <text_provider_review>Seu pedido foi recebido e encontra-se em análise com a nossa equipe</text_provider_review>
+                <text_waiting_first_payment>Seu pedido foi aprovado e está aguardando o primeiro pagamento</text_waiting_first_payment>
+                <!-- Description Review -->
+                <description_order_review>A Koin enviará para o seu e-mail as próximas atualizações sobre o seu pedido de crédito. Fique atento :)</description_order_review>
+                <description_order_denied>Seu pedido de crédito com a Koin não foi aprovado dessa vez, por esse motivo o pedido foi cancelado. Tente novamente com outro meio de pagamento!</description_order_denied>
+                <description_order_approved>Tudo certo com sua compra! Identificamos o pagamento do 1° boleto e a sua compra foi confirmada com sucesso!</description_order_approved>
+
+                <!-- Method config -->
+                <is_gateway>1</is_gateway>
+                <can_use_checkout>1</can_use_checkout>
+                <can_use_internal>0</can_use_internal>
+                <can_order>1</can_order>
+                <can_capture_partial>0</can_capture_partial>
+                <can_refund_partial_per_invoice>0</can_refund_partial_per_invoice>
+                <can_cancel>1</can_cancel>
+                <can_edit>0</can_edit>
+                <paymentInfoKeys>id,authorization_code,authorization_id,installments</paymentInfoKeys>
+                <privateInfoKeys>id,authorization_code,authorization_id</privateInfoKeys>
+                <debug>1</debug>
+            </koin_redirect>
+            <koin_pix>
+                <active>0</active>
+                <model>KoinPixFacade</model>
+                <code>PIX</code>
+                <title>Pix</title>
+                <store_code>adobe</store_code>
+                <use_default_checkout_instructions>1</use_default_checkout_instructions>
+                <checkout_instructions>Você receberá o QRCode para efetuar o pagamento após finalizar o pedido</checkout_instructions>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <paid_order_status>processing</paid_order_status>
+                <paid_virtual_order_status>complete</paid_virtual_order_status>
+                <cancel_unapproved_orders>1</cancel_unapproved_orders>
+                <cancelled_order_status>canceled</cancelled_order_status>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <min_order_total>1</min_order_total>
+                <show_logo_on_checkout>1</show_logo_on_checkout>
+                <use_default_checkout_instructions>1</use_default_checkout_instructions>
+                <!-- Method config -->
+                <is_gateway>1</is_gateway>
+                <can_use_checkout>1</can_use_checkout>
+                <can_use_internal>1</can_use_internal>
+                <can_order>1</can_order>
+                <can_capture>1</can_capture>
+                <can_capture_partial>0</can_capture_partial>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_void>1</can_void>
+                <can_edit>0</can_edit>
+                <paymentInfoKeys>id,authorization_code,status,reference_id,business_id,order_id,refund_id,refund_status</paymentInfoKeys>
+                <privateInfoKeys>id,authorization_code,status,reference_id,business_id,order_id,refund_id,refund_status</privateInfoKeys>
+                <debug>1</debug>
+            </koin_pix>
+            <koin_cc>
+                <active>0</active>
+                <model>KoinPaymentCreditCardFacade</model>
+                <code>CARD</code>
+                <title>Cartão de Crédito</title>
+                <payment_action>order</payment_action>
+                <order_status>pending</order_status>
+                <paid_order_status>processing</paid_order_status>
+                <paid_virtual_order_status>complete</paid_virtual_order_status>
+                <has_interest>0</has_interest>
+                <cctypes>AX,CA,VI</cctypes>
+                <show_logo_on_checkout>1</show_logo_on_checkout>
+                <interest_type>price</interest_type>
+                <interest_rate>1.99</interest_rate>
+                <interest_2_installments>4.5</interest_2_installments>
+                <interest_3_installments>5</interest_3_installments>
+                <interest_4_installments>5.5</interest_4_installments>
+                <interest_5_installments>6.5</interest_5_installments>
+                <interest_6_installments>7.5</interest_6_installments>
+                <interest_7_installments>8.5</interest_7_installments>
+                <interest_8_installments>9.5</interest_8_installments>
+                <interest_9_installments>10.5</interest_9_installments>
+                <interest_10_installments>11.5</interest_10_installments>
+                <interest_11_installments>12.5</interest_11_installments>
+                <interest_12_installments>14</interest_12_installments>
+                <min_installments>1</min_installments>
+                <max_installments>10</max_installments>
+                <max_installments_without_interest>10</max_installments_without_interest>
+                <minimum_installment_amount>5</minimum_installment_amount>
+                <allowspecific>1</allowspecific>
+                <specificcountry>BR</specificcountry>
+                <!-- Method config -->
+                <is_gateway>1</is_gateway>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_order>1</can_order>
+                <can_capture_partial>0</can_capture_partial>
+                <can_use_internal>1</can_use_internal>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_edit>0</can_edit>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <masked_fields>cvv,cc_number</masked_fields>
+                <useccv>1</useccv>
+                <privateInfoKeys>id,order_id,payment_method,business_id,status,refund_id,refund_status</privateInfoKeys>
+                <paymentInfoKeys>id,order_id,payment_method,business_id,status,refund_id,refund_status</paymentInfoKeys>
+                <debug>1</debug>
+                <debugReplaceKeys>cvv,cc_number</debugReplaceKeys>
+            </koin_cc>
+        </payment>
+    </default>
+</config>
+

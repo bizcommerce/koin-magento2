@@ -1,0 +1,86 @@
+<?php
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ * @copyright   Copyright (c) Koin
+ */
+// @codingStandardsIgnoreFile
+
+/**
+ * @var \Koin\Payment\Block\Info\Redirect $block
+ * @see \Magento\Payment\Block\Info
+ */
+
+/** @var \Magento\Framework\Escaper $escaper */
+
+$specificInfo = $block->getSpecificInformation();
+$title = $block->escapeHtml($block->getMethod()->getTitle());
+$payment = $block->getInfo();
+$mediaUrl = $this->getMediaUrl();
+
+$title = $block->getTitle();
+$description = $block->getDescription();
+$reason = $block->getReason();
+?>
+<dl class="payment-method koin-content">
+
+    <dt class="title">
+        <div class="logo-info">
+            <img src="<?php echo $block->getViewFileUrl('Koin_Payment::images/logo-info.png'); ?>" />
+        </div>
+        <?= $block->escapeHtml($title) ?>
+    </dt>
+    <dd class="content">
+        <div class="koin-redirect">
+            <div class="description">
+                <p><?= $description ?></p>
+                <?php if ($reason): ?>
+                    <p class="reason"><?= $reason ?></p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </dd>
+
+    <?php if ($specificInfo):?>
+        <table class="data table koin-data-table">
+            <?php foreach ($specificInfo as $label => $value):?>
+                <tr>
+                    <th scope="row"><?= $block->escapeHtml($label) ?></th>
+                    <td>
+                        <?= /* @noEscape */ nl2br($block->escapeHtml(
+                            implode("\n", $block->getValueAsArray($value, false)), ['a'])
+                        ) ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php endif;?>
+</dl>
+<?= $block->getChildHtml() ?>
+<style>
+    .koin-content {
+        text-align: center;
+    }
+
+    .koin-content .title {
+        font-size: 2.5rem;
+    }
+
+    .koin-content .logo-info {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 250px;
+    }
+</style>

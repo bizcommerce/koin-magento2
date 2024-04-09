@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="koin_callback" resource="default" engine="innodb" comment="Koin Callback">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="text" name="payload" nullable="false" comment="Payload"/>
+        <column xsi:type="varchar" name="method" length="255" nullable="false" comment="Payment Method" default="koin_redirect"/>
+        <column xsi:type="varchar" name="status" length="255" nullable="false" comment="Status"/>
+        <column xsi:type="varchar" name="increment_id" length="255" nullable="false" comment="Order Increment ID"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created Datetime"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated Datetime"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <index referenceId="KOIN_CALLBACK_INCREMENT_ID" indexType="btree">
+            <column name="increment_id"/>
+        </index>
+        <index referenceId="KOIN_CALLBACK_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+    </table>
+
+    <table name="koin_request" resource="default" engine="innodb" comment="Koin Requests">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="text" name="request" nullable="false" comment="Request"/>
+        <column xsi:type="text" name="response" nullable="false" comment="Response"/>
+        <column xsi:type="varchar" name="method" length="255" nullable="false" comment="Payment Method"/>
+        <column xsi:type="varchar" name="status_code" length="255" nullable="false" comment="Status Code"/>
+        <column xsi:type="varchar" name="increment_id" length="255" nullable="false" comment="Order Increment ID"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created Datetime"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated Datetime"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <index referenceId="KOIN_REQUEST_INCREMENT_ID" indexType="btree">
+            <column name="increment_id"/>
+        </index>
+        <index referenceId="KOIN_REQUEST_STATUS" indexType="btree">
+            <column name="status_code"/>
+        </index>
+    </table>
+
+    <table name="koin_antifraud" resource="default" engine="innodb" comment="Koin Anti Fraud">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="varchar" name="increment_id" length="255" nullable="false" comment="Order Increment ID"/>
+        <column xsi:type="varchar" name="antifraud_id" length="255" nullable="true" comment="Anti Fraud ID"/>
+        <column xsi:type="varchar" name="evaluation_id" length="255" nullable="true" comment="Evaluation ID"/>
+        <column xsi:type="varchar" name="analysis_type" length="255" nullable="true" comment="Analysis Type"/>
+        <column xsi:type="int" name="score" padding="10" nullable="true" comment="Score"/>
+        <column xsi:type="varchar" name="status" length="255" nullable="true" comment="Status"/>
+        <column xsi:type="varchar" name="message" length="255" nullable="true" comment="Message"/>
+        <column xsi:type="varchar" name="session_id" length="255" nullable="false" default="" comment="Order Session ID"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created Datetime"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated Datetime"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <index referenceId="KOIN_ANTIFRAUD_INCREMENT_ID" indexType="btree">
+            <column name="increment_id"/>
+        </index>
+        <index referenceId="KOIN_ANTIFRAUD_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+    </table>
+
+    <table name="koin_installments_rules" resource="default" engine="innodb" comment="Koin Installments Rules">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="varchar" name="title" length="255" nullable="false" comment="Rule Title"/>
+        <column xsi:type="varchar" name="store_ids" length="255" nullable="true" comment="Store IDS"/>
+        <column xsi:type="varchar" name="account_number" length="255" nullable="true" comment="Store Code"/>
+        <column xsi:type="text" name="payment_methods" nullable="false" comment="Payment Methods"/>
+        <column xsi:type="text" name="except_payment_methods" nullable="false" comment="Exception Payment Methods"/>
+        <column xsi:type="int" name="min_installments" padding="10" nullable="false" default="0" comment="Min Installments"/>
+        <column xsi:type="int" name="max_installments" padding="10" nullable="false" default="0" comment="Max Installments"/>
+        <column xsi:type="int" name="max_installments_without_interest" padding="10" nullable="false" default="0" comment="Max Installments Without Interest"/>
+        <column xsi:type="decimal" name="minimum_installment_amount" precision="12" scale="4" nullable="true" comment="Minimun Installment Amount"/>
+        <column xsi:type="boolean" name="has_interest" default="false" comment="Has Interest"/>
+        <column xsi:type="varchar" name="interest_type" length="255" nullable="true" comment="Interest Type"/>
+        <column xsi:type="decimal" name="interest_rate" precision="12" scale="4" nullable="true" comment="Interest Type"/>
+        <column xsi:type="date" name="start_date" nullable="true" comment="Rule Start Datetime"/>
+        <column xsi:type="date" name="end_date" nullable="true" comment="Rule End Datetime"/>
+        <column xsi:type="decimal" name="minimum_amount" precision="12" scale="4" nullable="true" comment="Minimum Amount"/>
+        <column xsi:type="decimal" name="maximum_amount" precision="12" scale="4" nullable="true" comment="Maximum Amount"/>
+        <column xsi:type="boolean" name="status" default="false" nullable="false" comment="Status"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created Datetime"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated Datetime"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <index referenceId="KOIN_INSTALLMENTS_RULES_START_END_DATE" indexType="btree">
+            <column name="minimum_amount"/>
+            <column name="maximum_amount"/>
+        </index>
+        <index referenceId="KOIN_INSTALLMENTS_RULES_ACCOUNT_NUMBER" indexType="btree">
+            <column name="account_number"/>
+            <column name="start_date"/>
+            <column name="end_date"/>
+        </index>
+        <index referenceId="KOIN_INSTALLMENTS_RULES_FULLTEXT" indexType="fulltext">
+            <column name="account_number"/>
+            <column name="title"/>
+        </index>
+    </table>
+
+    <table name="koin_queue" resource="default" engine="innodb" comment="Koin Anti Fraud">
+        <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="varchar" name="resource" length="255" nullable="false" comment="Resource"/>
+        <column xsi:type="varchar" name="resource_id" length="255" nullable="false" comment="Foreign Key"/>
+        <column xsi:type="varchar" name="status" length="255" nullable="true" comment="Status"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created Datetime"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated Datetime"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <index referenceId="KOIN_QUEUE_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+        <index referenceId="KOIN_QUEUE_RESOURCE" indexType="btree">
+            <column name="resource"/>
+        </index>
+        <index referenceId="KOIN_QUEUE_RESOURCE_ID" indexType="btree">
+            <column name="resource_id"/>
+        </index>
+        <index referenceId="KOIN_ANTIFRAUD_STATUS" indexType="btree">
+            <column name="status"/>
+        </index>
+    </table>
+
+    <table name="sales_order">
+        <column xsi:type="decimal"
+                name="koin_interest_amount"
+                default="0"
+                nullable="true"
+                precision="12"
+                scale="4"
+                comment="Koin Interest Amount"/>
+        <column xsi:type="decimal"
+                name="base_koin_interest_amount"
+                default="0"
+                nullable="true"
+                precision="12"
+                scale="4"
+                comment="Base Koin Interest Amount"/>
+        <column xsi:type="int"
+                name="koin_antifraud_score"
+                nullable="true"
+                padding="10"
+                comment="Koin Anti Fraud Score"/>
+        <column xsi:type="varchar"
+                name="koin_antifraud_status"
+                length="255"
+                nullable="true"
+                comment="Koin Anti Fraud Status"/>
+        <column xsi:type="varchar"
+                name="koin_antifraud_fingerprint"
+                length="255"
+                nullable="true"
+                comment="Koin Anti Fraud Fingerprint"/>
+    </table>
+
+    <table name="sales_order_grid">
+        <column xsi:type="varchar"
+                name="koin_antifraud_status"
+                length="255"
+                nullable="true"
+                comment="Koin Anti Fraud Status"/>
+    </table>
+
+    <table name="sales_invoice">
+        <column xsi:type="decimal"
+                name="koin_interest_amount"
+                default="0"
+                nullable="true"
+                precision="12"
+                scale="4"
+                comment="Koin Interest Amount"/>
+        <column xsi:type="decimal"
+                name="base_koin_interest_amount"
+                default="0"
+                nullable="true"
+                precision="12"
+                scale="4"
+                comment="Base Koin Interest Amount"/>
+    </table>
+
+    <table name="sales_creditmemo">
+        <column xsi:type="decimal"
+                name="koin_interest_amount"
+                default="0"
+                nullable="true"
+                precision="12"
+                scale="4"
+                comment="Koin Interest Amount"/>
+        <column xsi:type="decimal"
+                name="base_koin_interest_amount"
+                default="0"
+                nullable="true"
+                precision="12"
+                scale="4"
+                comment="Base Koin Interest Amount"/>
+    </table>
+
+    <table name="quote">
+        <column xsi:type="decimal"
+                name="koin_interest_amount"
+                default="0"
+                nullable="true"
+                precision="12"
+                scale="4"
+                comment="Koin Interest Amount"/>
+        <column xsi:type="decimal"
+                name="base_koin_interest_amount"
+                default="0"
+                nullable="true"
+                precision="12"
+                scale="4"
+                comment="Base Koin Interest Amount"/>
+    </table>
+</schema>

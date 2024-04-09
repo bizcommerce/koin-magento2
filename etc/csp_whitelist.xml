@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ *
+ */
+-->
+<csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
+    <policies>
+        <policy id="script-src">
+            <values>
+                <value id="koin-fingerprint" type="host">*.despegar.com/</value>
+            </values>
+        </policy>
+        <policy id="frame-src">
+            <values>
+                <value id="koin-fingerprint-frame" type="host">*.despegar.com/</value>
+            </values>
+        </policy>
+        <policy id="frame-ancestors">
+            <values>
+                <value id="koin-fingerprint-frame-ancestors" type="host">*.despegar.com/</value>
+            </values>
+        </policy>
+        <policy id="img-src">
+            <values>
+                <value id="koin-fingerprint-img" type="host">*.despegar.com/</value>
+            </values>
+        </policy>
+        <policy id="connect-src">
+            <values>
+                <value id="koin-fingerprint-connect" type="host">*.despegar.com/</value>
+            </values>
+        </policy>
+    </policies>
+</csp_whitelist>

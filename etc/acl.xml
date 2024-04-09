@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Sales::sales">
+                    <resource id="Koin_Payment::menu" title="Koin" translate="title" sortOrder="1000">
+                        <resource id="Koin_Payment::callbacks" title="CallBacks"/>
+                        <resource id="Koin_Payment::queue" title="Manage Queue"/>
+                        <resource id="Koin_Payment::fraud_analysis" title="Fraud Analysis"/>
+                        <resource id="Koin_Payment::requests" title="Requests e Responses"/>
+                        <resource id="Koin_Payment::installments_rules" title="Installments Rules"/>
+                        <resource id="Koin_Payment::settings" title="Settings"/>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

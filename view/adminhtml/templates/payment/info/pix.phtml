@@ -1,0 +1,67 @@
+<?php
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ * @copyright   Copyright (c) Koin
+ */
+// @codingStandardsIgnoreFile
+
+/**
+ * @var \Koin\Payment\Block\Info\Pix $block
+ * @see \Magento\Payment\Block\Info
+ */
+
+/** @var \Magento\Framework\Escaper $escaper */
+
+$specificInfo = $block->getSpecificInformation();
+$methodTitle = $block->escapeHtml($block->getMethod()->getTitle());
+$payment = $block->getInfo();
+$mediaUrl = $this->getMediaUrl();
+
+$title = $block->getTitle();
+$emv = $block->getEmv();
+$qrCodeImage = $block->getQRCodeImage();
+?>
+<div class="payment-method koin-content">
+    <div class="content">
+        <p><?= $block->escapeHtml($methodTitle) ?></p>
+        <div class="pix-img-code">
+            <?php if ($qrCodeImage): ?>
+                <img alt="<?= $block->escapeHtml(__('QRCode')) ?>" src="<?= $qrCodeImage ?>" class="koin-pix-qrcode" />
+            <?php endif; ?>
+            <div class="pix-qrcode"><?= $emv ?></div>
+        </div>
+    </div>
+
+    <?php if ($specificInfo):?>
+        <div class="additional-infomation">
+            <table class="data admin__table-primary koin-data-table">
+                <?php foreach ($specificInfo as $label => $value):?>
+                    <tbody>
+                        <tr>
+                            <td><strong><?= $block->escapeHtml($label) ?></strong></td>
+                            <td>
+                                <?= /* @noEscape */ nl2br($block->escapeHtml(
+                                    implode("\n", $block->getValueAsArray($value, false)), ['a'])
+                                ) ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                <?php endforeach; ?>
+            </table>
+        </div>
+    <?php endif;?>
+</div>
+
+<?= $block->getChildHtml() ?>

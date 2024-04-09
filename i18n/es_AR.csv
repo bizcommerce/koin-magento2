@@ -1,0 +1,219 @@
+Koin - Callback Listing,Koin - Listado de Llamadas de Retorno
+installments,Cuotas
+Installments,Cuotas
+Created,Creado
+API Key,Clave de API
+Marketplace ID,ID de Marketplace
+Refund when order is cancelled,Reembolso al cancelar el pedido
+Show Payment Info at Success Page,Mostrar información de pago en la página de finalización de compra
+Enable Log Requests,Habilitar Registro de Solicitudes
+Address Attributes,Atributos de Dirección
+Street,Calle
+Number,Número
+Complement,Complemento
+District,Barrio
+Customer Attributes,Atributos del Cliente
+Company Attribute,Atributos de la Empresa
+Enabled,Habilitado
+Title,Título
+Logo to be shown on checkout page,Logotipo a mostrar en la página de pago
+Checkout Instructions,Instrucciones para el Pago
+"Instructions to be shown in checkout's page, it can be HTML","Instrucciones que se mostrarán en la página de pago, puede ser HTML"
+New Order Status,Estado del Nuevo Pedido
+Paid Order Status,Estado del Pedido Pagado
+Paid Virtual Order Status,Estado del Pedido Virtual Pagado
+Cancel Unapproved Orders,Cancelar Pedidos no Aprobados
+Order unapproved will be automatically cancelled,Los pedidos no aprobados serán cancelados automáticamente
+Cancelled Order Status,Estado del Pedido Cancelado
+Sort Order,Orden de Clasificación
+Payment From Applicable Countries,Pago Desde Países Aplicables
+Payment From Specific Countries,Pago Desde Países Específicos
+Order canceled automatically,Pedido cancelado automáticamente
+Order status automatically updated to %1,Estado de pedido actualizado automáticamente a %1
+Your payment for the order %1 was confirmed,Tu pago para el pedido %1 fue confirmado
+The order %1 was cancelled,El pedido %1 fue cancelado
+The order %1 was cancelled. Amount of %2,El pedido %1 fue cancelado. Monto de %2
+Identifier of the organization that's using the service (Provider by Koin),Identificador de la organización que utiliza el servicio (Proporcionado por Koin)
+"If enabled, the transaction will be done in Koin test environment","Si está habilitado, la transacción se realizará en el entorno de prueba de Koin"
+"If your store shows the payment info at success page, DON'T enable this feature",Si tu tienda muestra la información de pago en la página de finalización de compra NO habilites esta función
+Customer Type Attribute,Tipo de Cliente
+Customer Type Value,Valor
+"Value that identify the customer type as a company, Koin cannot show to customers identified as a company","Valor que identifica al cliente como empresa, Koin no puede mostrar a los clientes identificados como empresa"
+Customer attribute that identify the customer type,Atributo de cliente que identifica el tipo de cliente
+Show Logo,Mostrar Logotipo
+"If not, Koin's logo besides the method title","Si no, el logotipo de Koin se situará junto al título del método"
+Use Default Checkout Instructions,Usar Instrucciones de Pago Predeterminadas
+Text for order waiting e-mail validation,Texto para el correo electrónico de espera de validación
+Text for order in review,Texto para el pedido en revisión
+Text for order waiting first payment,Texto para el pedido en espera de primer pago
+Taxvat is required.,Se requiere el Número de Identificación Tributaria.
+Customer Taxvat,Documento del Cliente
+Koin will send you an email with the next steps about your request. Be ready :),Koin te enviará un correo electrónico con los próximos pasos sobre tu solicitud. ¡Prepárate! :)
+"Your request with Koin wasn't approved right now, for that reason your order was cancelled","Tu solicitud con Koin no fue aprobada en este momento, por esa razón tu pedido fue cancelado"
+"Everything ok with your order, we identified your first payment and we'll proceed with your purchase!","Todo está bien con tu pedido, identificamos tu primer pago y ¡procederemos con tu compra!"
+We'll send you a confirmation email with informations about your account.,Te enviaremos un correo electrónico de confirmación con información sobre tu cuenta.
+Callbacks,Llamadas de Retorno
+Callback List,Lista de Llamadas de Retorno
+id,ID
+authorization_code,Código de Autorización
+"payment_method","Emisor"
+status,Estado
+reference_id,ID de Referencia
+business_id,ID de Negocio
+order_id,ID de Pedido
+refund_id,ID de Reembolso
+"refund_status","Estado de Reembolso"
+Redirect Credentials,Credenciales de Redirección
+Redirect Payment,Pago por Redirección
+Payments Credentials (Pix / Fraud Analysis),Credenciales de Pagos (Pix / Análisis de Fraude)
+Key Provided By Koin,Clave Proporcionada por Koin
+Secret Provided By Koin,Secreto Proporcionado por Koin
+Commerce Provided By Koin,Comercio Proporcionado por Koin
+Your Koin Account Number,Tu Número de Cuenta Koin
+Your Business ID,Tu ID de Negocio
+Store Code,Código de Tienda
+Expiration Time,Tiempo de Expiración
+"Minutes to expire the transaction, if empty it'll be 30 minutes","Minutos para expirar la transacción, si está vacío serán 30 minutos"
+Use Custom Pix Payment Key,Usar Clave de Pago Pix Personalizada
+If you want to use a custom PIX Key instead of a default key on Koin,Si deseas usar una Clave PIX personalizada en lugar de una clave predeterminada en Koin
+Refunded Order Status,Estado de Pedido Reembolsado
+Copy code,Copiar código
+QRCode,Código QR
+Copied!,¡Copiado!
+Increment ID,ID Incremental
+General Settings,Configuración General
+"The transaction is taking longer than expected, please try again in a few moments","La transacción está llevando más tiempo de lo esperado, por favor inténtalo de nuevo en unos momentos"
+Settings,Configuraciones
+Fraud Analysis,Análisis de Fraude
+Cancel Denied Orders,Cancelar Pedidos Denegados
+Change Status Denied Orders,Cambiar Estado de Pedidos Denegados
+Manage Queue,Administrar Cola
+Anti Fraud ID,ID Antifraude
+Evaluation ID,ID de Evaluación
+Analysis Type,Tipo de Análisis
+Executed,Ejecutado
+Manage Fraud Analysis,Administrar Análisis de Fraude
+Resource,Recurso
+Resource ID,ID de Recurso
+Status used to fraud analysis,Estado utilizado para el análisis de fraude
+Payment Methods selected to send to analysis,Métodos de Pago seleccionados para enviar al análisis
+Change Status Approved Orders,Cambiar Estado de Pedidos Aprobados
+Minimum Order Amount,Monto Mínimo del Pedido
+Maximum Order Amount,Monto Máximo del Pedido
+Aproved Order Status,Estado de Pedido Aprobado
+Denied Order Status,Estado de Pedido Denegado
+Denied Cancelled Order Status,Estado de Pedido Denegado Cancelado
+Status used to denied but not cancelled orders,Estado utilizado para pedidos denegados pero no cancelados
+denied,denegado
+approved,aprobado
+received,recibido
+queued,en cola
+Method,Método
+The order was approved by Fraud Analysis,El pedido fue aprobado por el Análisis de Fraude
+The order was repproved by Fraud Analysis,El pedido fue denegado por el Análisis de Fraude
+Requests and Responses,Solicitudes y Respuestas
+Koin Antifraud Score,Puntaje Antifraude de Koin
+Koin Antifraud Status,Estado Antifraude de Koin
+Request List,Listado de Solicitudes
+Global Credentials,Credenciales Globales
+Resolve evaluation after how many minutes?,Tiempo máximo esperado para resolver la evaluación
+It'll send a date (sla_date) that the evaluation is expected to be resolved based on the config,Enviaré una fecha (sla_date) para que la evaluación se resuelva según la configuración
+"If the order is made with Pix or BNPL, it'll trigger a refund command","Si el pedido se realiza con Pix o BNPL, se activará un comando de reembolso"
+Settings related to all payment methods (Pix and BNPL),Configuraciones relacionadas con todos los métodos de pago (Pix y BNPL)
+"Related to customer data sent to Pix, BNPL and Antifraud","Relacionado con los datos del cliente enviados a Pix, BNPL y Antifraude"
+"Related to address data sent to Pix, BNPL and Antifraud","Relacionado con los datos de dirección enviados a Pix, BNPL y Antifraude"
+"These credentials are specific for both services, Pix and Antifraud","Estas credenciales son específicas para ambos servicios, Pix y Antifraude"
+These credentials are specific for BNPL service,Estas credenciales son específicas para el servicio BNPL
+BNPL Credentials,Credenciales de BNPL
+Global Credentials and General Settings,Credenciales Globales y Configuración General
+"If 'yes', it'll trigger a refund command to payment method provider, it depends on availability of the payment method to send refund commands to the issuer","Si 'sí', se activará un comando de reembolso al proveedor del método de pago, depende de la disponibilidad del método de pago para enviar comandos de reembolso al emisor"
+"When the order is denied by Koin and cancelled at the store, it'll update the order to that status","Cuando Koin deniega el pedido y se cancela en la tienda, actualizará el pedido a ese estado"
+"When the order is denied by Koin, it'll update the chosen status","Cuando Koin deniega el pedido, actualizará el estado elegido"
+"When the order is approved by Koin, it'll update the order status","Cuando Koin aprueba el pedido, actualizará el estado del pedido"
+Status used to approved orders,Estado utilizado para pedidos aprobados
+It'll send to Koin only order with a grand total value higher than (or equal) the minimum amount,Solo enviar a Koin pedidos con un valor total superior o igual al monto mínimo
+The order had the amount of %1 refunded by Koin,El pedido tuvo el monto de %1 reembolsado por Koin
+Capture Approved Orders,Capturar Pedidos Aprobados
+"If 'yes', it'll trigger a capture command to payment method provider, it depends on availability of the payment method to send capture commands to the issuer","Si 'sí', se activará un comando de captura al proveedor del método de pago, depende de la disponibilidad del método de pago para enviar comandos de captura al emisor"
+Koin - Card with Antifraud,Koin - Tarjeta con Antifraude
+Credit Card with Antifraud,Tarjeta de Crédito con Antifraude
+"To work with Fraud Analysis, it's mandatory to enable Magento Cron functions, the fraud analysis are sent to koin through crontab","Para trabajar con el Análisis de Fraude, es obligatorio habilitar las funciones de Cron de Magento, el análisis de fraude se envía a Koin a través de crontab"
+Credit Card Information not provided,Información de la Tarjeta de Crédito no proporcionada
+Card Installments,Cuotas de la Tarjeta
+What is this?,¿Qué es esto?
+Card Verification Number,"Código de Seguridad"
+Year,Año
+Month,Mes
+Expiration Date,Fecha de Vencimiento
+Name on Card,Nombre en la Tarjeta
+Card Number,Número de Tarjeta
+Credit Card Information,Información de la Tarjeta
+Card Information,Información de la Tarjeta
+"Credentials used for all Koin services, if you don't have the private key, contact us.","Credenciales utilizadas para todos los servicios de Koin, si no tienes la clave privada, contáctanos."
+Fraud Analysis (Other Payment Methods),Análisis de Fraude (Otros Métodos de Pago)
+Credit Card Brand,Marca de Tarjeta
+Card Brand,Marca de Tarjeta
+Select Brand,Seleccionar Marca
+Authorized Order Status,Estado de Pedido Autorizado
+Installments,Cuotas
+with interest,con interés
+without interest,sin interés
+with discount,con descuento
+"%1x of %2 (%3). Total: %4","%1x de %2 (%3). Total: %4"
+1x of %1 (%2). Total: %3,1x de %1 (%2). Total: %3
+1x of %1 (without interest),1x de %1 (sin interés)
+Card Installments,Cuotas de la Tarjeta
+"Your order wasn't accepted, please, review your payment's data or choose another payment method.","Tu pedido no pudo ser completado, por favor, revisa los datos de tu pago o elige otro método de pago."
+"Min Installments","Numero Minimo de Cuotas"
+"Installments Rules","Reglas de Cuotas"
+"Manage Items","Administrar Items"
+"Create Item","Crear Item"
+"Create New Item","Crear Nuevo Item"
+"The Rule has been deleted.","La regla ha sido eliminada."
+"The Rule has been enabled.","La regla ha sido habilitada."
+"The Rule has been disabled.","La regla ha sido deshabilitada."
+"Rule was not found.","La regla no fue encontrada."
+"A total of %1 record(s) have been updated.","Un total de %1 registro(s) han sido actualizados."
+"A total of %1 record(s) have been deleted.","Un total de %1 registro(s) han sido eliminados."
+"Delete Rule(s)","Eliminar Regla(s)"
+"Are you sure?","¿Estás seguro?"
+"Change status","Cambiar estado"
+"Enable","Habilitar"
+"Disable","Deshabilitar"
+"Insert your credit card number to see installments options","Inserta tu número de tarjeta para ver las opciones de cuotas"
+"Insert your card number to see installments options","Inserta tu número de tarjeta para ver las opciones de cuotas"
+"Are you sure you want to do this?","¿Estás seguro de querer hacer esto?"
+"Account Number","Número de Cuenta"
+"It's possible to add the Credit Card BINs separated with a pipe, like: '555566|444433', or add a regex with the required BINs","Es posible agregar los BINs de la tarjeta separados por una barra vertical, como: '555566|444433', o agregar una expresión regular con los BINs requeridos"
+"Payment Methods BINs","BINs de Métodos de Pago"
+"Minimum Installments","Numero Minimo de Cuotas"
+"Maximum Installments","Numero Maximo de Cuotas"
+"Maximum Installments Without Interest","Cuotas Máximas Sin Interés"
+"Valid integer number; '0' will get the default value","Número entero válido; '0' obtendrá el valor predeterminado"
+"Use dot as a decimal separator, e.g.: 100.00","Usar punto como separador decimal, por ejemplo: 100.00"
+"Minimum Installment Amount","Monto Mínimo de Cuota"
+"Interest Type","Tipo de Interés"
+"Interest Rate","Tasa de Interés"
+"Start Date","Fecha de Inicio"
+"End Date","Fecha de Fin"
+"Fill if that rule uses a different account number, otherwise it's not necessary","Llenar si esa regla usa un número de cuenta diferente, de lo contrario no es necesario"
+"Minimum Order Amount","Monto Mínimo"
+"Maximum Order Amount","Monto Máximo"
+"Rule saved.","Regla guardada."
+"There was an error saving the rule.","Hubo un error al guardar la regla."
+"Enable Rule","Habilitar Regla"
+"Rule Title","Título de la Regla"
+"Auto Capture","Captura Automática"
+"This will make the order change status to Paid Order Status","Esto hará que el pedido cambie de estado a Estado de Pedido Pagado"
+"This will make the order change to captured default status","Esto hará que el pedido cambie al estado predeterminado de captura"
+"Refund when creditmemo is created from order","Reembolsar cuando se crea una nota de crédito desde el pedido"
+"If the order is made with Pix or Credit Card, it'll trigger an online refund command","Si el pedido se realiza con Pix o Tarjeta, se activará un comando de reembolso en línea"
+"The order had the amount refunded on Koin. Amount of %1","El pedido tuvo el monto reembolsado en Koin. Monto de %1"
+"Error trying to refund order on Koin","Error al intentar reembolsar el pedido en Koin"
+"Callback received %1 -> %2","Llamada de retorno recibida: %1 -> %2"
+"Payment Methods BINs to exclude","BINs de Métodos de Pago a excluir"
+"Adding Credit Card BINs, like: '555566|444433', or add a regex with the required BINs, those BINs will deny the rule, applying the rule only if the BINs do not match this field","Agregando BINs de Tarjeta de Crédito, como: '555566|444433', o agregue una expresión regular con los BINs requeridos, esos BINs denegarán la regla, aplicando la regla solo si los BINs no coinciden con este campo"
+"Card Verification Number (CVV)","Código de Seguridad
+"Fetch Info Koin","Consultar Koin"
+"The transaction is still open.","La transacción sigue abierta."
+"This will be the status when the order remains opened and is cancelled afterwards","Este será el estado cuando el pedido permanezca abierto y sea cancelado posteriormente"

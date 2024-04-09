@@ -1,0 +1,79 @@
+<?php
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ * @copyright   Copyright (c) Koin
+ */
+// @codingStandardsIgnoreFile
+
+/**
+ * @var \Koin\Payment\Block\Info\Pix $block
+ * @see \Magento\Payment\Block\Info
+ */
+
+/** @var \Magento\Framework\Escaper $escaper */
+
+$specificInfo = $block->getSpecificInformation();
+$title = $block->escapeHtml($block->getMethod()->getTitle());
+$payment = $block->getInfo();
+$mediaUrl = $this->getMediaUrl();
+
+$title = $block->getTitle();
+$emv = $block->getEmv();
+$qrCodeImage = $block->getQRCodeImage();
+?>
+<dl class="payment-method koin-content">
+
+    <dt class="title">
+        <div class="logo-info">
+            <img src="<?php echo $block->getViewFileUrl('Koin_Payment::images/logo-info.png'); ?>" />
+        </div>
+        <?= $block->escapeHtml($title) ?>
+    </dt>
+    <dd class="content">
+        <div class="koin-pix pix">
+            <div class="pix-barcode-container">
+                <div class="pix-img-code">
+                    <?php if ($qrCodeImage): ?>
+                        <img alt="<?= $block->escapeHtml(__('QRCode')) ?>" src="<?= $qrCodeImage ?>" class="koin-pix-qrcode" />
+                    <?php endif; ?>
+                    <div class="pix-qrcode"><?= $emv ?></div>
+                </div>
+                <button class="pix-copy-button"
+                        data-text="<?= $block->escapeHtml(__('Copied!')) ?>"
+                        onclick="koin.copyCode(this, '.pix-qrcode', false)">
+                    <?= $block->escapeHtml(__('Copy code')) ?>
+                </button>
+            </div>
+        </div>
+    </dd>
+
+    <?php if ($specificInfo):?>
+        <dd>
+            <table class="data table koin-data-table">
+                <?php foreach ($specificInfo as $label => $value):?>
+                    <tr>
+                        <th scope="row"><?= $block->escapeHtml($label) ?></th>
+                        <td>
+                            <?= /* @noEscape */ nl2br($block->escapeHtml(
+                                implode("\n", $block->getValueAsArray($value, false)), ['a'])
+                            ) ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        </dd>
+    <?php endif;?>
+</dl>
+<?= $block->getChildHtml() ?>

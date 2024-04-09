@@ -1,0 +1,25 @@
+<?php
+/**
+ * Koin
+ *
+ *
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ */
+
+/**
+ * @var Koin\Payment\Block\Checkout\Success $block
+ * @see Koin\Payment\Block\Checkout\Success
+ */
+?>
+
+<div class="payment-method-information">
+    <div class="title"><?= __('Chosen payment method') ?></div>
+    <?= $block->getInfoBlockHtml() ?>
+</div>

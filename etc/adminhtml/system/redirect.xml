@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="koin_redirect" translate="label" type="text" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>BNPL</label>
+
+        <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Enabled</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>payment/koin_redirect/active</config_path>
+        </field>
+
+        <field id="title" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Title</label>
+            <config_path>payment/koin_redirect/title</config_path>
+        </field>
+
+        <field id="show_logo_on_checkout" translate="label comment" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Show Logo</label>
+            <config_path>payment/koin_redirect/show_logo_on_checkout</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <comment><![CDATA[If not, Koin's logo besides the method title]]></comment>
+        </field>
+
+        <field id="use_default_checkout_instructions" translate="label comment" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Use Default Checkout Instructions</label>
+            <config_path>payment/koin_redirect/use_default_checkout_instructions</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <comment><![CDATA[If yes, it'll show a default checkout instructions]]></comment>
+        </field>
+
+        <field id="checkout_instructions" translate="label comment" type="textarea" sortOrder="121" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Checkout Instructions</label>
+            <config_path>payment/koin_redirect/checkout_instructions</config_path>
+            <comment><![CDATA[Instructions to be shown in checkout's page, it can be HTML]]></comment>
+            <depends>
+                <field id="use_default_checkout_instructions">0</field>
+            </depends>
+        </field>
+
+        <field id="order_status" translate="label" type="select" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>New Order Status</label>
+            <source_model>Magento\Sales\Model\Config\Source\Order\Status\Newprocessing</source_model>
+            <config_path>payment/koin_redirect/order_status</config_path>
+        </field>
+
+        <field id="paid_order_status" translate="label" type="select" sortOrder="1010" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Paid Order Status</label>
+            <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+            <config_path>payment/koin_redirect/paid_order_status</config_path>
+        </field>
+
+        <field id="paid_virtual_order_status" translate="label" type="select" sortOrder="1020" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Paid Virtual Order Status</label>
+            <source_model>Koin\Payment\Model\Config\Source\Order\ProcessingComplete</source_model>
+            <config_path>payment/koin_redirect/paid_virtual_order_status</config_path>
+        </field>
+
+        <field id="cancel_unapproved_orders" translate="label" type="select" sortOrder="1020" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Cancel Unapproved Orders</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>payment/koin_redirect/cancel_unapproved_orders</config_path>
+            <comment><![CDATA[Order unapproved will be automatically cancelled]]></comment>
+        </field>
+
+        <field id="cancelled_order_status" translate="label" type="select" sortOrder="1030" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Cancelled Order Status</label>
+            <source_model>Koin\Payment\Model\Config\Source\Order\Cancelled</source_model>
+            <config_path>payment/koin_redirect/cancelled_order_status</config_path>
+            <depends>
+                <field id="cancelled_unapproved_orders">1</field>
+            </depends>
+        </field>
+
+        <field id="text_email_validation" translate="label" type="textarea" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Text for order waiting e-mail validation</label>
+            <config_path>payment/koin_redirect/text_email_validation</config_path>
+        </field>
+
+        <field id="text_provider_review" translate="label" type="textarea" sortOrder="2010" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Text for order in review</label>
+            <config_path>payment/koin_redirect/text_provider_review</config_path>
+        </field>
+
+        <field id="text_waiting_first_payment" translate="label" type="textarea" sortOrder="2020" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Text for order waiting first payment</label>
+            <config_path>payment/koin_redirect/text_waiting_first_payment</config_path>
+        </field>
+
+        <field id="description_order_review" translate="label" type="textarea" sortOrder="3000" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Description for order waiting review</label>
+            <config_path>payment/koin_redirect/description_order_review</config_path>
+        </field>
+
+        <field id="description_order_denied" translate="label" type="textarea" sortOrder="3010" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Description for order denied</label>
+            <config_path>payment/koin_redirect/description_order_denied</config_path>
+        </field>
+
+        <field id="description_order_approved" translate="label" type="textarea" sortOrder="3020" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Description for order approved</label>
+            <config_path>payment/koin_redirect/description_order_approved</config_path>
+        </field>
+
+        <field id="sort_order" translate="label" type="text" sortOrder="10000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Sort Order</label>
+            <frontend_class>validate-number</frontend_class>
+            <config_path>payment/koin_redirect/sort_order</config_path>
+        </field>
+
+        <field id="allowspecific" translate="label" type="allowspecific" sortOrder="10010" showInDefault="9" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Payment From Applicable Countries</label>
+            <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+            <config_path>payment/koin_redirect/allowspecific</config_path>
+        </field>
+
+        <field id="specificcountry" translate="label" type="multiselect" sortOrder="10011" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Payment From Specific Countries</label>
+            <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+            <config_path>payment/koin_redirect/specificcountry</config_path>
+            <depends>
+                <field id="allowspecific">1</field>
+            </depends>
+        </field>
+
+        <field id="min_order_total" translate="label" type="text" sortOrder="20000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <config_path>payment/koin_redirect/min_order_total</config_path>
+            <label>Minimum Order Total</label>
+            <validate>validate-number validate-zero-or-greater</validate>
+        </field>
+
+        <field id="max_order_total" translate="label" type="text" sortOrder="20010" showInDefault="1" showInWebsite="1" showInStore="1">
+            <config_path>payment/koin_redirect/max_order_total</config_path>
+            <label>Maximum Order Total</label>
+            <validate>validate-number validate-zero-or-greater</validate>
+        </field>
+    </group>
+</include>

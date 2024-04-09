@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Koin_Payment::css/checkout.css" />
+        <script src="Koin_Payment::js/payments.js" />
+    </head>
+    <body>
+        <referenceContainer name="creditmemo_totals">
+            <block class="Koin\Payment\Block\Sales\Order\Totals\Interest" name="koinpayment_interest">
+                <action method="setBeforeCondition">
+                    <argument name="condition" xsi:type="string">shipping</argument>
+                </action>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

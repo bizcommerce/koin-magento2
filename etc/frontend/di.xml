@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="koin_redirect_config_provider" xsi:type="object">Koin\Payment\Model\Ui\Redirect\ConfigProvider</item>
+                <item name="koin_pix_config_provider" xsi:type="object">Koin\Payment\Model\Ui\Pix\ConfigProvider</item>
+                <item name="koin_cc_config_provider" xsi:type="object">Koin\Payment\Model\Ui\CreditCard\ConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Koin\Payment\Block\Info\Redirect">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Koin\Payment\Block\Info\Pix">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Koin\Payment\Block\Info\CreditCard">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,57 @@
+<?php
+/**
+ * @var \Koin\Payment\Block\Adminhtml\Order\View\FraudAnalysis $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+$antiFraud = $block->getAntiFraud();
+$status = $antiFraud->getStatus();
+?>
+<section class="admin__page-section koin-payment-fraud-analysis">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Fraud Analysis')) ?></span>
+    </div>
+    <div class="admin__page-section-item ">
+        <div class="admin__page-section-item-content">
+            <table class="data admin__table-primary koin-data-table">
+                <tbody>
+                    <tr>
+                        <td ><?= $block->escapeHtml(__('Method')) ?></td>
+                        <td>
+                            <img src="<?= $block->getViewFileUrl('Koin_Payment::images/logo.png') ?>"
+                                 alt="Koin"
+                                 title="Koin"
+                             />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><?= $block->escapeHtml(__('Status')) ?></td>
+                        <td>
+                            <?= $block->escapeHtml(__($status)) ?>
+                        </td>
+                    </tr>
+                    <?php if ($status != \Koin\Payment\Gateway\Http\Client\Risk\Api::STATUS_QUEUED): ?>
+                        <tr>
+                            <td><?= $block->escapeHtml(__('Score')) ?></td>
+                            <td>
+                                <?= $block->escapeHtml(__($antiFraud->getScore())) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><?= $block->escapeHtml(__('Evaluation ID')) ?></td>
+                            <td>
+                                <?= $block->escapeHtml(__($antiFraud->getEvaluationId())) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><?= $block->escapeHtml(__('Anti Fraud ID')) ?></td>
+                            <td>
+                                <?= $block->escapeHtml(__($antiFraud->getAntifraudId())) ?>
+                            </td>
+                        </tr>
+                    <?php endif ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

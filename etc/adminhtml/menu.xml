@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Koin_Payment::menu" title="Koin" module="Koin_Payment" sortOrder="1000" parent="Magento_Sales::sales" resource="Koin_Payment::menu"/>
+        <add id="Koin_Payment::callbacks"
+             title="Callbacks"
+             module="Koin_Payment"
+             sortOrder="10"
+             parent="Koin_Payment::menu"
+             resource="Koin_Payment::callbacks"
+             action="koin/callback/grid"
+        />
+
+        <add id="Koin_Payment::queue"
+             title="Manage Queue"
+             module="Koin_Payment"
+             sortOrder="20"
+             parent="Koin_Payment::menu"
+             resource="Koin_Payment::queue"
+             action="koin/queue/grid"
+        />
+
+        <add id="Koin_Payment::fraud_analysis"
+             title="Fraud Analysis"
+             module="Koin_Payment"
+             sortOrder="30"
+             parent="Koin_Payment::menu"
+             resource="Koin_Payment::fraud_analysis"
+             action="koin/fraudanalysis/grid"
+        />
+
+        <add id="Koin_Payment::requests"
+             title="Requests e Responses"
+             module="Koin_Payment"
+             sortOrder="40"
+             parent="Koin_Payment::menu"
+             resource="Koin_Payment::requests"
+             action="koin/request/grid"
+        />
+
+        <add id="Koin_Payment::installments_rules"
+             title="Installments Rules"
+             module="Koin_Payment"
+             sortOrder="50"
+             parent="Koin_Payment::menu"
+             resource="Koin_Payment::installments_rules"
+             action="koin/installments_rules/"
+        />
+
+        <add id="Koin_Payment::payment_methods"
+             title="Settings"
+             module="Koin_Payment"
+             sortOrder="1000"
+             resource="Koin_Payment::settings"
+             parent="Koin_Payment::menu"
+             action="adminhtml/system_config/edit/section/payment/"
+         />
+    </menu>
+</config>

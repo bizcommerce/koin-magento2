@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Koin_Payment::css/checkout.css" />
+        <script src="Koin_Payment::js/payments.js" />
+    </head>
+    <body>
+        <referenceContainer name="order.success.additional.info">
+            <block class="Koin\Payment\Block\Checkout\Success"
+                   name="koin.payment.success"
+                   template="Koin_Payment::checkout/success.phtml"
+                   cacheable="false"
+                   ifconfig="koin/general/show_payment_info"
+            />
+        </referenceContainer>
+    </body>
+</page>

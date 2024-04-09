@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="koin_general" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>General</label>
+        <group id="global_credencials" translate="label" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Global Credentials and General Settings</label>
+            <comment>Credentials used for all Koin services, if you don't have the private key, contact us.</comment>
+
+            <field id="org_id" translate="label comment" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Org Id</label>
+                <config_path>koin/general/org_id</config_path>
+                <comment><![CDATA[Identifier of the organization that's using the service (Provider by Koin)]]></comment>
+            </field>
+
+            <field id="private_key" translate="label" type="obscure" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Private Key</label>
+                <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                <config_path>koin/general/private_key</config_path>
+            </field>
+
+            <field id="account_number" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Your Koin Account Number</label>
+                <config_path>koin/general/account_number</config_path>
+            </field>
+
+            <field id="store_code" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Store Code</label>
+                <config_path>koin/general/store_code</config_path>
+            </field>
+
+            <field id="use_sandbox" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Use Sandbox</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>koin/general/use_sandbox</config_path>
+                <comment><![CDATA[If enabled, the transaction will be done in Koin test environment]]></comment>
+            </field>
+
+            <field id="refund_on_cancel" translate="label comment" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Refund when order is cancelled</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>koin/general/refund_on_cancel</config_path>
+                <comment>If the order is made with Pix or BNPL, it'll trigger a refund command</comment>
+            </field>
+
+            <field id="refund_offline_creditmemo" translate="label comment" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Refund when creditmemo is created from order</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>koin/general/refund_offline_creditmemo</config_path>
+                <comment>If the order is made with Pix or Credit Card, it'll trigger an online refund command</comment>
+            </field>
+
+            <field id="show_payment_info" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Show Payment Info at Success Page</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>koin/general/show_payment_info</config_path>
+                <comment><![CDATA[If your store shows the payment info at success page, DON'T enable this feature]]></comment>
+            </field>
+
+            <field id="debug" translate="label" type="select" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Enable Log Requests</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>koin/general/debug</config_path>
+            </field>
+        </group>
+
+        <group id="koin_address" translate="label" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Address Attributes</label>
+            <comment>Related to address data sent to Pix, BNPL and Antifraud</comment>
+            <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+
+            <field id="street" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Street</label>
+                <source_model>Koin\Payment\Model\Config\Source\Street</source_model>
+                <config_path>koin/address/street</config_path>
+            </field>
+            <field id="number" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Number</label>
+                <source_model>Koin\Payment\Model\Config\Source\Street</source_model>
+                <config_path>koin/address/number</config_path>
+            </field>
+            <field id="complement" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Complement</label>
+                <source_model>Koin\Payment\Model\Config\Source\Street</source_model>
+                <config_path>koin/address/complement</config_path>
+                <comment>A complementary information about the address</comment>
+            </field>
+            <field id="district" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>District</label>
+                <source_model>Koin\Payment\Model\Config\Source\Street</source_model>
+                <config_path>koin/address/district</config_path>
+            </field>
+        </group>
+
+        <group id="koin_customer" translate="label" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Customer Attributes</label>
+            <comment>Related to customer data sent to Pix, BNPL and Antifraud</comment>
+            <frontend_model>Magento\Config\Block\System\Config\Form\Fieldset</frontend_model>
+
+            <field id="customer_type_attribute" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Customer Type Attribute</label>
+                <source_model>Koin\Payment\Model\Config\Source\Customer\Attributes</source_model>
+                <config_path>koin/customer/customer_type_attribute</config_path>
+                <comment>Customer attribute that identify the customer type</comment>
+            </field>
+
+            <field id="customer_type_company_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <label>Customer Type Value</label>
+                <config_path>koin/customer/customer_type_company_value</config_path>
+                <comment>Value that identify the customer type as a company, Koin cannot show to customers identified as a company</comment>
+            </field>
+        </group>
+    </group>
+</include>

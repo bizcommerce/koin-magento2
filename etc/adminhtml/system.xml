@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="koin" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label">
+                <label>Koin</label>
+                <include path="Koin_Payment::system/version.xml"/>
+                <include path="Koin_Payment::system/general.xml"/>
+                <include path="Koin_Payment::system/credit_card.xml"/>
+                <include path="Koin_Payment::system/redirect.xml"/>
+                <include path="Koin_Payment::system/pix.xml"/>
+                <include path="Koin_Payment::system/fraud_analysis.xml"/>
+            </group>
+        </section>
+    </system>
+</config>
