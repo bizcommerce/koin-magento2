@@ -221,3 +221,4 @@
 "If the installments should be shown even if there are other rule with the same number of installments","If the installments should be shown even if there are other rule with the same number of installments"
 "You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total","You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total"
 "Only %1x of %2 (%3). Total: %4","Only %1x of %2 (%3). Total: %4"
+"rule_title","Installments Rules"

@@ -186,8 +186,8 @@
                 <can_fetch_transaction_information>1</can_fetch_transaction_information>
                 <masked_fields>cvv,cc_number</masked_fields>
                 <useccv>1</useccv>
-                <privateInfoKeys>id,order_id,payment_method,business_id,status,refund_id,refund_status</privateInfoKeys>
-                <paymentInfoKeys>id,order_id,payment_method,business_id,status,refund_id,refund_status</paymentInfoKeys>
+                <privateInfoKeys>id,order_id,payment_method,business_id,status,refund_id,refund_status,rule_title</privateInfoKeys>
+                <paymentInfoKeys>id,order_id,payment_method,business_id,status,refund_id,refund_status,rule_title</paymentInfoKeys>
                 <debug>1</debug>
                 <debugReplaceKeys>cvv,cc_number</debugReplaceKeys>
             </koin_cc>

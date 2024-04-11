@@ -229,3 +229,4 @@
 "If the installments should be shown even if there are other rule with the same number of installments","Se o parcelamento deve ser exibido mesmo se houver outra regra com o mesmo número de parcelas"
 "You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total","Você pode usar %1x para parcelas, %2 para valor da parcela, %3 para descrição de juros e %4 para total"
 "Only %1x of %2 (%3). Total: %4","Somente %1x de %2 (%3). Total: %4"
+"rule_title","Regra de Parcelamento"
