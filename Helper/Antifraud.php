@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  *
@@ -293,11 +294,6 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
-    /**
-     * @param mixed $evaluationId
-     * @param array $requestData
-     * @return void
-     */
     public function notify(string $evaluationId, array $requestData, array $queryParams = [], $storeId = null): void
     {
         $urlPath = $this->api->evaluation()->getEndpointPath('risk/notifications', null, $evaluationId);
@@ -563,7 +559,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                 }
             } catch (\Exception $e) {
                 $queueStatus = \Koin\Payment\Model\Queue::STATUS_ERROR;
-                if ($antifraud->getId()) {
+                if (isset($antifraud) && $antifraud->getId()) {
                     $this->updateAntifraud(
                         $antifraud,
                         \Koin\Payment\Gateway\Http\Client\Risk\Api::STATUS_ERROR,

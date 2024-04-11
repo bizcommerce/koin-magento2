@@ -85,6 +85,7 @@ class OrderSaveAfter implements ObserverInterface
             $statuses = explode(',', $this->helper->getAntifraudConfig('order_status'));
             $minOrderTotal = (float) $this->helper->getAntifraudConfig('min_order_total');
 
+            //@phpstan-ignore-next-line
             if (!empty($paymentMethods)) {
                 if (in_array($order->getPayment()->getMethod(), $paymentMethods)) {
                     if (in_array($order->getStatus(), $statuses)) {

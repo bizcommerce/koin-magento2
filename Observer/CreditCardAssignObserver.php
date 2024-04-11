@@ -176,6 +176,7 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
             $this->setAdditionalInfo($paymentInfo, [
                 'rule_id' => $ruleId,
                 'rule_data' => $this->json->serialize($rule->getData()),
+                'rule_title' => $rule->getTitle(),
                 'rule_account_number' => (string) trim($rule->getAccountNumber())
             ]);
         }
