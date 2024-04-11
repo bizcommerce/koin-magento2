@@ -103,6 +103,48 @@
             </settings>
         </field>
 
+        <field name="description" formElement="input">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Description</label>
+                <dataScope>description</dataScope>
+                <notice translate="true">Description that will be shown on installments dropdown item</notice>
+                <tooltip>
+                    <description>You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total</description>
+                </tooltip>
+            </settings>
+        </field>
+
+        <field name="show_installments" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">installments_rules</item>
+                </item>
+            </argument>
+            <settings>
+                <dataType>boolean</dataType>
+                <label translate="true">Show Installments</label>
+                <dataScope>show_installments</dataScope>
+                <notice translate="true">If the installments number should be shown with the description on the installments dropdown</notice>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="number">0</map>
+                            <map name="true" xsi:type="number">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
+
         <field name="account_number" formElement="input" sortOrder="3">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">

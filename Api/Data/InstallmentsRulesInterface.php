@@ -25,6 +25,11 @@ interface InstallmentsRulesInterface
      * Constants for keys of data array. Identical to the name of the getter in snake case.
      */
     const TITLE = 'title';
+
+    const DESCRIPTION = 'description';
+
+    const SHOW_INSTALLMENTS = 'show_installments';
+
     const ACCOUNT_NUMBER = 'account_number';
     const PAYMENT_METHODS = 'payment_methods';
 
@@ -47,6 +52,14 @@ interface InstallmentsRulesInterface
     public function getTitle(): string;
 
     public function setTitle(string $title): void;
+
+    public function getDescription(): string;
+
+    public function setDescription(string $description): void;
+
+    public function getShowInstallments(): bool;
+
+    public function setShowInstallments(bool $showInstallments): void;
 
     public function getAccountNumber(): string;
 

@@ -151,6 +151,7 @@ class Callback extends AbstractModel implements CallbackInterface
      */
     public function getExtensionAttributes()
     {
+        //@phpstan-ignore-next-line
         return $this->_getExtensionAttributes();
     }
 
@@ -159,6 +160,7 @@ class Callback extends AbstractModel implements CallbackInterface
      */
     public function setExtensionAttributes(CallbackExtensionInterface $extensionAttributes)
     {
+        //@phpstan-ignore-next-line
         $this->_setExtensionAttributes($extensionAttributes);
     }
 }

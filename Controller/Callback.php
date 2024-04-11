@@ -78,17 +78,6 @@ abstract class Callback extends Action implements \Magento\Framework\App\CsrfAwa
      */
     protected $eventManager;
 
-    /**
-     * PostBack constructor.
-     * @param Context $context
-     * @param Json $json
-     * @param ResultFactory $resultFactory
-     * @param HelperData $helperData
-     * @param HelperAntifraud $helperAntifraud
-     * @param HelperOrder $helperOrder
-     * @param CallbackResourceModel $callbackResourceModel
-     * @param ManagerInterface $eventManager
-     */
     public function __construct(
         Context $context,
         Json $json,
@@ -109,7 +98,7 @@ abstract class Callback extends Action implements \Magento\Framework\App\CsrfAwa
         $this->callbackFactory = $callbackFactory;
         $this->eventManager = $eventManager;
 
-        return parent::__construct($context);
+        parent::__construct($context);
     }
 
     /**

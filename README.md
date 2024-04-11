@@ -5,9 +5,8 @@
 **Composer**
 
 ```
-composer config --auth http-basic.repo.packagist.com koin {CREDENCIAIS-FORCECIDAS-PELA-KOIN}
-composer config repositories.koin composer https://repo.packagist.com/koin/
-composer require koin/payment
+composer config repositories.koinlatam-magento git https://github.com/koinlatam/magento2.git
+composer require koinlatam/payment
 
 php bin/magento setup:upgrade
 php bin/magento setup:di:compile
@@ -260,4 +259,8 @@ v2.5.8:
 - Fix: 'Opened' transactions with 'Failed' Callback was remaining pending
 - Fiz: 'Opened' transactions with 'Capture' Callback wasn't creating the invoice automatically
 - Feat: Button to fetch info when order is Opened
+
+v2.6.0
+- Feat: Added new options for installment rules to show only the text or the text with the installments
+- Feat: Possibility to show more than one installment rules with the same installment number
 

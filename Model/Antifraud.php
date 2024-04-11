@@ -217,6 +217,7 @@ class Antifraud extends AbstractModel implements AntifraudInterface
      */
     public function getExtensionAttributes()
     {
+        //@phpstan-ignore-next-line
         return $this->_getExtensionAttributes();
     }
 
@@ -225,6 +226,7 @@ class Antifraud extends AbstractModel implements AntifraudInterface
      */
     public function setExtensionAttributes(AntifraudExtensionInterface $extensionAttributes)
     {
+        //@phpstan-ignore-next-line
         $this->_setExtensionAttributes($extensionAttributes);
     }
 }

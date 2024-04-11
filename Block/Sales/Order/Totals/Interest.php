@@ -32,7 +32,7 @@ class Interest extends \Magento\Framework\View\Element\Template
     /**
      * @var \Magento\Framework\DataObject
      */
-    protected $_source;
+    protected $source;
 
     /**
      * Get data (totals) source model
@@ -57,6 +57,7 @@ class Interest extends \Magento\Framework\View\Element\Template
                 'label' => __('Interest Rate'),
             ]);
 
+            //@phpstan-ignore-next-line
             $this->getParentBlock()->addTotalBefore($total, $this->getBeforeCondition());
         }
 

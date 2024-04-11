@@ -32,12 +32,13 @@
             </address>
             <endpoints>
                 <tokenize_uri>https://api-secure.koin.com.br/</tokenize_uri>
+                <tokenize_uri_sandbox>https://api-sandbox.koin.com.br/</tokenize_uri_sandbox>
                 <payments_uri>https://api-payments.koin.com.br/</payments_uri>
                 <payments_uri_sandbox>https://api-sandbox.koin.com.br/</payments_uri_sandbox>
                 <antifraud_uri>https://api-antifraud.koin.com.br/</antifraud_uri>
                 <antifraud_uri_sandbox>https://api-sandbox.koin.com.br/</antifraud_uri_sandbox>
                 <secure>
-                    <tokenize>/v1/payment/tokenize</tokenize>
+                    <tokenize>v1/payment/tokenize</tokenize>
                 </secure>
                 <payments>
                     <create>v1/payment/orders</create>
