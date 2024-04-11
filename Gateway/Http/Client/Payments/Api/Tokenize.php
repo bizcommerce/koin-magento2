@@ -20,6 +20,8 @@ use Laminas\Http\Request;
 
 class Tokenize extends Client
 {
+    protected $apiType = 'tokenize';
+    
     /**
      * @param $data
      * @param int $storeId

@@ -261,3 +261,5 @@ v2.5.8:
 - Fiz: 'Opened' transactions with 'Capture' Callback wasn't creating the invoice automatically
 - Feat: Button to fetch info when order is Opened
 
+v2.5.9:
+- Fix: Sandbox for tokenize
