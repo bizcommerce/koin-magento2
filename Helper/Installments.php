@@ -162,10 +162,10 @@ class Installments extends AbstractHelper
     ): string {
         $interestText = __('%1x of %2 (%3). Total: %4');
         if (trim($description)) {
-            $interestText = $description;
             if (!$showInstallments) {
-                return $interestText;
+                return $description;
             }
+            $interestText = $description . ' - ' . $interestText;
         }
 
         $interestExtra = __('without interest');
