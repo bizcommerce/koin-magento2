@@ -260,6 +260,9 @@ v2.5.8:
 - Fiz: 'Opened' transactions with 'Capture' Callback wasn't creating the invoice automatically
 - Feat: Button to fetch info when order is Opened
 
+v2.5.9:
+- Fix: Sandbox for tokenize
+
 v2.6.0
 - Feat: Added new options for installment rules to show only the text or the text with the installments
 - Feat: Possibility to show more than one installment rules with the same installment number
