@@ -224,3 +224,4 @@ Card Installments,Cuotas de la Tarjeta
 "Description that will be shown on installments dropdown item","Descripción que se mostrará en el elemento del menú desplegable de cuotas"
 "If the installments should be shown even if there are other rule with the same number of installments","Si las cuotas deben mostrarse incluso si hay otra regla con el mismo número de cuotas"
 "You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total","Puedes usar %1x para cuotas, %2 para el valor de la cuota, %3 para la descripción de interés y %4 para el total"
+"Only %1x of %2 (%3). Total: %4","Solo %1x de %2 (%3). Total: %4"

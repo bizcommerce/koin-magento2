@@ -117,6 +117,7 @@
                 <tooltip>
                     <description>You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total</description>
                 </tooltip>
+                <placeholder translate="true">Only %1x of %2 (%3). Total: %4</placeholder>
             </settings>
         </field>
 
