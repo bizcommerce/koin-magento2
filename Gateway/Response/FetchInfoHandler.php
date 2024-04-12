@@ -85,7 +85,6 @@ class FetchInfoHandler implements HandlerInterface
         if (isset($transaction['status'])) {
             if (isset($transaction['status']['type'])) {
                 $koinStatus = $transaction['status']['type'];
-$koinStatus = Api::STATUS_FAILED;
                 $payment->setAdditionalInformation('status', $transaction['status']['type']);
                 if ($koinStatus == Api::STATUS_COLLECTED) {
                     $this->helperOrder->captureOrder($order, Invoice::CAPTURE_OFFLINE);
