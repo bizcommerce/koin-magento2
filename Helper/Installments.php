@@ -276,7 +276,9 @@ class Installments extends AbstractHelper
             );
             $value = $this->getInstallmentPrice($total, $i, $hasInterest, $interestRate, $interestType);
             $grandTotal = $total;
-            if ($hasInterest && $interestRate > 0) {
+            if (!$interestRate) {
+                $interestRate = 0;
+            } elseif ($hasInterest && $interestRate > 0) {
                 $grandTotal = round($value * $i, 2);
             }
             $allInstallments[] = $this->getInstallmentItem($i, $interestRate, $value, $grandTotal, $ruleId, $showInstallments, $description);
