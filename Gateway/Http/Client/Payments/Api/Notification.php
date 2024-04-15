@@ -48,7 +48,7 @@ class Notification extends Client
         $api->setRawBody($this->json->serialize($data));
 
         $response = $api->send();
-        $content = $response->getContent();
+        $content = $response->getBody();
         if ($content && $response->getStatusCode() != 204) {
             $content = $this->json->unserialize($content);
         }
