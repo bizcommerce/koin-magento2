@@ -51,7 +51,7 @@ class InstallmentsRules extends AbstractModel implements InstallmentsRulesInterf
 
     public function getTitle(): string
     {
-        return $this->getData(self::TITLE);
+        return (string) $this->getData(self::TITLE);
     }
 
     public function setTitle(string $title): void
@@ -61,7 +61,7 @@ class InstallmentsRules extends AbstractModel implements InstallmentsRulesInterf
 
     public function getDescription(): string
     {
-        return $this->getData(self::DESCRIPTION);
+        return (string) $this->getData(self::DESCRIPTION);
     }
 
     public function setDescription(string $description): void
