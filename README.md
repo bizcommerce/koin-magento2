@@ -6,7 +6,7 @@
 
 ```
 composer config repositories.koinlatam-magento git https://github.com/koinlatam/magento2.git
-composer require koinlatam/payment
+composer require koin/payment
 
 php bin/magento setup:upgrade
 php bin/magento setup:di:compile
@@ -23,10 +23,10 @@ composer require laminas/laminas-http:>2.4.0
 composer require firebase/php-jwt:* 
 composer require bacon/bacon-qr-code:* 
 ```
-
+g
 2 - Download o arquivo e coloque na pasta
 ```
-app/code/Koin/Payment
+git clone https://github.com/koinlatam/magento2.git.git app/code/Koin/Payment
 ```
 
 3 - Depois rodar os comandos de instalação

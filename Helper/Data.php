@@ -259,7 +259,7 @@ class Data extends \Magento\Payment\Helper\Data
                 $request = $this->mask($request);
                 $response = $this->mask($response);
 
-                $connection = $this->resourceConnection->getConnection();
+                //$connection = $this->resourceConnection->getConnection();
                 $requestModel = $this->requestFactory->create();
                 $requestModel->setRequest($request);
                 $requestModel->setResponse($response);
@@ -267,7 +267,7 @@ class Data extends \Magento\Payment\Helper\Data
                 $requestModel->setStatusCode($statusCode);
 
                 $this->requestRepository->save($requestModel);
-                $connection->commit();
+                //$connection->commit();
             } catch (\Exception $e) {
                 $this->log($e->getMessage());
             }
