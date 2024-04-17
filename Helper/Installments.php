@@ -134,6 +134,7 @@ class Installments extends AbstractHelper
         string $description = ''
     ): array {
         return [
+            'id' => (string) $installments . '-' . (string) $ruleId,
             'installments' => $installments,
             'interest_rate' => $interestRate,
             'installment_price' => $value,

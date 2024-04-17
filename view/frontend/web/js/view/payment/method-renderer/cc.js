@@ -67,6 +67,7 @@ define([
                 installments: ko.observableArray([]),
                 hasInstallments: ko.observable(false),
                 installmentsUrl: '',
+                installmentsId: '',
                 showInstallmentsWarning: ko.observable(true),
                 debounceTimer: null
             },
@@ -85,7 +86,8 @@ define([
                         'creditCardVerificationNumber',
                         'selectedCardType',
                         'creditCardOwner',
-                        'creditCardInstallments'
+                        'creditCardInstallments',
+                        'installmentsId'
                     ]);
 
                 this.creditCardVerificationNumber('');
@@ -146,6 +148,11 @@ define([
              * @returns {Object}
              */
             getData: function () {
+
+                const iRule = this.installmentsId() ? this.installmentsId().split('-') : '';
+                const installments = iRule[0] || '1';
+                const ruleId = iRule[1] || '0';
+
                 return {
                     'method': this.item.method,
                     'additional_data': {
@@ -156,7 +163,8 @@ define([
                         'cc_exp_month': this.creditCardExpMonth(),
                         'cc_number': this.koinCreditCardNumber(),
                         'cc_owner': this.creditCardOwner(),
-                        'installments': this.creditCardInstallments() ? this.creditCardInstallments() : 1
+                        'installments': installments,
+                        'rule_id': ruleId
                     }
                 };
             },
