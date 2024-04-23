@@ -266,4 +266,6 @@ v2.5.9:
 v2.6.0
 - Feat: Added new options for installment rules to show only the text or the text with the installments
 - Feat: Possibility to show more than one installment rules with the same installment number
+- Fix: fallback to use payments URL for tokenize
+- Fix: error when creating a refund that was dispatching an error even when the refund was successful
 
