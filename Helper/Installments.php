@@ -23,7 +23,6 @@ namespace Koin\Payment\Helper;
 use Koin\Payment\Model\InstallmentsRules\Validator;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 
 /**
@@ -78,12 +77,13 @@ class Installments extends AbstractHelper
                         $rule->getHasInterest(),
                         $rule->getInterestRate(),
                         $rule->getInterestType() ?: $interestType,
-                        $rule->getId()
+                        $rule->getId(),
+                        $rule->getShowInstallments(),
+                        $rule->getDescription()
                     );
                 }
 
                 ksort($allInstallments);
-                return array_values($allInstallments);
             }
         } catch (\Exception $e) {
             $this->logError($e->getMessage());
@@ -129,9 +129,12 @@ class Installments extends AbstractHelper
         float $interestRate,
         float $value,
         float $total,
-        int $ruleId = 0
+        int $ruleId = 0,
+        bool $showInstallments = false,
+        string $description = ''
     ): array {
         return [
+            'id' => (string) $installments . '-' . (string) $ruleId,
             'installments' => $installments,
             'interest_rate' => $interestRate,
             'installment_price' => $value,
@@ -139,25 +142,45 @@ class Installments extends AbstractHelper
             'formatted_installments_price' => $this->priceCurrency->format($value, false),
             'formatted_total' => $this->priceCurrency->format($total, false),
             'rule' => $ruleId,
-            'text' => $this->getInterestText($installments, $value, $interestRate, $total)
+            'text' => $this->getInterestText(
+                $installments,
+                $value,
+                $interestRate,
+                $total,
+                $showInstallments,
+                $description
+            )
         ];
     }
 
-    public function getInterestText(int $installments, float $value, float $interestRate, float $grandTotal): string
-    {
+    public function getInterestText(
+        int $installments,
+        float $value,
+        float $interestRate,
+        float $grandTotal,
+        bool $showInstallments,
+        string $description
+    ): string {
+        $interestText = __('%1x of %2 (%3). Total: %4');
+        if (trim($description)) {
+            $interestText = $description . ' - ' . $interestText;
+            if (!$showInstallments) {
+                $interestText = $description;
+            }
+        }
+
+        $interestExtra = __('without interest');
         if ($interestRate > 0) {
-            $interestText = __('with interest');
+            $interestExtra = __('with interest');
         } elseif ($interestRate < 0) {
-            $interestText = __('with discount');
-        } else {
-            $interestText = __('without interest');
+            $interestExtra = __('with discount');
         }
 
         return __(
-            '%1x of %2 (%3). Total: %4',
+            $interestText,
             $installments,
             $this->priceCurrency->format($value, false),
-            $interestText,
+            $interestExtra,
             $this->priceCurrency->format($grandTotal, false)
         );
     }
@@ -229,8 +252,10 @@ class Installments extends AbstractHelper
         int $minimumInstallments,
         bool $hasInterest,
         float $defaultInterestRate,
-        mixed $interestType,
-        int $ruleId = 0
+        string $interestType,
+        int $ruleId = 0,
+        bool $showInstallments = false,
+        string $description = ''
     ): array {
         if ($minInstallmentAmount > 0) {
             while ($maxInstallments > ($total / $minInstallmentAmount)) {
@@ -240,10 +265,6 @@ class Installments extends AbstractHelper
             while ($installmentsWithoutInterest > ($total / $minInstallmentAmount)) {
                 $installmentsWithoutInterest--;
             }
-        }
-
-        if ($minimumInstallments > 1) {
-            $allInstallments[1] = $this->getFirstInstallment($total);
         }
 
         $maxInstallments = ($maxInstallments == 0) ? 1 : $maxInstallments;
@@ -256,21 +277,30 @@ class Installments extends AbstractHelper
             );
             $value = $this->getInstallmentPrice($total, $i, $hasInterest, $interestRate, $interestType);
             $grandTotal = $total;
-            if ($hasInterest && $interestRate > 0) {
+            if (!$hasInterest) {
+                $interestRate = 0;
+            } elseif ($hasInterest && $interestRate > 0) {
                 $grandTotal = round($value * $i, 2);
             }
-            $allInstallments[$i] = $this->getInstallmentItem($i, $interestRate, $value, $grandTotal, $ruleId);
+            $allInstallments[] = $this->getInstallmentItem($i, $interestRate, $value, $grandTotal, $ruleId, $showInstallments, $description);
         }
         return $allInstallments;
     }
 
-    public function getFirstInstallment(float $total): array
-    {
+    public function getFirstInstallment(
+        float $total,
+        int $ruleId = 0,
+        bool $showInstallments = false,
+        string $description = ''
+    ): array {
         return $this->getInstallmentItem(
             1,
             $this->getInterestRateByInstallment(1),
             $total,
-            $total
+            $total,
+            $ruleId,
+            $showInstallments,
+            $description
         );
     }
 

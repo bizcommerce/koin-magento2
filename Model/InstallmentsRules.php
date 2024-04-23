@@ -51,12 +51,32 @@ class InstallmentsRules extends AbstractModel implements InstallmentsRulesInterf
 
     public function getTitle(): string
     {
-        return $this->getData(self::TITLE);
+        return (string) $this->getData(self::TITLE);
     }
 
     public function setTitle(string $title): void
     {
         $this->setData(self::TITLE, $title);
+    }
+
+    public function getDescription(): string
+    {
+        return (string) $this->getData(self::DESCRIPTION);
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->setData(self::DESCRIPTION, $description);
+    }
+
+    public function getShowInstallments(): bool
+    {
+        return (bool) $this->getData(self::SHOW_INSTALLMENTS);
+    }
+
+    public function setShowInstallments(bool $showInstallments): void
+    {
+        $this->setData(self::SHOW_INSTALLMENTS, $showInstallments);
     }
 
     public function getAccountNumber(): string

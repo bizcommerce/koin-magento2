@@ -78,6 +78,8 @@
     <table name="koin_installments_rules" resource="default" engine="innodb" comment="Koin Installments Rules">
         <column xsi:type="int" name="entity_id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
         <column xsi:type="varchar" name="title" length="255" nullable="false" comment="Rule Title"/>
+        <column xsi:type="varchar" name="description" length="255" nullable="true" comment="Rule Description"/>
+        <column xsi:type="boolean" name="show_installments" nullable="false" default="true" comment="Show Installments"/>
         <column xsi:type="varchar" name="store_ids" length="255" nullable="true" comment="Store IDS"/>
         <column xsi:type="varchar" name="account_number" length="255" nullable="true" comment="Store Code"/>
         <column xsi:type="text" name="payment_methods" nullable="false" comment="Payment Methods"/>

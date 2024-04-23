@@ -120,6 +120,7 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
                 'installments' => $installments,
                 'cc_installments' => $installments,
                 'cc_bin' => $ccBin,
+                'rule_id' => $additionalData['rule_id'] ?? 0,
                 'payment_method' => $this->getBrandName($ccType)
             ]);
 
@@ -165,17 +166,18 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
         $grandTotal = $quote->getGrandTotal() - (float) $quote->getKoinInterestAmount();
 
         $this->setAdditionalInfo($paymentInfo, [
-            'rule_id' => 0,
             'rule_data' => '',
             'rule_account_number' => ''
         ]);
 
-        $ruleId = $this->installmentsHelper->getRuleIdByOrderData($installments, $grandTotal, $ccNumber);
+        $ruleId = $paymentInfo->getAdditionalInformation('rule_id')
+            ?: $this->installmentsHelper->getRuleIdByOrderData($installments, $grandTotal, $ccNumber);
         if ($ruleId) {
             $rule = $this->rulesRepository->getById($ruleId);
             $this->setAdditionalInfo($paymentInfo, [
                 'rule_id' => $ruleId,
                 'rule_data' => $this->json->serialize($rule->getData()),
+                'rule_title' => $rule->getTitle(),
                 'rule_account_number' => (string) trim($rule->getAccountNumber())
             ]);
         }

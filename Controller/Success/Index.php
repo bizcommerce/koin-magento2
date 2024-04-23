@@ -103,7 +103,7 @@ class Index extends Action
         $this->orderFactory = $orderFactory;
 
 
-        return parent::__construct($context);
+        parent::__construct($context);
     }
 
     public function execute()

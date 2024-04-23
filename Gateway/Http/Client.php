@@ -162,7 +162,7 @@ class Client
             try {
                 $content = $this->json->unserialize($content);
             } catch (\Exception $e) {
-                $content = (string) $response->getContent();
+                $content = (string) $response->getBody();
             }
         }
 

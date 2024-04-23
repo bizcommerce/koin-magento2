@@ -5,8 +5,7 @@
 **Composer**
 
 ```
-composer config --auth http-basic.repo.packagist.com koin {CREDENCIAIS-FORCECIDAS-PELA-KOIN}
-composer config repositories.koin composer https://repo.packagist.com/koin/
+composer config repositories.koinlatam-magento git https://github.com/koinlatam/magento2.git
 composer require koin/payment
 
 php bin/magento setup:upgrade
@@ -24,10 +23,10 @@ composer require laminas/laminas-http:>2.4.0
 composer require firebase/php-jwt:* 
 composer require bacon/bacon-qr-code:* 
 ```
-
+g
 2 - Download o arquivo e coloque na pasta
 ```
-app/code/Koin/Payment
+git clone https://github.com/koinlatam/magento2.git.git app/code/Koin/Payment
 ```
 
 3 - Depois rodar os comandos de instalação
@@ -260,4 +259,13 @@ v2.5.8:
 - Fix: 'Opened' transactions with 'Failed' Callback was remaining pending
 - Fiz: 'Opened' transactions with 'Capture' Callback wasn't creating the invoice automatically
 - Feat: Button to fetch info when order is Opened
+
+v2.5.9:
+- Fix: Sandbox for tokenize
+
+v2.6.0
+- Feat: Added new options for installment rules to show only the text or the text with the installments
+- Feat: Possibility to show more than one installment rules with the same installment number
+- Fix: fallback to use payments URL for tokenize
+- Fix: error when creating a refund that was dispatching an error even when the refund was successful
 

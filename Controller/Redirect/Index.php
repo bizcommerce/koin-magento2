@@ -95,7 +95,7 @@ class Index extends Action
         $this->orderFactory = $orderFactory;
         $this->checkoutSession = $checkoutSession;
 
-        return parent::__construct($context);
+        parent::__construct($context);
     }
 
     /**

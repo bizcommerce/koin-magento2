@@ -142,6 +142,7 @@ class Queue extends AbstractModel implements QueueInterface
      */
     public function getExtensionAttributes()
     {
+        //@phpstan-ignore-next-line
         return $this->_getExtensionAttributes();
     }
 
@@ -150,6 +151,7 @@ class Queue extends AbstractModel implements QueueInterface
      */
     public function setExtensionAttributes(QueueExtensionInterface $extensionAttributes)
     {
+        //@phpstan-ignore-next-line
         $this->_setExtensionAttributes($extensionAttributes);
     }
 }
