@@ -86,11 +86,18 @@ class Client
     {
         $privateKey = $this->helper->getGeneralConfig('private_key', $storeId);
 
-        return [
+        $headers = [
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $this->encryptor->decrypt($privateKey),
             'X-Module-Version' => $this->helper->getModuleVersion()
         ];
+
+        if ($this->helper->getGeneralConfig('use_sandbox')) {
+            $headers['User-Agent'] = 'koin-oficial';
+        }
+
+
+        return $headers;
     }
 
     /**
