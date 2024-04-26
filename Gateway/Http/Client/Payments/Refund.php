@@ -64,12 +64,15 @@ class Refund implements ClientInterface
 
         $statusCode = $transaction['status'] ?? null;
         $status = $transaction['response']['status'] ?? $statusCode;
+        $statusType = is_array($status) && isset($status['type']) ? $status['type'] : null;
+        $async = $statusType === Api::STATUS_FAILED || $statusCode >= 300;
 
         $this->api->saveRequest(
             $requestBody,
             $transaction['response'],
             $statusCode,
-            self::LOG_NAME
+            self::LOG_NAME,
+            $async
         );
 
         return ['status' => $status, 'status_code' => $statusCode, 'transaction' => $transaction['response']];

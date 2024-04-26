@@ -269,3 +269,6 @@ v2.6.0
 - Fix: fallback to use payments URL for tokenize
 - Fix: error when creating a refund that was dispatching an error even when the refund was successful
 
+v2.6.1
+- Feat: Save Refund request and response when order transaction rollbacks
+- Feat: add specific user agent for sandbox transactions

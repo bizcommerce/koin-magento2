@@ -50,7 +50,11 @@ class Notification extends Client
         $response = $api->send();
         $content = $response->getBody();
         if ($content && $response->getStatusCode() != 204) {
-            $content = $this->json->unserialize($content);
+            try {
+                $content = $this->json->unserialize($content);
+            } catch (\Exception $e) {
+                $content = (string) $response->getBody();
+            }
         }
 
         return [

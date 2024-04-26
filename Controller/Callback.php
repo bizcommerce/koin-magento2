@@ -1,8 +1,6 @@
 <?php
+
 /**
- *
- *
- *
  * @category    Koin
  * @package     Koin_Payment
  */

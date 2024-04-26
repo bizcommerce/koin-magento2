@@ -17,6 +17,8 @@ namespace Koin\Payment\Helper;
 use Koin\Payment\Logger\Logger;
 use Koin\Payment\Api\RequestRepositoryInterface;
 use Koin\Payment\Model\RequestFactory;
+use Laminas\Http\Client as HttpClient;
+use Laminas\Http\Request;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Directory\Helper\Data as DirectoryData;
 use Magento\Framework\App\Config\Initial;
@@ -55,6 +57,8 @@ class Data extends \Magento\Payment\Helper\Data
     public const DEFAULT_DELIVERY_DAYS = 10;
 
     public const DEFAULT_CURRENCY = 'BRL';
+
+    public const REQUEST_SALT = 'koin_request';
 
     /** @var ResourceConnection */
     protected $resourceConnection;
@@ -109,6 +113,11 @@ class Data extends \Magento\Payment\Helper\Data
      */
     protected $file;
 
+    /**
+     * @var HttpClient
+     */
+    protected $httpClient;
+
     public function __construct(
         Context $context,
         LayoutFactory $layoutFactory,
@@ -130,7 +139,8 @@ class Data extends \Magento\Payment\Helper\Data
         ComponentRegistrar $componentRegistrar,
         DateTime $dateTime,
         DirectoryData $helperDirectory,
-        File $file
+        File $file,
+        HttpClient $httpClient
     ) {
         parent::__construct($context, $layoutFactory, $paymentMethodFactory, $appEmulation, $paymentConfig, $initialConfig);
 
@@ -149,6 +159,7 @@ class Data extends \Magento\Payment\Helper\Data
         $this->dateTime = $dateTime;
         $this->helperDirectory = $helperDirectory;
         $this->file = $file;
+        $this->httpClient = $httpClient;
     }
 
     public function getAllowedMethods(): array
@@ -217,17 +228,17 @@ class Data extends \Magento\Payment\Helper\Data
     }
 
     /**
-     * @param $message
-     * @return bool|string
+     * @param string $message
+     * @return array
      */
-    public function jsonDecode($message): string
+    public function jsonDecode(string $message): array
     {
         try {
             return $this->json->unserialize($message);
         } catch (\Exception $e) {
             $this->log($e->getMessage());
         }
-        return $message;
+        return [];
     }
 
     public function getAccountNumber(Order $order): string
@@ -259,15 +270,38 @@ class Data extends \Magento\Payment\Helper\Data
                 $request = $this->mask($request);
                 $response = $this->mask($response);
 
-                //$connection = $this->resourceConnection->getConnection();
                 $requestModel = $this->requestFactory->create();
                 $requestModel->setRequest($request);
                 $requestModel->setResponse($response);
                 $requestModel->setMethod($method);
                 $requestModel->setStatusCode($statusCode);
-
                 $this->requestRepository->save($requestModel);
-                //$connection->commit();
+
+            } catch (\Exception $e) {
+                $this->log($e->getMessage());
+            }
+        }
+    }
+
+    public function saveRequestAsync($request, $response, $statusCode, string $method = 'koin'): void
+    {
+        if ($this->getGeneralConfig('debug')) {
+            try {
+                $url = $this->_getUrl(
+                    'koin/request/save',
+                    ['_query' => ['hash' => $this->getHash(self::REQUEST_SALT)]]
+                );
+                $client = new HttpClient();
+                $client->setUri($url);
+                $client->setMethod(Request::METHOD_POST);
+                $client->setRawBody($this->json->serialize([
+                    'method' => $method,
+                    'request' => $request,
+                    'response' => $response,
+                    'status_code' => $statusCode
+                ]));
+                $client->setEncType('application/json');
+                $client->send();
             } catch (\Exception $e) {
                 $this->log($e->getMessage());
             }
@@ -325,10 +359,15 @@ class Data extends \Magento\Payment\Helper\Data
         return $this->storeManager->getStore($orderId)->getUrl(
             'koin/callback/payments',
             [
-                '_query' => ['hash' => sha1($this->getGeneralConfig('private_key'))],
+                '_query' => ['hash' => $this->getHash()],
                 '_secure' => true
             ]
         );
+    }
+
+    public function getHash(string $salt = ''): string
+    {
+        return sha1($this->getGeneralConfig('private_key') . $salt);
     }
 
     public function getAntifraudCallbackUrl(Order $order): string

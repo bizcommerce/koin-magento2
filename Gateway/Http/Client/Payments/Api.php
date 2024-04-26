@@ -148,8 +148,14 @@ class Api
         $request,
         $response,
         $statusCode,
-        $method = \Koin\Payment\Model\Ui\Pix\ConfigProvider::CODE
+        $method = \Koin\Payment\Model\Ui\Pix\ConfigProvider::CODE,
+        $async = false
     ): void {
+        if ($async) {
+            $this->helper->saveRequestAsync($request, $response, $statusCode, $method);
+            return;
+        }
+
         $this->helper->saveRequest($request, $response, $statusCode, $method);
     }
 }
