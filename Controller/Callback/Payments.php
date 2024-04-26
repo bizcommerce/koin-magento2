@@ -1,8 +1,6 @@
 <?php
+
 /**
- *
- *
- *
  * @category    Koin
  * @package     Koin_Payment
  */
@@ -29,7 +27,7 @@ class Payments extends Callback
     public function validateForCsrf(RequestInterface $request): ?bool
     {
         $hash = $request->getParam('hash');
-        $storeHash = sha1($this->helperData->getGeneralConfig('private_key'));
+        $storeHash = $this->helperData->getHash();
         return ($hash == $storeHash);
     }
 
