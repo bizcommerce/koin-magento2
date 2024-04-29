@@ -81,7 +81,7 @@ class Save extends Action implements CsrfAwareActionInterface
     public function validateForCsrf(RequestInterface $request): ?bool
     {
         $hash = $request->getParam('hash');
-        $storeHash = $this->helperData->getHash(Data::REQUEST_SALT);
+        $storeHash = sha1(Data::REQUEST_SALT);
         return ($hash == $storeHash);
     }
 }
