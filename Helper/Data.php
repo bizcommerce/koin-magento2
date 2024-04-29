@@ -289,7 +289,7 @@ class Data extends \Magento\Payment\Helper\Data
             try {
                 $url = $this->_getUrl(
                     'koin/request/save',
-                    ['_query' => ['hash' => sha1(self::REQUEST_SALT)]]
+                    ['_query' => ['hash' => sha1($this->getHash(0) . self::REQUEST_SALT)]]
                 );
                 $client = new HttpClient();
                 $client->setUri($url);
@@ -359,7 +359,7 @@ class Data extends \Magento\Payment\Helper\Data
         return $this->storeManager->getStore($orderId)->getUrl(
             'koin/callback/payments',
             [
-                '_query' => ['hash' => $this->getHash($order->getStoreId())],
+                '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
             ]
         );
