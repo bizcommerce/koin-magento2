@@ -272,3 +272,6 @@ v2.6.0
 v2.6.1
 - Feat: Save Refund request and response when order transaction rollbacks
 - Feat: add specific user agent for sandbox transactions
+
+v2.6.2
+- Feat: Use default private key async requests
