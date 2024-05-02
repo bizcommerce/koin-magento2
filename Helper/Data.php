@@ -291,7 +291,7 @@ class Data extends \Magento\Payment\Helper\Data
                     'koin/request/save',
                     ['hash' => sha1($this->getHash(0) . self::REQUEST_SALT)]
                 );
-
+                $this->log($url);
                 $client = new HttpClient();
                 $client->setUri($url);
                 $client->setMethod(Request::METHOD_POST);
