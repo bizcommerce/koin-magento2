@@ -290,7 +290,7 @@ class Data extends \Magento\Payment\Helper\Data
                 $storeId = $this->storeManager->getDefaultStoreView()->getStoreId();
                 $url = $this->storeManager->getStore($storeId)->getUrl(
                     'koin/request/save',
-                    ['_query' => ['hash' => sha1($this->getHash(0) . self::REQUEST_SALT)]]
+                    ['_query' => ['hash' => sha1(self::REQUEST_SALT)]]
                 );
 
                 $client = new HttpClient();

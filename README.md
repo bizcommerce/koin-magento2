@@ -275,3 +275,6 @@ v2.6.1
 
 v2.6.2
 - Feat: Use default private key async requests
+
+v2.6.3
+- Fix: Use hash to async requests
