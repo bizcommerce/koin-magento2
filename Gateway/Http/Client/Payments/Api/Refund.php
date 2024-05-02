@@ -21,7 +21,7 @@ class Refund extends Client
     public const CANCEL_STATUS = ['Opened', 'Authorized', 'Published'];
 
     /**
-     * @param array $data
+     * @param array|\stdClass $data
      * @param string $orderId
      * @param string $status
      * @param int $storeId
