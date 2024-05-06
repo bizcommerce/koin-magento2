@@ -27,7 +27,7 @@ class Payments extends Callback
     public function validateForCsrf(RequestInterface $request): ?bool
     {
         $hash = $request->getParam('hash');
-        $storeHash = $this->helperData->getHash();
+        $storeHash = $this->helperData->getHash(0);
         return ($hash == $storeHash);
     }
 
