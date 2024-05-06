@@ -104,28 +104,40 @@ class Creditmemo
 
                     if ($status === 'Collected' || $status === 'Authorized') {
                         $this->api->logRequest($payload, Refund::LOG_NAME);
-                        $response = $this->api->refund()->execute($payload, $koinOrderId, $status, $order->getStoreId());
-                        $this->api->logResponse($response, Refund::LOG_NAME);
-                        $this->api->saveRequest(
+                        $transaction = $this->api->refund()->execute(
                             $payload,
-                            $response['response'],
-                            $response['status'] ?? null,
-                            Refund::LOG_NAME
+                            $koinOrderId,
+                            $status,
+                            $order->getStoreId()
                         );
 
-                        if ($response['status'] !== 200 || !isset($response['response']['refund_id'])) {
+                        $statusCode = $transaction['status'] ?? null;
+                        $status = $transaction['response']['status'] ?? $statusCode;
+                        $statusType = is_array($status) && isset($status['type']) ? $status['type'] : null;
+                        $async = $statusType === Api::STATUS_FAILED || $statusCode >= 300;
+
+                        $this->api->logResponse($transaction, Refund::LOG_NAME);
+                        $this->api->saveRequest(
+                            $payload,
+                            $transaction['response'],
+                            $transaction['status'] ?? null,
+                            Refund::LOG_NAME,
+                            $async
+                        );
+
+                        if ($transaction['status'] !== 200 || !isset($transaction['response']['refund_id'])) {
                             throw new LocalizedException(__('Error trying to refund order on Koin'));
                         }
 
                         if (
-                            isset($response['response']['status']['type'])
-                            && $response['response']['status']['type'] === Api::STATUS_FAILED
+                            isset($transaction['response']['status']['type'])
+                            && $transaction['response']['status']['type'] === Api::STATUS_FAILED
                         ) {
                             throw new LocalizedException(__('Error trying to refund order on Koin'));
                         }
 
-                        $payment = $this->helperOrder->updateRefundedAdditionalInformation($payment, $response['response']);
-                        $amount = $response['response']['amount']['value'];
+                        $payment = $this->helperOrder->updateRefundedAdditionalInformation($payment, $transaction['response']);
+                        $amount = $transaction['response']['amount']['value'];
                         $order->addCommentToStatusHistory(
                             __('The order had the amount refunded on Koin. Amount of %1', $amount)
                         );
