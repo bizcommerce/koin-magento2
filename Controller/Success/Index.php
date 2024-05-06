@@ -194,7 +194,7 @@ class Index extends Action
     public function validateForCsrf(RequestInterface $request): ?bool
     {
         $hash = $request->getParam('hash');
-        $storeHash = sha1($this->helperData->getGeneralConfig('app_key'));
+        $storeHash = $this->helperData->getHash(0);
         return ($hash == $storeHash);
     }
 

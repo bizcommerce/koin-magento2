@@ -377,7 +377,7 @@ class Data extends \Magento\Payment\Helper\Data
         return $this->storeManager->getStore($orderId)->getUrl(
             'koin/callback/risk',
             [
-                '_query' => ['hash' => sha1($this->getGeneralConfig('private_key'))],
+                '_query' => ['hash' => $this->helperData->getHash(0)],
                 '_secure' => true
             ]
         );
@@ -389,7 +389,7 @@ class Data extends \Magento\Payment\Helper\Data
             'koin/success/',
             [
                 '_query' => [
-                    'hash' => sha1($this->getGeneralConfig('app_key')),
+                    'hash' => $this->getHash(0),
                     'increment_id' => $incrementId
                 ],
                 '_secure' => true
