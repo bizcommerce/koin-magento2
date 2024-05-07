@@ -43,7 +43,10 @@ class FetchInfo
 
         if (
             $payment->getMethod() == ConfigProvider::CODE
-            && $payment->getAdditionalInformation('status') == Api::STATUS_OPENED
+            && (
+                $payment->getAdditionalInformation('status') == Api::STATUS_OPENED
+                || $payment->getAdditionalInformation('status') == Api::STATUS_AUTHORIZED
+            )
         ) {
             $link = $this->url->getUrl(
                 'koin/order/fetch',

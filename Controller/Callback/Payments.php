@@ -84,9 +84,7 @@ class Payments extends Callback
                     if ($order->getId()) {
                         $method = $order->getPayment()->getMethod();
                         $amount = $this->getCallbackAmount($order, $content);
-                        if ($this->canUpdateOrder($order, $koinStatus)) {
-                            $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $content, $amount, true);
-                        }
+                        $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $content, $amount, true);
                         $statusCode = 204;
                     } elseif ($koinStatus == Api::STATUS_FAILED) {
                         $statusCode = 204;
@@ -108,20 +106,6 @@ class Payments extends Callback
 
         $result->setHttpResponseCode($statusCode);
         return $result;
-    }
-
-    protected function canUpdateOrder($order, $koinStatus): bool
-    {
-        $payment = $order->getPayment();
-        if (
-            $payment->getMethod() == \Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE
-            && (bool) $this->helperData->getCcConfig('auto_capture')
-            && $koinStatus == Api::STATUS_COLLECTED
-        ) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

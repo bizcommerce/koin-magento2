@@ -36,7 +36,9 @@ class Api
     public const STATUS_REFUNDED = 'Refunded';
     public const STATUS_CANCELLED = 'Cancelled';
     public const STATUS_VOIDED = 'Voided';
+
     public const STATUS_FAILED = 'Failed';
+    public const STATUS_REFUSED = 'ConnectionRefused';
 
     /**
      * @var Data
