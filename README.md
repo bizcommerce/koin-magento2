@@ -278,3 +278,9 @@ v2.6.2
 
 v2.6.3
 - Fix: Use hash to async requests
+
+v2.6.4
+- Fix: using wrong hash when multi store
+
+v2.6.5
+- Feat: allow fetch info for authorized orders
