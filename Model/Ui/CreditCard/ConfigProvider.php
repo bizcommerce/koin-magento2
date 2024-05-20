@@ -144,7 +144,7 @@ class ConfigProvider extends CcGenericConfigProvider
             'payment' => [
                 self::CODE => [
                     'grand_total' => $this->checkoutSession->getQuote()->getGrandTotal(),
-                    'show_logo_on_checkout' => $this->helper->getConfig('show_logo_on_checkout', self::CODE),
+                    'show_logo_on_checkout' => (int) $this->helper->getConfig('show_logo_on_checkout', self::CODE),
                     'customer_taxvat' => $customerTaxvat,
                     'icons' => $this->getIcons(),
                     'availableTypes' => $this->getCcAvailableTypes($methodCode)

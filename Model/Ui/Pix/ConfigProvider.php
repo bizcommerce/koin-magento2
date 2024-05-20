@@ -119,7 +119,7 @@ class ConfigProvider implements ConfigProviderInterface
                 self::CODE => [
                     'grand_total' => $this->checkoutSession->getQuote()->getGrandTotal(),
                     'checkout_instructions' => trim($this->helper->getConfig('checkout_instructions', self::CODE)),
-                    'show_logo_on_checkout' => $this->helper->getConfig('show_logo_on_checkout', self::CODE),
+                    'show_logo_on_checkout' => (int) $this->helper->getConfig('show_logo_on_checkout', self::CODE),
                     'customer_taxvat' => $customerTaxvat,
                     'koin_logo' => $this->helper->getConfig('logo', self::CODE)
                 ]
