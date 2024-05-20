@@ -104,9 +104,9 @@ class ConfigProvider implements ConfigProviderInterface
             'payment' => [
                 self::CODE => [
                     'grand_total' => $this->checkoutSession->getQuote()->getGrandTotal(),
-                    'use_default_checkout_instructions' =>  $this->helper->getConfig('use_default_checkout_instructions', self::CODE),
-                    'checkout_instructions' =>  $this->helper->getConfig('checkout_instructions', self::CODE),
-                    'show_logo_on_checkout' =>  $this->helper->getConfig('show_logo_on_checkout', self::CODE),
+                    'use_default_checkout_instructions' => $this->helper->getConfig('use_default_checkout_instructions', self::CODE),
+                    'checkout_instructions' => $this->helper->getConfig('checkout_instructions', self::CODE),
+                    'show_logo_on_checkout' => (int) $this->helper->getConfig('show_logo_on_checkout', self::CODE),
                     'customer_taxvat' =>  $customerTaxvat,
                     'checkout_image' => $this->getViewFileUrl('Koin_Payment::images/checkout_description.png')
                 ]

@@ -284,3 +284,6 @@ v2.6.4
 
 v2.6.5
 - Feat: allow fetch info for authorized orders
+
+v2.6.6
+- Fix: error disabling logon on checkout
