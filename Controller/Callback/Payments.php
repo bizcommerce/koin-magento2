@@ -16,6 +16,8 @@ use Magento\Sales\Model\Order as SalesOrder;
 
 class Payments extends Callback
 {
+    const LOCK_PREFIX = 'PLACE_ORDER_';
+
     /**
      * @var string
      */
@@ -82,6 +84,11 @@ class Payments extends Callback
                     $koinState = $this->helperOrder->getStatus($koinStatus);
                     $order = $this->helperOrder->loadOrder($transaction['reference_id']);
                     if ($order->getId()) {
+                        if ($this->helperData->isLocked(self::LOCK_PREFIX . $order->getQuoteId())) {
+                            $this->helperData->log(sprintf('Order %s is locked', $order->getId()));
+                            sleep(5);
+                        }
+
                         $method = $order->getPayment()->getMethod();
                         $amount = $this->getCallbackAmount($order, $content);
                         $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $content, $amount, true);

@@ -26,6 +26,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Filesystem\Io\File;
+use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\LayoutFactory;
@@ -118,6 +119,11 @@ class Data extends \Magento\Payment\Helper\Data
      */
     protected $httpClient;
 
+    /**
+     * @var LockManagerInterface
+     */
+    protected $lockManager;
+
     public function __construct(
         Context $context,
         LayoutFactory $layoutFactory,
@@ -140,7 +146,8 @@ class Data extends \Magento\Payment\Helper\Data
         DateTime $dateTime,
         DirectoryData $helperDirectory,
         File $file,
-        HttpClient $httpClient
+        HttpClient $httpClient,
+        LockManagerInterface $lockManager
     ) {
         parent::__construct($context, $layoutFactory, $paymentMethodFactory, $appEmulation, $paymentConfig, $initialConfig);
 
@@ -160,6 +167,7 @@ class Data extends \Magento\Payment\Helper\Data
         $this->helperDirectory = $helperDirectory;
         $this->file = $file;
         $this->httpClient = $httpClient;
+        $this->lockManager = $lockManager;
     }
 
     public function getAllowedMethods(): array
@@ -169,6 +177,11 @@ class Data extends \Magento\Payment\Helper\Data
             \Koin\Payment\Model\Ui\Pix\ConfigProvider::CODE,
             \Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE
         ];
+    }
+
+    public function isLocked(string $key): bool
+    {
+        return $this->lockManager->isLocked($key);
     }
 
     public function getFinalStates(): array
