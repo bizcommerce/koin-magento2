@@ -61,6 +61,10 @@ class Data extends \Magento\Payment\Helper\Data
 
     public const REQUEST_SALT = 'koin_request';
 
+    public const PLACE_ORDER_LOCK_PREFIX = 'PLACE_ORDER_';
+
+    public const CAPTUE_ORDER_LOCK_PREFIX = 'CAPTURE_ORDER_';
+
     /** @var ResourceConnection */
     protected $resourceConnection;
 
@@ -179,9 +183,22 @@ class Data extends \Magento\Payment\Helper\Data
         ];
     }
 
-    public function isLocked(string $key): bool
+    public function lock(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
     {
-        return $this->lockManager->isLocked($key);
+        return $this->lockManager->lock($prefix . $key);
+    }
+
+    public function isLocked(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
+    {
+        return (
+            $this->lockManager->isLocked(self::PLACE_ORDER_LOCK_PREFIX . $key)
+            || $this->lockManager->isLocked($prefix . $key)
+        );
+    }
+
+    public function unlock(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
+    {
+        return $this->lockManager->lock($prefix . $key);
     }
 
     public function getFinalStates(): array
@@ -390,7 +407,7 @@ class Data extends \Magento\Payment\Helper\Data
         return $this->storeManager->getStore($orderId)->getUrl(
             'koin/callback/risk',
             [
-                '_query' => ['hash' => $this->helperData->getHash(0)],
+                '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
             ]
         );
