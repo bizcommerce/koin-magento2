@@ -222,13 +222,13 @@ class Data extends \Magento\Payment\Helper\Data
         $message = preg_replace('/"security_code":\s?"([^"]+)"/', '"security_code":"***"', $message);
         $message = preg_replace('/"expiration_month":\s?"([^"]+)"/', '"expiration_month":"**"', $message);
         $message = preg_replace('/"expiration_year":\s?"([^"]+)"/', '"expiration_year":"****"', $message);
-        $message = preg_replace('/"notification_url":\s?\["([^"]+)"\]/', '"notification_url":["*****************"]', $message);
+        $message = preg_replace('/"notification_url":\s?\["([^"]+)"\]/', '"notification_url":["*********"]', $message);
         return preg_replace('/"number":\s?"(\d{6})\d{3,9}(\d{4})"/', '"number":"$1******$2"', $message);
     }
 
     /**
      * @param $message
-     * @return bool|string
+     * @return string
      */
     public function jsonEncode($message): string
     {
@@ -237,7 +237,7 @@ class Data extends \Magento\Payment\Helper\Data
         } catch (\Exception $e) {
             $this->log($e->getMessage());
         }
-        return $message;
+        return (string) $message;
     }
 
     /**

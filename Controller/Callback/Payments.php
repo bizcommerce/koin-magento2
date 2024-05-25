@@ -7,11 +7,11 @@
 
 namespace Koin\Payment\Controller\Callback;
 
+use Koin\Payment\Exception\OrderNotFinishedException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Koin\Payment\Controller\Callback;
 use Koin\Payment\Gateway\Http\Client\Payments\Api;
-use Koin\Payment\Helper\Order;
 use Magento\Sales\Model\Order as SalesOrder;
 
 class Payments extends Callback
@@ -68,8 +68,12 @@ class Payments extends Callback
     {
         $this->helperData->log(__('Webhook %1', __CLASS__), self::LOG_NAME);
 
-        $result = $this->resultFactory->create(ResultFactory::TYPE_RAW);
         $statusCode = 500;
+        $method = '';
+        $koinStatus = '';
+        $content = [];
+
+        $result = $this->resultFactory->create(ResultFactory::TYPE_RAW);
 
         try {
             $content = $this->getContent($this->getRequest());
@@ -79,14 +83,14 @@ class Payments extends Callback
             if (isset($content['transaction'])) {
                 $transaction = $content['transaction'];
                 if (isset($content['status'])) {
-                    $method = '';
                     $koinStatus = $content['status']['type'] ?? $content['status'];
                     $koinState = $this->helperOrder->getStatus($koinStatus);
                     $order = $this->helperOrder->loadOrder($transaction['reference_id']);
                     if ($order->getId()) {
                         if ($this->helperData->isLocked(self::LOCK_PREFIX . $order->getQuoteId())) {
-                            $this->helperData->log(sprintf('Order %s is locked', $order->getId()));
-                            sleep(5);
+                            $message = sprintf('Order %s is locked', $order->getId());
+                            $this->helperData->log($message);
+                            throw new OrderNotFinishedException(__($message));
                         }
 
                         $method = $order->getPayment()->getMethod();
@@ -94,21 +98,28 @@ class Payments extends Callback
                         $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $content, $amount, true);
                         $statusCode = 204;
                     } elseif ($koinStatus == Api::STATUS_FAILED) {
-                        $statusCode = 204;
+                        $statusCode = 404;
                     }
-
-                    /** @var \Koin\Payment\Model\Callback $callBack */
-                    $callBack = $this->callbackFactory->create();
-                    $callBack->setStatus($koinStatus);
-                    $callBack->setMethod($method);
-                    $callBack->setIncrementId($transaction['reference_id']);
-                    $callBack->setPayload($this->json->serialize($content));
-                    $this->callbackResourceModel->save($callBack);
                 }
             }
+        } catch (OrderNotFinishedException $e) {
+            $statusCode = 409;
+            $result->setHeader('Content-Type', 'application/json');
+            $result->setContents(
+                $this->helperData->jsonEncode([
+                    'code' => $statusCode,
+                    'error' => $e->getMessage()
+                ])
+            );
         } catch (\Exception $e) {
-            $statusCode = 500;
             $this->helperData->getLogger()->error($e->getMessage());
+        } finally {
+            $callBack = $this->callbackFactory->create();
+            $callBack->setStatus($koinStatus);
+            $callBack->setMethod($method);
+            $callBack->setIncrementId($transaction['reference_id'] ?? '');
+            $callBack->setPayload($this->json->serialize($content));
+            $this->callbackResourceModel->save($callBack);
         }
 
         $result->setHttpResponseCode($statusCode);
