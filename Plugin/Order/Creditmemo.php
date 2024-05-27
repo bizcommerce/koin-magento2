@@ -66,7 +66,6 @@ class Creditmemo
     /**
      * @param CreditmemoRepositoryInterface $subject
      * @param $creditmemo
-     * @return void
      * @throws \Exception
      */
     public function afterSave(
@@ -89,9 +88,7 @@ class Creditmemo
             $payment = $order->getPayment();
 
             if (in_array($payment->getMethod(), $this->getAllowedMethods())) {
-                $grandTotal = ($creditmemo->getGrandTotal() > 0)
-                    ? $creditmemo->getGrandTotal()
-                    : $order->getBaseGrandTotal();
+                $grandTotal = $creditmemo->getGrandTotal();
                 $alreadyRefunded = (float) $payment->getAdditionalInformation('total_refunded');
 
                 if (
@@ -138,16 +135,23 @@ class Creditmemo
 
                         $payment = $this->helperOrder->updateRefundedAdditionalInformation($payment, $transaction['response']);
                         $amount = $transaction['response']['amount']['value'];
-                        $order->addCommentToStatusHistory(
-                            __('The order had the amount refunded on Koin. Amount of %1', $amount)
-                        );
-                        $this->helperOrder->savePayment($payment);
-                        $this->orderRepository->save($order);
+                        if ($amount > 0) {
+                            $order->addCommentToStatusHistory(
+                                __('The order had the amount refunded on Koin. Amount of %1', $amount)
+                            );
+                            $this->helperOrder->savePayment($payment);
+                            $this->orderRepository->save($order);
+                        }
                     }
                 }
             }
         }
 
+        return $creditmemo;
+    }
+
+    protected function refundWithoutAmountValue($creditmemo)
+    {
         return $creditmemo;
     }
 

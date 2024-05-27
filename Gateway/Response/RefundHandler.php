@@ -80,9 +80,12 @@ class RefundHandler implements HandlerInterface
             throw new LocalizedException(__('There was an error processing your request.'));
         }
 
-        /** @var \Magento\Sales\Model\Order\Payment $payment */
-        $payment = $paymentData->getPayment();
-        $payment = $this->helperOrder->updateRefundedAdditionalInformation($payment, $transaction);
-        $payment->setAdditionalInformation('refunded', true);
+        $amount = $transaction['amount']['value'];
+        if ($amount > 0) {
+            /** @var \Magento\Sales\Model\Order\Payment $payment */
+            $payment = $paymentData->getPayment();
+            $payment = $this->helperOrder->updateRefundedAdditionalInformation($payment, $transaction);
+            $payment->setAdditionalInformation('refunded', true);
+        }
     }
 }

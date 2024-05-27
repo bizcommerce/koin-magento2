@@ -14,6 +14,7 @@
 namespace Koin\Payment\Gateway\Http\Client\Payments\Api;
 
 use Koin\Payment\Gateway\Http\Client;
+use Koin\Payment\Gateway\Http\Client\Payments\Api;
 use Laminas\Http\Request;
 
 class Refund extends Client
@@ -44,8 +45,32 @@ class Refund extends Client
 
     public function refund($data, $orderId, $storeId): array
     {
+        if (
+            is_object($data) && $data->amount->value == 0
+            || is_array($data) && $data['amount']['value'] == 0
+        ) {
+            return $this->refundEmtpyValue();
+        }
+
         $path = $this->getEndpointPath('payments/refund', $orderId);
         $method = Request::METHOD_PUT;
         return $this->makeRequest($path, $method, $data, $storeId);
+    }
+
+    protected function refundEmtpyValue(): array
+    {
+        return [
+            'status' => 200,
+            'response' => [
+                'refund_id' => '',
+                'message' => 'refund not allowed without amount value',
+                'amount' => [
+                    'value' => 0
+                ],
+                'status' => [
+                    'type' => Api::STATUS_UNKNOWN
+                ]
+            ]
+        ];
     }
 }
