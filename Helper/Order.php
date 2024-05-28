@@ -340,24 +340,31 @@ class Order extends \Magento\Payment\Helper\Data
     }
 
     /**
-     * @param $order
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Exception
      */
-    public function captureOrder(SalesOrder $order, $captureCase = 'online'): void
+    public function captureOrder(SalesOrder $order, string $captureCase = 'online'): void
     {
         if ($order->canInvoice()) {
-            /** @var Invoice $invoice */
-            $invoice = $order->prepareInvoice();
-            $invoice->setRequestedCaptureCase($captureCase);
-            $invoice->register();
-            $invoice->pay();
+            try {
+                $this->helperData->lock($order->getQuoteId());
 
-            $this->invoiceRepository->save($invoice);
+                /** @var Invoice $invoice */
+                $invoice = $order->prepareInvoice();
+                $invoice->setRequestedCaptureCase($captureCase);
+                $invoice->register();
+                $invoice->pay();
 
-            // Update the order
-            $order->getPayment()->setAdditionalInformation('captured', true);
-            $this->orderRepository->save($order);
+                $this->invoiceRepository->save($invoice);
+
+                // Update the order
+                $order->getPayment()->setAdditionalInformation('captured', true);
+                $this->orderRepository->save($order);
+
+                $this->helperData->unlock($order->getQuoteId());
+            } catch (\Exception $e) {
+                $this->helperData->unlock($order->getQuoteId());
+                throw new \Exception($e->getMessage());
+            }
         }
     }
 

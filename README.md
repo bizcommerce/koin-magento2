@@ -287,3 +287,6 @@ v2.6.5
 
 v2.6.6
 - Fix: error disabling logon on checkout
+
+v2.6.7
+- Fix: add lock verification to notification callback

@@ -26,6 +26,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Component\ComponentRegistrar;
 use Magento\Framework\Filesystem\Io\File;
+use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\LayoutFactory;
@@ -59,6 +60,10 @@ class Data extends \Magento\Payment\Helper\Data
     public const DEFAULT_CURRENCY = 'BRL';
 
     public const REQUEST_SALT = 'koin_request';
+
+    public const PLACE_ORDER_LOCK_PREFIX = 'PLACE_ORDER_';
+
+    public const CAPTUE_ORDER_LOCK_PREFIX = 'CAPTURE_ORDER_';
 
     /** @var ResourceConnection */
     protected $resourceConnection;
@@ -118,6 +123,11 @@ class Data extends \Magento\Payment\Helper\Data
      */
     protected $httpClient;
 
+    /**
+     * @var LockManagerInterface
+     */
+    protected $lockManager;
+
     public function __construct(
         Context $context,
         LayoutFactory $layoutFactory,
@@ -140,7 +150,8 @@ class Data extends \Magento\Payment\Helper\Data
         DateTime $dateTime,
         DirectoryData $helperDirectory,
         File $file,
-        HttpClient $httpClient
+        HttpClient $httpClient,
+        LockManagerInterface $lockManager
     ) {
         parent::__construct($context, $layoutFactory, $paymentMethodFactory, $appEmulation, $paymentConfig, $initialConfig);
 
@@ -160,6 +171,7 @@ class Data extends \Magento\Payment\Helper\Data
         $this->helperDirectory = $helperDirectory;
         $this->file = $file;
         $this->httpClient = $httpClient;
+        $this->lockManager = $lockManager;
     }
 
     public function getAllowedMethods(): array
@@ -169,6 +181,24 @@ class Data extends \Magento\Payment\Helper\Data
             \Koin\Payment\Model\Ui\Pix\ConfigProvider::CODE,
             \Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE
         ];
+    }
+
+    public function lock(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
+    {
+        return $this->lockManager->lock($prefix . $key);
+    }
+
+    public function isLocked(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
+    {
+        return (
+            $this->lockManager->isLocked(self::PLACE_ORDER_LOCK_PREFIX . $key)
+            || $this->lockManager->isLocked($prefix . $key)
+        );
+    }
+
+    public function unlock(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
+    {
+        return $this->lockManager->lock($prefix . $key);
     }
 
     public function getFinalStates(): array
@@ -209,13 +239,13 @@ class Data extends \Magento\Payment\Helper\Data
         $message = preg_replace('/"security_code":\s?"([^"]+)"/', '"security_code":"***"', $message);
         $message = preg_replace('/"expiration_month":\s?"([^"]+)"/', '"expiration_month":"**"', $message);
         $message = preg_replace('/"expiration_year":\s?"([^"]+)"/', '"expiration_year":"****"', $message);
-        $message = preg_replace('/"notification_url":\s?\["([^"]+)"\]/', '"notification_url":["*****************"]', $message);
+        $message = preg_replace('/"notification_url":\s?\["([^"]+)"\]/', '"notification_url":["*********"]', $message);
         return preg_replace('/"number":\s?"(\d{6})\d{3,9}(\d{4})"/', '"number":"$1******$2"', $message);
     }
 
     /**
      * @param $message
-     * @return bool|string
+     * @return string
      */
     public function jsonEncode($message): string
     {
@@ -224,7 +254,7 @@ class Data extends \Magento\Payment\Helper\Data
         } catch (\Exception $e) {
             $this->log($e->getMessage());
         }
-        return $message;
+        return (string) $message;
     }
 
     /**
@@ -377,7 +407,7 @@ class Data extends \Magento\Payment\Helper\Data
         return $this->storeManager->getStore($orderId)->getUrl(
             'koin/callback/risk',
             [
-                '_query' => ['hash' => $this->helperData->getHash(0)],
+                '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
             ]
         );
