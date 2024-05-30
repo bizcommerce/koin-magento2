@@ -290,3 +290,6 @@ v2.6.6
 
 v2.6.7
 - Fix: add lock verification to notification callback
+
+v2.6.8
+- Feat: add 15 seconds to lock verification
