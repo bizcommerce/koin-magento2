@@ -346,8 +346,6 @@ class Order extends \Magento\Payment\Helper\Data
     {
         if ($order->canInvoice()) {
             try {
-                $this->helperData->lock($order->getQuoteId());
-
                 /** @var Invoice $invoice */
                 $invoice = $order->prepareInvoice();
                 $invoice->setRequestedCaptureCase($captureCase);
@@ -359,10 +357,7 @@ class Order extends \Magento\Payment\Helper\Data
                 // Update the order
                 $order->getPayment()->setAdditionalInformation('captured', true);
                 $this->orderRepository->save($order);
-
-                $this->helperData->unlock($order->getQuoteId());
             } catch (\Exception $e) {
-                $this->helperData->unlock($order->getQuoteId());
                 throw new \Exception($e->getMessage());
             }
         }

@@ -185,22 +185,9 @@ class Data extends \Magento\Payment\Helper\Data
         ];
     }
 
-    public function lock(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
-    {
-        return $this->lockManager->lock($prefix . $key, self::LOCK_TIMEOUT);
-    }
-
     public function isLocked(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
     {
-        return (
-            $this->lockManager->isLocked(self::PLACE_ORDER_LOCK_PREFIX . $key)
-            || $this->lockManager->isLocked($prefix . $key)
-        );
-    }
-
-    public function unlock(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
-    {
-        return $this->lockManager->unlock($prefix . $key);
+        return $this->lockManager->isLocked(self::PLACE_ORDER_LOCK_PREFIX . $key);
     }
 
     public function getFinalStates(): array
