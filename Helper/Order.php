@@ -195,6 +195,7 @@ class Order extends \Magento\Payment\Helper\Data
 
             $payment = $this->updateAdditionalInfo($payment, $content);
 
+            $order->setHasDataChanges(true);
             $this->orderRepository->save($order);
             $this->savePayment($payment);
 
