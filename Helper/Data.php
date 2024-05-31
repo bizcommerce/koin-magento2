@@ -185,11 +185,6 @@ class Data extends \Magento\Payment\Helper\Data
         ];
     }
 
-    public function isLocked(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
-    {
-        return $this->lockManager->isLocked(self::PLACE_ORDER_LOCK_PREFIX . $key);
-    }
-
     public function getFinalStates(): array
     {
         return [

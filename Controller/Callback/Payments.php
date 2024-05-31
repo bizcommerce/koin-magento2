@@ -85,12 +85,6 @@ class Payments extends Callback
                     $koinState = $this->helperOrder->getStatus($koinStatus);
                     $order = $this->helperOrder->loadOrder($transaction['reference_id']);
                     if ($order->getId()) {
-                        if ($this->helperData->isLocked($order->getQuoteId())) {
-                            $message = sprintf('Order %s is locked', $order->getId());
-                            $this->helperData->log($message);
-                            throw new OrderNotFinishedException(__($message));
-                        }
-
                         $method = $order->getPayment()->getMethod();
                         $amount = $this->getCallbackAmount($order, $content);
                         $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $content, $amount, true);
