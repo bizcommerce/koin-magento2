@@ -49,7 +49,7 @@ class OrderSaveAfter implements ObserverInterface
         $order = $observer->getEvent()->getDataObject();
         $originalState = $order->getOrigData('state');
 
-
+        $this->saveRequest($order);
 
         try {
             if ($originalState != $order->getState()) {
