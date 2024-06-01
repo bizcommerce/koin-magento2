@@ -195,7 +195,6 @@ class Order extends \Magento\Payment\Helper\Data
 
             $payment = $this->updateAdditionalInfo($payment, $content);
 
-            $order->setHasDataChanges(true);
             $this->orderRepository->save($order);
             $this->savePayment($payment);
 
@@ -356,8 +355,9 @@ class Order extends \Magento\Payment\Helper\Data
                 $this->invoiceRepository->save($invoice);
 
                 // Update the order
-                $order->getPayment()->setAdditionalInformation('captured', true);
-                $this->orderRepository->save($order);
+                $invoicedOrder = $invoice->getOrder();
+                $invoicedOrder->getPayment()->setAdditionalInformation('captured', true);
+                $this->orderRepository->save($invoicedOrder);
             } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
             }
