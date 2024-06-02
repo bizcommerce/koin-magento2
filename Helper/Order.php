@@ -194,7 +194,7 @@ class Order extends \Magento\Payment\Helper\Data
             }
 
             $payment = $this->updateAdditionalInfo($payment, $content);
-
+            $order->setData('koin_last_callback_date', $this->dateTime->gmtDate());
             $this->orderRepository->save($order);
             $this->savePayment($payment);
 
@@ -346,8 +346,6 @@ class Order extends \Magento\Payment\Helper\Data
     {
         if ($order->canInvoice()) {
             try {
-                $this->helperData->lock($order->getQuoteId());
-
                 /** @var Invoice $invoice */
                 $invoice = $order->prepareInvoice();
                 $invoice->setRequestedCaptureCase($captureCase);
@@ -357,12 +355,10 @@ class Order extends \Magento\Payment\Helper\Data
                 $this->invoiceRepository->save($invoice);
 
                 // Update the order
-                $order->getPayment()->setAdditionalInformation('captured', true);
-                $this->orderRepository->save($order);
-
-                $this->helperData->unlock($order->getQuoteId());
+                $invoicedOrder = $invoice->getOrder();
+                $invoicedOrder->getPayment()->setAdditionalInformation('captured', true);
+                $this->orderRepository->save($invoicedOrder);
             } catch (\Exception $e) {
-                $this->helperData->unlock($order->getQuoteId());
                 throw new \Exception($e->getMessage());
             }
         }

@@ -48,6 +48,9 @@ class OrderSaveAfter implements ObserverInterface
         /** @var Order $order */
         $order = $observer->getEvent()->getDataObject();
         $originalState = $order->getOrigData('state');
+
+        $this->saveLogRequest($order);
+
         try {
             if ($originalState != $order->getState()) {
 
@@ -120,6 +123,18 @@ class OrderSaveAfter implements ObserverInterface
                     $notificationStatus
                 );
             }
+        }
+    }
+
+    protected function saveLogRequest(Order $order): void
+    {
+        if (in_array($order->getPayment()->getMethod(), $this->helper->getAllowedMethods())) {
+            $this->helper->saveRequest([
+                'event' => 'sales_order_save_after',
+                'order_status' => $order->getStatus(),
+                'order_state' => $order->getState(),
+                'koin_status' => $order->getPayment()->getAdditionalInformation('status')
+            ], [], 204, 'koin-sales-order-save-after');
         }
     }
 }

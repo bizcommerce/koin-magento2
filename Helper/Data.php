@@ -65,6 +65,8 @@ class Data extends \Magento\Payment\Helper\Data
 
     public const CAPTUE_ORDER_LOCK_PREFIX = 'CAPTURE_ORDER_';
 
+    public const LOCK_TIMEOUT = 15;
+
     /** @var ResourceConnection */
     protected $resourceConnection;
 
@@ -181,24 +183,6 @@ class Data extends \Magento\Payment\Helper\Data
             \Koin\Payment\Model\Ui\Pix\ConfigProvider::CODE,
             \Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE
         ];
-    }
-
-    public function lock(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
-    {
-        return $this->lockManager->lock($prefix . $key);
-    }
-
-    public function isLocked(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
-    {
-        return (
-            $this->lockManager->isLocked(self::PLACE_ORDER_LOCK_PREFIX . $key)
-            || $this->lockManager->isLocked($prefix . $key)
-        );
-    }
-
-    public function unlock(string $key, string $prefix = self::CAPTUE_ORDER_LOCK_PREFIX): bool
-    {
-        return $this->lockManager->lock($prefix . $key);
     }
 
     public function getFinalStates(): array

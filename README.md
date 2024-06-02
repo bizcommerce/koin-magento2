@@ -290,3 +290,7 @@ v2.6.6
 
 v2.6.7
 - Fix: add lock verification to notification callback
+
+v2.6.8
+- Fix: Lock is not necessary anymore
+- Feat: added a log when the order pass through the sales_order_save_after event
