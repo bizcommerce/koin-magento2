@@ -142,6 +142,7 @@
     </table>
 
     <table name="sales_order">
+        <column xsi:type="timestamp" name="koin_last_callback_date" nullable="true" comment="Last Callback Date"/>
         <column xsi:type="decimal"
                 name="koin_interest_amount"
                 default="0"

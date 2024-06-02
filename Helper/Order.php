@@ -194,7 +194,7 @@ class Order extends \Magento\Payment\Helper\Data
             }
 
             $payment = $this->updateAdditionalInfo($payment, $content);
-
+            $order->setData('koin_last_callback_date', $this->dateTime->gmtDate());
             $this->orderRepository->save($order);
             $this->savePayment($payment);
 
@@ -205,13 +205,6 @@ class Order extends \Magento\Payment\Helper\Data
                 ) {
                     $this->captureOrder($order);
                 }
-            }
-
-            if (!$order->hasDataChanges()) {
-                $this->_eventManager->dispatch('sales_order_save_after', [
-                    'data_object' => $order,
-                    'sales_order' => $order
-                ]);
             }
 
             return true;
