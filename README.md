@@ -294,3 +294,6 @@ v2.6.7
 v2.6.8
 - Fix: Lock is not necessary anymore
 - Feat: added a log when the order pass through the sales_order_save_after event
+
+v2.6.9
+- Fix: error, rule title being shwon if the rule was already on quote

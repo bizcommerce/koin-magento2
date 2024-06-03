@@ -166,6 +166,8 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
         $grandTotal = $quote->getGrandTotal() - (float) $quote->getKoinInterestAmount();
 
         $this->setAdditionalInfo($paymentInfo, [
+            'rule_id' => '',
+            'rule_title' => '',
             'rule_data' => '',
             'rule_account_number' => ''
         ]);
