@@ -226,3 +226,6 @@ Card Installments,Cuotas de la Tarjeta
 "You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total","Puedes usar %1x para cuotas, %2 para el valor de la cuota, %3 para la descripción de interés y %4 para el total"
 "Only %1x of %2 (%3). Total: %4","Solo %1x de %2 (%3). Total: %4"
 "rule_title","Regla de Cuotas"
+"Authorized/Paid Order Status","Estado de Pedido Autorizado/Pagado"
+"Void on Capture Error","Anular en caso de error de captura"
+"If there's an error while capturing it'll void the order","Si hay un error al capturar, anulará el pedido"

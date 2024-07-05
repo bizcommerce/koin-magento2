@@ -300,3 +300,7 @@ v2.6.9
 
 v2.6.10
 - Feat: change token url for production environments
+
+v2.6.11
+- Fix: refund autocapture order when capture has an ststua code error
+

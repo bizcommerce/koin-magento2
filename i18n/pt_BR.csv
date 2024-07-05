@@ -230,3 +230,6 @@
 "You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total","Você pode usar %1x para parcelas, %2 para valor da parcela, %3 para descrição de juros e %4 para total"
 "Only %1x of %2 (%3). Total: %4","Somente %1x de %2 (%3). Total: %4"
 "rule_title","Regra de Parcelamento"
+"Authorized/Paid Order Status","Status de Pedido Autorizado/Pago"
+"Void on Capture Error","Anular em caso de erro de captura"
+"If there's an error while capturing it'll void the order","Se houver um erro ao capturar, irá anular o pedido"

@@ -68,17 +68,16 @@ class InstallmentsTest extends TestCase
 
     public function testGetAllInstallmentsWithMinimumOfOne()
     {
-        $this->dataHelper
-            ->method('getCcConfig')
-            ->willReturnMap([
-                ['min_installments', '1'],
-                ['max_installments', '5'],
-                ['minimum_installment_amount', '30'],
-                ['interest_rate', '1'],
-                ['interest_type', 'compound'],
-                ['has_interest', '1'],
-                ['max_installments_without_interest', '1']
-            ]);
+        $this->mockDataHelper([
+            'min_installments' => '1',
+            'max_installments' => '5',
+            'minimum_installment_amount' => '30',
+            'interest_rate' => '1',
+            'interest_type' => 'compound',
+            'has_interest' => '1',
+            'max_installments_without_interest' => '1'
+        ]);
+
         $installments = $this->installments->getDefaultInstallments(1000);
 
         $expectedInstallments = [
@@ -90,7 +89,8 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 1.000,00',
                 'formatted_total' => 'R$ 1.000,00',
                 'text' => '1x of R$ 1.000,00 (without interest). Total: R$ 1.000,00',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '1-0'
             ],
             1 => [
                 'installments' => 2,
@@ -100,7 +100,8 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 510,05',
                 'formatted_total' => 'R$ 1.020,10',
                 'text' => '2x of R$ 510,05 (with interest). Total: R$ 1.020,10',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '2-0'
             ],
             2 => [
                 'installments' => 3,
@@ -110,7 +111,8 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 343,43',
                 'formatted_total' => 'R$ 1.030,29',
                 'text' => '3x of R$ 343,43 (with interest). Total: R$ 1.030,29',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '3-0'
             ],
             3 => [
                 'installments' => 4,
@@ -120,7 +122,8 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 260,15',
                 'formatted_total' => 'R$ 1.040,60',
                 'text' => '4x of R$ 260,15 (with interest). Total: R$ 1.040,60',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '4-0'
             ],
             4 => [
                 'installments' => 5,
@@ -130,7 +133,8 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 210,20',
                 'formatted_total' => 'R$ 1.051,00',
                 'text' => '5x of R$ 210,20 (with interest). Total: R$ 1.051,00',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '5-0'
             ],
         ];
 
@@ -139,32 +143,20 @@ class InstallmentsTest extends TestCase
 
     public function testGetAllInstallmentsWithMinimumOfTwo()
     {
-        $this->dataHelper
-            ->method('getCcConfig')
-            ->willReturnMap([
-                ['min_installments', '2'],
-                ['max_installments', '5'],
-                ['minimum_installment_amount', '30'],
-                ['interest_rate', '1'],
-                ['interest_type', 'compound'],
-                ['has_interest', '1'],
-                ['max_installments_without_interest', '1']
-            ]);
+        $this->mockDataHelper([
+            'min_installments' => '2',
+            'max_installments' => '5',
+            'minimum_installment_amount' => '30',
+            'interest_rate' => '1',
+            'interest_type' => 'compound',
+            'has_interest' => '1',
+            'max_installments_without_interest' => '1'
+        ]);
 
-        $installments = $this->installments->getDefaultInstallments(1000);
+        $installments = $this->installments->getAllInstallments(1000);
 
         $expectedInstallments = [
             0 => [
-                'installments' => 1,
-                'interest_rate' => 0.0,
-                'installment_price' => 1000.0,
-                'total' => 1000.0,
-                'formatted_installments_price' => 'R$ 1.000,00',
-                'formatted_total' => 'R$ 1.000,00',
-                'text' => '1x of R$ 1.000,00 (without interest). Total: R$ 1.000,00',
-                'rule' => 0
-            ],
-            1 => [
                 'installments' => 2,
                 'interest_rate' => 0.01,
                 'installment_price' => 510.05,
@@ -172,9 +164,10 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 510,05',
                 'formatted_total' => 'R$ 1.020,10',
                 'text' => '2x of R$ 510,05 (with interest). Total: R$ 1.020,10',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '2-0'
             ],
-            2 => [
+            1 => [
                 'installments' => 3,
                 'interest_rate' => 0.01,
                 'installment_price' => 343.43,
@@ -182,9 +175,10 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 343,43',
                 'formatted_total' => 'R$ 1.030,29',
                 'text' => '3x of R$ 343,43 (with interest). Total: R$ 1.030,29',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '3-0'
             ],
-            3 => [
+            2 => [
                 'installments' => 4,
                 'interest_rate' => 0.01,
                 'installment_price' => 260.15,
@@ -192,9 +186,10 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 260,15',
                 'formatted_total' => 'R$ 1.040,60',
                 'text' => '4x of R$ 260,15 (with interest). Total: R$ 1.040,60',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '4-0'
             ],
-            4 => [
+            3 => [
                 'installments' => 5,
                 'interest_rate' => 0.01,
                 'installment_price' => 210.2,
@@ -202,7 +197,8 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 210,20',
                 'formatted_total' => 'R$ 1.051,00',
                 'text' => '5x of R$ 210,20 (with interest). Total: R$ 1.051,00',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '5-0'
             ],
         ];
 
@@ -211,32 +207,20 @@ class InstallmentsTest extends TestCase
 
     public function testGetAllInstallmentsWithMinimumOfThree()
     {
-        $this->dataHelper
-            ->method('getCcConfig')
-            ->willReturnMap([
-                ['min_installments', '3'],
-                ['max_installments', '5'],
-                ['minimum_installment_amount', '30'],
-                ['interest_rate', '1'],
-                ['interest_type', 'compound'],
-                ['has_interest', '1'],
-                ['max_installments_without_interest', '1']
-            ]);
+        $this->mockDataHelper([
+            'min_installments' => '3',
+            'max_installments' => '5',
+            'minimum_installment_amount' => '30',
+            'interest_rate' => '1',
+            'interest_type' => 'compound',
+            'has_interest' => '1',
+            'max_installments_without_interest' => '1'
+        ]);
 
-        $installments = $this->installments->getDefaultInstallments(1000);
+        $installments = $this->installments->getAllInstallments(1000);
 
         $expectedInstallments = [
             0 => [
-                'installments' => 1,
-                'interest_rate' => 0.0,
-                'installment_price' => 1000.0,
-                'total' => 1000.0,
-                'formatted_installments_price' => 'R$ 1.000,00',
-                'formatted_total' => 'R$ 1.000,00',
-                'text' => '1x of R$ 1.000,00 (without interest). Total: R$ 1.000,00',
-                'rule' => 0
-            ],
-            1 => [
                 'installments' => 3,
                 'interest_rate' => 0.01,
                 'installment_price' => 343.43,
@@ -244,9 +228,10 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 343,43',
                 'formatted_total' => 'R$ 1.030,29',
                 'text' => '3x of R$ 343,43 (with interest). Total: R$ 1.030,29',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '3-0'
             ],
-            2 => [
+            1 => [
                 'installments' => 4,
                 'interest_rate' => 0.01,
                 'installment_price' => 260.15,
@@ -254,9 +239,10 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 260,15',
                 'formatted_total' => 'R$ 1.040,60',
                 'text' => '4x of R$ 260,15 (with interest). Total: R$ 1.040,60',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '4-0'
             ],
-            3 => [
+            2 => [
                 'installments' => 5,
                 'interest_rate' => 0.01,
                 'installment_price' => 210.2,
@@ -264,10 +250,19 @@ class InstallmentsTest extends TestCase
                 'formatted_installments_price' => 'R$ 210,20',
                 'formatted_total' => 'R$ 1.051,00',
                 'text' => '5x of R$ 210,20 (with interest). Total: R$ 1.051,00',
-                'rule' => 0
+                'rule' => 0,
+                'id' => '5-0'
             ],
         ];
 
         $this->assertEquals($expectedInstallments, $installments);
+    }
+
+    protected function mockDataHelper($map): void
+    {
+        $this->dataHelper->method('getCcConfig')
+            ->will($this->returnCallback(function ($arg) use ($map){
+                return $map[$arg] ?? '';
+            }));
     }
 }

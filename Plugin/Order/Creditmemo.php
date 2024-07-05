@@ -95,7 +95,7 @@ class Creditmemo
                     !$payment->getAdditionalInformation('refunded')
                     || $alreadyRefunded < $order->getBaseGrandTotal()
                 ) {
-                    $payload = $this->getRefundRequest($order, $grandTotal);
+                    $payload = $this->helperOrder->getRefundRequest($order, $grandTotal);
                     $koinOrderId = $payment->getAdditionalInformation('order_id');
                     $status = $payment->getAdditionalInformation('status');
 
@@ -148,26 +148,5 @@ class Creditmemo
         }
 
         return $creditmemo;
-    }
-
-    protected function refundWithoutAmountValue($creditmemo)
-    {
-        return $creditmemo;
-    }
-
-    /**
-     * @param $order
-     * @param float $amountValue
-     * @return \stdClass
-     */
-    protected function getRefundRequest($order, float $amountValue): \stdClass
-    {
-        $request = new \stdClass();
-        $request->transaction = new \stdClass();
-        $request->transaction->reference_id = $order->getIncrementId();
-        $request->amount = new \stdClass();
-        $request->amount->currency_code = $order->getBaseCurrencyCode() ?: $this->helper->getStoreCurrencyCode();
-        $request->amount->value = $amountValue;
-        return $request;
     }
 }
