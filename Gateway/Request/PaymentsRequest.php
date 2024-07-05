@@ -148,7 +148,7 @@ class PaymentsRequest
 
         $transaction->amount = new \stdClass();
         $transaction->amount->currency_code = $currencyCode;
-        $transaction->amount->value = $amount;
+        $transaction->amount->value = round((float) $amount, 2);
 
         return $transaction;
     }

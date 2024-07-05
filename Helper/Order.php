@@ -733,7 +733,7 @@ class Order extends \Magento\Payment\Helper\Data
         $request->transaction->reference_id = $order->getIncrementId();
         $request->amount = new \stdClass();
         $request->amount->currency_code = $order->getBaseCurrencyCode() ?: $this->helperData->getStoreCurrencyCode();
-        $request->amount->value = $amountValue;
+        $request->amount->value = round($amountValue, 2);
         return $request;
     }
 }
