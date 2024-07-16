@@ -81,7 +81,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Feat: change token url for production environments
 
 ### v2.6.11
-- Fix: refund autocapture order when capture has an ststua code error
+- Fix: refund autocapture order when capture has an status code error
 
 ### v2.6.12
 - Fix: saving the current rule wans't working
