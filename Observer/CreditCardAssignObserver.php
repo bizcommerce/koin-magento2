@@ -98,6 +98,14 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
 
             /** @var Payment $paymentInfo */
             $paymentInfo = $this->readPaymentModelArgument($observer);
+
+            $this->setAdditionalInfo($paymentInfo, [
+                'rule_id' => '',
+                'rule_title' => '',
+                'rule_data' => '',
+                'rule_account_number' => ''
+            ]);
+
             $paymentInfo->addData([
                 'cc_type' => $ccType,
                 'cc_owner' => $ccOwner,
@@ -164,13 +172,6 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
     {
         $quote = $this->checkoutSession->getQuote();
         $grandTotal = $quote->getGrandTotal() - (float) $quote->getKoinInterestAmount();
-
-        $this->setAdditionalInfo($paymentInfo, [
-            'rule_id' => '',
-            'rule_title' => '',
-            'rule_data' => '',
-            'rule_account_number' => ''
-        ]);
 
         $ruleId = $paymentInfo->getAdditionalInformation('rule_id')
             ?: $this->installmentsHelper->getRuleIdByOrderData($installments, $grandTotal, $ccNumber);

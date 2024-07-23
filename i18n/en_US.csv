@@ -222,3 +222,6 @@
 "You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total","You can use %1x for installments, %2 for installment value, %3 for interest description and %4 for grand total"
 "Only %1x of %2 (%3). Total: %4","Only %1x of %2 (%3). Total: %4"
 "rule_title","Installments Rules"
+"Authorized/Paid Order Status","Authorized/Paid Order Status"
+"Void on Capture Error","Void on Capture Error"
+"If there's an error while capturing it'll void the order","If there's an error while capturing it'll void the order"

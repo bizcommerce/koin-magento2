@@ -42,7 +42,17 @@
             <comment><![CDATA[This will make the order change to captured default status]]></comment>
         </field>
 
-        <field id="show_logo_on_checkout" translate="label comment" type="select" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+        <field id="void_on_capture_error" translate="label" type="select" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Void on Capture Error</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>payment/koin_cc/void_on_capture_error</config_path>
+            <comment><![CDATA[If there's an error while capturing it'll void the order]]></comment>
+            <depends>
+                <field id="auto_capture">1</field>
+            </depends>
+        </field>
+
+        <field id="show_logo_on_checkout" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Show Logo</label>
             <config_path>payment/koin_cc/show_logo_on_checkout</config_path>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

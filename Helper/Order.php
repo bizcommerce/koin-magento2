@@ -306,11 +306,11 @@ class Order extends \Magento\Payment\Helper\Data
             }
         }
 
-        $cancelledStatus = $this->helperData->getConfig(
-            'cancelled_order_status',
-            $order->getPayment()->getMethod()
-        ) ?: false;
-        $order->addCommentToStatusHistory(__('The order %1 was cancelled. Amount of %2', $cancelledStatus, $amount));
+        $method = $order->getPayment()->getMethod();
+        $cancelledStatus = $this->helperData->getConfig('cancelled_order_status', $method) ?: false;
+        $message = __('The order %1 was cancelled. Amount of %2', $order->getIncrementId(), $amount);
+
+        $order->addCommentToStatusHistory($message, $cancelledStatus);
 
         return $order;
     }
@@ -345,22 +345,18 @@ class Order extends \Magento\Payment\Helper\Data
     public function captureOrder(SalesOrder $order, string $captureCase = 'online'): void
     {
         if ($order->canInvoice()) {
-            try {
-                /** @var Invoice $invoice */
-                $invoice = $order->prepareInvoice();
-                $invoice->setRequestedCaptureCase($captureCase);
-                $invoice->register();
-                $invoice->pay();
+            /** @var Invoice $invoice */
+            $invoice = $order->prepareInvoice();
+            $invoice->setRequestedCaptureCase($captureCase);
+            $invoice->register();
+            $invoice->pay();
 
-                $this->invoiceRepository->save($invoice);
+            $this->invoiceRepository->save($invoice);
 
-                // Update the order
-                $invoicedOrder = $invoice->getOrder();
-                $invoicedOrder->getPayment()->setAdditionalInformation('captured', true);
-                $this->orderRepository->save($invoicedOrder);
-            } catch (\Exception $e) {
-                throw new \Exception($e->getMessage());
-            }
+            // Update the order
+            $invoicedOrder = $invoice->getOrder();
+            $invoicedOrder->getPayment()->setAdditionalInformation('captured', true);
+            $this->orderRepository->save($invoicedOrder);
         }
     }
 
@@ -723,5 +719,21 @@ class Order extends \Magento\Payment\Helper\Data
         }
 
         return $status;
+    }
+
+    /**
+     * @param $order
+     * @param float $amountValue
+     * @return \stdClass
+     */
+    public function getRefundRequest($order, float $amountValue): \stdClass
+    {
+        $request = new \stdClass();
+        $request->transaction = new \stdClass();
+        $request->transaction->reference_id = $order->getIncrementId();
+        $request->amount = new \stdClass();
+        $request->amount->currency_code = $order->getBaseCurrencyCode() ?: $this->helperData->getStoreCurrencyCode();
+        $request->amount->value = round($amountValue, 2);
+        return $request;
     }
 }

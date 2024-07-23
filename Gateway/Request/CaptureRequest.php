@@ -92,7 +92,7 @@ class CaptureRequest implements BuilderInterface
     {
         $amount = new \stdClass();
         $amount->currency_code = $order->getBaseCurrencyCode() ?: $this->helper->getStoreCurrencyCode();
-        $amount->value = (float) $amountValue;
+        $amount->value = round((float) $amountValue, 2);
         return $amount;
     }
 }
