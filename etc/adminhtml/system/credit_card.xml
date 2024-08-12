@@ -35,11 +35,21 @@
             <config_path>payment/koin_cc/title</config_path>
         </field>
 
+        <field id="koin_charging_type" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Koin Charging Model</label>
+            <source_model>Koin\Payment\Model\Config\Source\KoinChargingType</source_model>
+            <config_path>payment/koin_cc/koin_charging_type</config_path>
+            <comment><![CDATA[By default, Koin responds to orders as authorized (Authorized). If your contract responds to orders directly as captured (Collected), change this setting to Authorize and Capture ONLY if your contract already responds to orders as Collected. If you have any questions, please contact our Koin team.]]></comment>
+        </field>
+
         <field id="auto_capture" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Auto Capture</label>
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <config_path>payment/koin_cc/auto_capture</config_path>
             <comment><![CDATA[This will make the order change to captured default status]]></comment>
+            <depends>
+                <field id="koin_charging_type">authorize</field>
+            </depends>
         </field>
 
         <field id="void_on_capture_error" translate="label" type="select" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -72,12 +82,9 @@
         </field>
 
         <field id="paid_order_status" translate="label" type="select" sortOrder="51" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-            <label>Paid Order Status</label>
+            <label>Completed Orders Status</label>
             <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
             <config_path>payment/koin_cc/paid_order_status</config_path>
-            <depends>
-                <field id="auto_capture">0</field>
-            </depends>
         </field>
 
         <field id="paid_virtual_order_status" translate="label" type="select" sortOrder="52" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
