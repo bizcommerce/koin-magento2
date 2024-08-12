@@ -35,10 +35,10 @@
             <config_path>payment/koin_cc/title</config_path>
         </field>
 
-        <field id="koin_charging_type" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field id="charging_type" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Koin Charging Model</label>
-            <source_model>Koin\Payment\Model\Config\Source\KoinChargingType</source_model>
-            <config_path>payment/koin_cc/koin_charging_type</config_path>
+            <source_model>Koin\Payment\Model\Config\Source\ChargingType</source_model>
+            <config_path>payment/koin_cc/charging_type</config_path>
             <comment><![CDATA[By default, Koin responds to orders as authorized (Authorized). If your contract responds to orders directly as captured (Collected), change this setting to Authorize and Capture ONLY if your contract already responds to orders as Collected. If you have any questions, please contact our Koin team.]]></comment>
         </field>
 
@@ -48,7 +48,7 @@
             <config_path>payment/koin_cc/auto_capture</config_path>
             <comment><![CDATA[This will make the order change to captured default status]]></comment>
             <depends>
-                <field id="koin_charging_type">authorize</field>
+                <field id="charging_type">authorize</field>
             </depends>
         </field>
 

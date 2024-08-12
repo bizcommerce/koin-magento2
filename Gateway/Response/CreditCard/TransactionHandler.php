@@ -105,7 +105,7 @@ class TransactionHandler implements HandlerInterface
         $this->session->unsKoinCcNumber();
 
         if (!$payment->getMethodInstance()->getConfigData('auto_capture')
-            && $payment->getMethodInstance()->getConfigData('koin_charging_type') == 'authorize'
+            && $payment->getMethodInstance()->getConfigData('charging_type') == 'authorize'
         ) {
             if ($this->helperOrder->canSkipOrderProcessing($state)) {
                 $payment->getOrder()->setState($state);

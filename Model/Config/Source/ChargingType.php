@@ -26,7 +26,7 @@ use Magento\Payment\Model\MethodInterface;
 /**
  * Class PaymentAction
  */
-class KoinChargingType implements \Magento\Framework\Data\OptionSourceInterface
+class ChargingType implements \Magento\Framework\Data\OptionSourceInterface
 {
     /**
      * {@inheritdoc}
@@ -39,7 +39,7 @@ class KoinChargingType implements \Magento\Framework\Data\OptionSourceInterface
                 'label' => __('Only Authorize (Authorized)')
             ],
             [
-                'value' => 'collected',
+                'value' => MethodInterface::ACTION_AUTHORIZE_CAPTURE,
                 'label' => __('Authorize and Capture (Collected)')
             ]
         ];
