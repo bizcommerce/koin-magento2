@@ -359,12 +359,13 @@ class Order extends \Magento\Payment\Helper\Data
 
     protected function addPaidComment(OrderInterface $order): OrderInterface
     {
-        $updateStatus = $order->getIsVirtual()
+        $paidStatus = $order->getIsVirtual()
             ? $this->helperData->getConfig('paid_virtual_order_status')
             : $this->helperData->getConfig('paid_order_status');
 
         $message = __('Your payment for the order %1 was confirmed', $order->getIncrementId());
-        $order->addCommentToStatusHistory($message, $updateStatus, true);
+        $order->addCommentToStatusHistory($message, $paidStatus, true);
+        $order->setState($this->getStatusState($paidStatus));
 
         return $order;
     }

@@ -105,20 +105,14 @@ class TransactionHandler implements HandlerInterface
 
         $this->session->unsKoinCcNumber();
 
-        if (
-            $payment->getMethodInstance()->getConfigData('charging_type') == MethodInterface::ACTION_AUTHORIZE
-            && !$payment->getMethodInstance()->getConfigData('auto_capture')
-        ) {
-            if ($this->helperOrder->canSkipOrderProcessing($state)) {
-                $payment->getOrder()->setState($state);
-                $payment->setSkipOrderProcessing(true);
-                $payment->addTransaction(TransactionInterface::TYPE_ORDER);
-            }
+        if ($this->helperOrder->canSkipOrderProcessing($state)) {
+            $payment->getOrder()->setState($state);
+            $payment->setSkipOrderProcessing(true);
+            $payment->addTransaction(TransactionInterface::TYPE_ORDER);
         }
 
         if ($responseStatusType === Api::STATUS_UNKNOWN || $responseStatusType === Api::STATUS_OPENED) {
             $payment->getOrder()->setState('new');
-            $payment->setSkipOrderProcessing(true);
         }
     }
 
