@@ -27,6 +27,7 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\View\LayoutFactory;
 use Magento\Payment\Model\Config;
 use Magento\Payment\Model\Method\Factory;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order as SalesOrder;
 use Magento\Sales\Model\Order\CreditmemoFactory;
 use Magento\Sales\Model\Order\Invoice;
@@ -177,13 +178,7 @@ class Order extends \Magento\Payment\Helper\Data
                             $order = $this->invoiceOrder($order, $amount);
                         }
                     }
-
-                    $updateStatus = $order->getIsVirtual()
-                        ? $this->helperData->getConfig('paid_virtual_order_status')
-                        : $this->helperData->getConfig('paid_order_status');
-
-                    $message = __('Your payment for the order %1 was confirmed', $order->getIncrementId());
-                    $order->addCommentToStatusHistory($message, $updateStatus, true);
+                    $order = $this->addPaidComment($order);
                 } else {
                     if ($koinState == self::STATUS_DENIED) {
                         $order = $this->cancelOrder($order, $amount, $callback);
@@ -356,8 +351,22 @@ class Order extends \Magento\Payment\Helper\Data
             // Update the order
             $invoicedOrder = $invoice->getOrder();
             $invoicedOrder->getPayment()->setAdditionalInformation('captured', true);
+            $invoicedOrder = $this->addPaidComment($invoicedOrder);
+
             $this->orderRepository->save($invoicedOrder);
         }
+    }
+
+    protected function addPaidComment(OrderInterface $order): OrderInterface
+    {
+        $updateStatus = $order->getIsVirtual()
+            ? $this->helperData->getConfig('paid_virtual_order_status')
+            : $this->helperData->getConfig('paid_order_status');
+
+        $message = __('Your payment for the order %1 was confirmed', $order->getIncrementId());
+        $order->addCommentToStatusHistory($message, $updateStatus, true);
+
+        return $order;
     }
 
     public function notification(SalesOrder $order, $status = 'FINALIZED'): void
