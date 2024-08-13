@@ -43,7 +43,7 @@
     </event>
 
     <event name="checkout_submit_all_after">
-        <observer name="koin_payment_sales_order_payment_place_end" instance="Koin\Payment\Observer\Sales\QuoteSubmitSuccess"/>
+        <observer name="koin_payment_checkout_submit_all_after" instance="Koin\Payment\Observer\Sales\QuoteSubmitSuccess"/>
     </event>
 
     <event name="order_cancel_after">
