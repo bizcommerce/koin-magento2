@@ -20,6 +20,7 @@
 "Checkout Instructions","Instruções do Checkout"
 "Instructions to be shown in checkout's page, it can be HTML","Instruções para ser mostrada na página do checkout, pode ser HTML"
 "New Order Status","Status de Novo Pedido"
+"Paid Order Status","Status de Pedidos Pagos"
 "Completed Orders Status","Status de Pedido Pago"
 "Paid Virtual Order Status","Status de Pedido Virtual Pago"
 "Cancel Unapproved Orders","Cancelar Pedido Não Aprovado"

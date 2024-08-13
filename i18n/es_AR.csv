@@ -19,7 +19,8 @@ Title,Título
 Logo to be shown on checkout page,Logotipo a mostrar en la página de pago
 Checkout Instructions,Instrucciones para el Pago
 "Instructions to be shown in checkout's page, it can be HTML","Instrucciones que se mostrarán en la página de pago, puede ser HTML"
-New Order Status,Estado del Nuevo Pedido
+"New Order Status","Estado del Nuevo Pedido"
+"Paid Order Status","Estado de los Pedidos Pagados"
 Completed Orders Status,Estado de los Pedidos Finalizados
 Paid Virtual Order Status,Estado del Pedido Virtual Pagado
 Cancel Unapproved Orders,Cancelar Pedidos no Aprobados

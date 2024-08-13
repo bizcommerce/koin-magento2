@@ -49,7 +49,6 @@ class QuoteSubmitSuccess implements ObserverInterface
             if ($payment->getMethod() == \Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE) {
                 if (
                     $payment->getMethodInstance()->getConfigData('auto_capture')
-                    && $payment->getMethodInstance()->getConfigData('charging_type') == 'authorize'
                     && $apiStatus == Api::STATUS_AUTHORIZED
                 ) {
                     $this->helperOrder->captureOrder($order, Invoice::CAPTURE_ONLINE);

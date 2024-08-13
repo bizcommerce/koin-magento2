@@ -29,6 +29,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Model\Order;
@@ -104,8 +105,9 @@ class TransactionHandler implements HandlerInterface
 
         $this->session->unsKoinCcNumber();
 
-        if (!$payment->getMethodInstance()->getConfigData('auto_capture')
-            && $payment->getMethodInstance()->getConfigData('charging_type') == 'authorize'
+        if (
+            $payment->getMethodInstance()->getConfigData('charging_type') == MethodInterface::ACTION_AUTHORIZE
+            && !$payment->getMethodInstance()->getConfigData('auto_capture')
         ) {
             if ($this->helperOrder->canSkipOrderProcessing($state)) {
                 $payment->getOrder()->setState($state);

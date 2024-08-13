@@ -19,7 +19,8 @@ Title,Título
 Logo to be shown on checkout page,Logotipo a mostrar en la página de pago
 Checkout Instructions,Instrucciones para el Pago
 "Instructions to be shown in checkout's page, it can be HTML","Instrucciones que se mostrarán en la página de pago, puede ser HTML"
-New Order Status,Estado del Nuevo Pedido
+"New Order Status","Estado del Nuevo Pedido"
+"Paid Order Status","Estado de los Pedidos Pagados"
 Completed Orders Status,Estado de los Pedidos Finalizados
 Paid Virtual Order Status,Estado del Pedido Virtual Pagado
 Cancel Unapproved Orders,Cancelar Pedidos no Aprobados
@@ -180,11 +181,11 @@ Card Installments,Cuotas de la Tarjeta
 "Change status","Cambiar estado"
 "Enable","Habilitar"
 "Disable","Deshabilitar"
-"Insert your credit card number to see installments options","Inserta tu número de tarjeta de crédito para ver las opciones de cuotas"
+"Insert your credit card number to see installments options","Inserta tu número de tarjeta para ver las opciones de cuotas"
 "Insert your card number to see installments options","Inserta tu número de tarjeta para ver las opciones de cuotas"
 "Are you sure you want to do this?","¿Estás seguro de querer hacer esto?"
 "Account Number","Número de Cuenta"
-"It's possible to add the Credit Card BINs separated with a pipe, like: '555566|444433', or add a regex with the required BINs","Es posible agregar los BINs de la tarjeta de crédito separados por una barra vertical, como: '555566|444433', o agregar una expresión regular con los BINs requeridos"
+"It's possible to add the Credit Card BINs separated with a pipe, like: '555566|444433', or add a regex with the required BINs","Es posible agregar los BINs de la tarjeta separados por una barra vertical, como: '555566|444433', o agregar una expresión regular con los BINs requeridos"
 "Payment Methods BINs","BINs de Métodos de Pago"
 "Minimum Installments","Numero Minimo de Cuotas"
 "Maximum Installments","Numero Maximo de Cuotas"
@@ -213,7 +214,7 @@ Card Installments,Cuotas de la Tarjeta
 "Callback received %1 -> %2","Llamada de retorno recibida: %1 -> %2"
 "Payment Methods BINs to exclude","BINs de Métodos de Pago a excluir"
 "Adding Credit Card BINs, like: '555566|444433', or add a regex with the required BINs, those BINs will deny the rule, applying the rule only if the BINs do not match this field","Agregando BINs de Tarjeta de Crédito, como: '555566|444433', o agregue una expresión regular con los BINs requeridos, esos BINs denegarán la regla, aplicando la regla solo si los BINs no coinciden con este campo"
-"Card Verification Number (CVV)","Código de Seguridad"
+"Card Verification Number (CVV)","Código de Seguridad
 "Fetch Info Koin","Consultar Koin"
 "The transaction is still open.","La transacción sigue abierta."
 "This will be the status when the order remains opened and is cancelled afterwards","Este será el estado cuando el pedido permanezca abierto y sea cancelado posteriormente"
@@ -232,4 +233,5 @@ Card Installments,Cuotas de la Tarjeta
 "Koin Charging Model", "Modelo de Carga Koin"
 "Only Authorize (Authorized)", "Sólo Autorizar (Authorized)"
 "Authorize and Capture (Collected)", "Autorizar y Capturar (Collected)"
+"By default, Koin responds to orders as authorized (Authorized). If your contract responds to orders directly as captured (Collected), change this setting to Authorize and Capture ONLY if your contract already responds to orders as Collected. If you have any questions, please contact our Koin team.", "Por defecto, Koin responde a los pedidos como autorizado (Authorized). Si su contrato responde a los pedidos directamente como capturado (Collected), cambie esta configuración a Autorizado y Capturar SÓLO si su contrato ya responde a los pedidos como Recogido. Si tiene alguna pregunta, póngase en contacto con nuestro equipo de Koin."
 "Order has been paid %1", "Pedido pagado %1"

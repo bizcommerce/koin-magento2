@@ -76,13 +76,13 @@
         </field>
 
         <field id="order_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-            <label>Authorized Order Status</label>
+            <label>New Order Status</label>
             <source_model>Magento\Sales\Model\Config\Source\Order\Status\Newprocessing</source_model>
             <config_path>payment/koin_cc/order_status</config_path>
         </field>
 
         <field id="paid_order_status" translate="label" type="select" sortOrder="51" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-            <label>Completed Orders Status</label>
+            <label>Paid Order Status</label>
             <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
             <config_path>payment/koin_cc/paid_order_status</config_path>
         </field>
