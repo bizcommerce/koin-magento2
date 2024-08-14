@@ -101,12 +101,14 @@ class TransactionHandler implements HandlerInterface
         $payment = $this->helperOrder->updateDefaultAdditionalInfo($payment, $transaction);
         $payment = $this->helperOrder->updateCreditCardAdditionalInformation($payment, $transaction);
         $payment->setIsTransactionClosed(false);
+        $status = $payment->getConfigData('order_status');
         $state = $this->helperOrder->getPaymentStatusState($payment);
 
         $this->session->unsKoinCcNumber();
 
+        $payment->getOrder()->setState($state);
+        $payment->getOrder()->setStatus($status);
         if ($this->helperOrder->canSkipOrderProcessing($state)) {
-            $payment->getOrder()->setState($state);
             $payment->setSkipOrderProcessing(true);
             $payment->addTransaction(TransactionInterface::TYPE_ORDER);
         }
