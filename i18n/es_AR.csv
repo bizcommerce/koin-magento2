@@ -19,8 +19,9 @@ Title,Título
 Logo to be shown on checkout page,Logotipo a mostrar en la página de pago
 Checkout Instructions,Instrucciones para el Pago
 "Instructions to be shown in checkout's page, it can be HTML","Instrucciones que se mostrarán en la página de pago, puede ser HTML"
-New Order Status,Estado del Nuevo Pedido
-Paid Order Status,Estado del Pedido Pagado
+"New Order Status","Estado del Nuevo Pedido"
+"Paid Order Status","Estado de los Pedidos Pagados"
+Completed Orders Status,Estado de los Pedidos Finalizados
 Paid Virtual Order Status,Estado del Pedido Virtual Pagado
 Cancel Unapproved Orders,Cancelar Pedidos no Aprobados
 Order unapproved will be automatically cancelled,Los pedidos no aprobados serán cancelados automáticamente
@@ -229,3 +230,9 @@ Card Installments,Cuotas de la Tarjeta
 "Authorized/Paid Order Status","Estado de Pedido Autorizado/Pagado"
 "Void on Capture Error","Anular en caso de error de captura"
 "If there's an error while capturing it'll void the order","Si hay un error al capturar, anulará el pedido"
+"Koin Charging Model","Modelo de Carga Koin"
+"Only Authorize (Authorized)","Sólo Autorizar (Authorized)"
+"Authorize and Capture (Collected)","Autorizar y Capturar (Collected)"
+"By default, Koin responds to orders as authorized (Authorized). If your contract responds to orders directly as captured (Collected), change this setting to Authorize and Capture ONLY if your contract already responds to orders as Collected. If you have any questions, please contact our Koin team.","Por defecto, Koin responde a los pedidos como autorizado (Authorized). Si su contrato responde a los pedidos directamente como capturado (Collected), cambie esta configuración a Autorizado y Capturar SÓLO si su contrato ya responde a los pedidos como Recogido. Si tiene alguna pregunta, póngase en contacto con nuestro equipo de Koin."
+"Order has been paid %1","Pedido pagado %1",
+"There was an error processing your request.","Hubo un error al procesar tu pedido, revisa los datos, por favor, si el problema persiste, contáctanos."

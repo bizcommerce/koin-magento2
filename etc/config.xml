@@ -143,6 +143,7 @@
                 <model>KoinPaymentCreditCardFacade</model>
                 <code>CARD</code>
                 <title>Cartão de Crédito</title>
+                <charging_type>authorize</charging_type>
                 <payment_action>order</payment_action>
                 <order_status>pending</order_status>
                 <paid_order_status>processing</paid_order_status>

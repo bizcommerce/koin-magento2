@@ -29,6 +29,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Response\HandlerInterface;
+use Magento\Payment\Model\MethodInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Api\Data\TransactionInterface;
 use Magento\Sales\Model\Order;
@@ -100,21 +101,20 @@ class TransactionHandler implements HandlerInterface
         $payment = $this->helperOrder->updateDefaultAdditionalInfo($payment, $transaction);
         $payment = $this->helperOrder->updateCreditCardAdditionalInformation($payment, $transaction);
         $payment->setIsTransactionClosed(false);
+        $status = $payment->getConfigData('order_status');
         $state = $this->helperOrder->getPaymentStatusState($payment);
 
         $this->session->unsKoinCcNumber();
 
-        if (!$payment->getMethodInstance()->getConfigData('auto_capture')) {
-            if ($this->helperOrder->canSkipOrderProcessing($state)) {
-                $payment->getOrder()->setState($state);
-                $payment->setSkipOrderProcessing(true);
-                $payment->addTransaction(TransactionInterface::TYPE_ORDER);
-            }
+        $payment->getOrder()->setState($state);
+        $payment->getOrder()->setStatus($status);
+        if ($this->helperOrder->canSkipOrderProcessing($state)) {
+            $payment->setSkipOrderProcessing(true);
+            $payment->addTransaction(TransactionInterface::TYPE_ORDER);
         }
 
         if ($responseStatusType === Api::STATUS_UNKNOWN || $responseStatusType === Api::STATUS_OPENED) {
             $payment->getOrder()->setState('new');
-            $payment->setSkipOrderProcessing(true);
         }
     }
 

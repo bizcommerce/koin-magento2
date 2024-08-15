@@ -43,6 +43,7 @@ class CcType extends \Magento\Payment\Model\Source\Cctype
     MD  MasterCard Débito
     NT  Nativa
     TN  Tarjeta Naranja
+    TU  Tuya
     VI  Visa
     VD  Visa Débito
      * @var string[]
@@ -59,6 +60,7 @@ class CcType extends \Magento\Payment\Model\Source\Cctype
         'EC',
         'HC',
         'TN',
+        'TU',
         'VI'
     ];
 
@@ -73,6 +75,7 @@ class CcType extends \Magento\Payment\Model\Source\Cctype
         'EC' => 'Elo',
         'HC' => 'HiperCard',
         'TN' => 'Tarjeta Naranja',
+        'TU' => 'Tuya',
         'VI' => 'Visa'
     ];
 

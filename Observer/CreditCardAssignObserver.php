@@ -39,6 +39,7 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
         'DS' => 'Discover',
         'EC' => 'Elo',
         'TN' => 'Tarjeta Naranja',
+        'TU' => 'Tuya',
         'HC' => 'HiperCard'
     ];
 
