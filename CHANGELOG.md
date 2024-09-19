@@ -90,3 +90,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Feat: added new settings for auto capture orders
 - Feat: added tuys as a card brand option
 - Fix: Config Status for automatically captured orders
+
+### v2.7.3
+- Fix: Paid config orders was using wrong config
