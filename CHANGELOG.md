@@ -93,3 +93,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.7.3
 - Fix: Paid config orders was using wrong config
+
+### v2.7.4
+- Feat: Update BNPL Banner
+- Fix: send region code instead of region text for addresses

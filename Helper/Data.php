@@ -641,6 +641,10 @@ class Data extends \Magento\Payment\Helper\Data
         return $currencyCode;
     }
 
+    /**
+     * @param \Magento\Sales\Api\Data\OrderAddressInterface $address
+     * @return array
+     */
     public function getAddressData($address): array
     {
         $fullStreet = $address->getStreet();
@@ -656,7 +660,7 @@ class Data extends \Magento\Payment\Helper\Data
             'complement' => $fullStreet[$complement] ?? 'N/A',
             'neighborhood' => $fullStreet[$neighborhood] ?? 'N/A',
             'city' => $address->getCity(),
-            'state' => $address->getRegion(),
+            'state' => $address->getRegionCode() ?: $address->getRegion(),
             'country_code' => $address->getCountryId(),
         ];
     }
