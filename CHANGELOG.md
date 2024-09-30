@@ -97,3 +97,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.7.4
 - Feat: Update BNPL Banner
 - Fix: send region code instead of region text for addresses
+
+### v2.7.5
+- Fix: send region code instead of region text for addresses also for BNPL 
