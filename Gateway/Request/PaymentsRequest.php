@@ -221,7 +221,7 @@ class PaymentsRequest
     {
         $address = new \stdClass();
         $address->country_code = $orderAddress->getCountryId();
-        $address->state = $orderAddress->getRegion();
+        $address->state = $orderAddress->getRegionCode() ?: $address->getRegion();
         $address->city_name = $orderAddress->getCity();
         $address->zip_code = $orderAddress->getPostcode();
         $address->street = $orderAddress->getStreetLine($this->getStreetField('street'));
