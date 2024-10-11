@@ -116,6 +116,18 @@ class TransactionRequest extends PaymentsRequest implements BuilderInterface
     }
 
     /**
+     * @param \Magento\Sales\Model\Order\Address $orderAddress
+     * @return \stdClass
+     */
+    protected function getAddress($orderAddress): \stdClass
+    {
+        $address = parent::getAddress($orderAddress);
+        $address->zip_code = preg_replace('/\D/', '', $orderAddress->getPostcode());
+
+        return $address;
+    }
+
+    /**
      * @param \Magento\Sales\Model\Order $order
      * @param float $amount
      * @return \stdClass

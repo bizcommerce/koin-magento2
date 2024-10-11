@@ -221,7 +221,7 @@ class PaymentsRequest
     {
         $address = new \stdClass();
         $address->country_code = $orderAddress->getCountryId();
-        $address->state = $orderAddress->getRegionCode() ?: $address->getRegion();
+        $address->state = $orderAddress->getRegionCode() ?: $orderAddress->getRegion();
         $address->city_name = $orderAddress->getCity();
         $address->zip_code = $orderAddress->getPostcode();
         $address->street = $orderAddress->getStreetLine($this->getStreetField('street'));
@@ -253,7 +253,7 @@ class PaymentsRequest
             $item->id = $quoteItem->getSku();
             $item->name = $quoteItem->getName();
             $item->price = $this->getPriceItem($quoteItem, $order);
-            $item->quantity = $quoteItem->getQtyOrdered();
+            $item->quantity = (int) $quoteItem->getQtyOrdered();
             $item->discount_amount = $this->getDiscountItem($quoteItem, $order);
             $item->category = $this->getCategoryByQuoteItem($quoteItem);
 

@@ -99,4 +99,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Fix: send region code instead of region text for addresses
 
 ### v2.7.5
-- Fix: send region code instead of region text for addresses also for BNPL 
+- Fix: send region code instead of region text for addresses also for BNPL
+
+### v2.7.6
+- Fix: send only number postcode for addresses in BNPL
+- Fix: send number as quantity for transactions
