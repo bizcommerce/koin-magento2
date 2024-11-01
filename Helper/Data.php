@@ -21,7 +21,6 @@ use Laminas\Http\Client as HttpClient;
 use Laminas\Http\Request;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Directory\Helper\Data as DirectoryData;
-use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
@@ -224,7 +223,7 @@ class Data extends \Magento\Payment\Helper\Data
         $message = preg_replace('/"security_code":\s?"([^"]+)"/', '"security_code":"***"', $message);
         $message = preg_replace('/"expiration_month":\s?"([^"]+)"/', '"expiration_month":"**"', $message);
         $message = preg_replace('/"expiration_year":\s?"([^"]+)"/', '"expiration_year":"****"', $message);
-        $message = preg_replace('/(hash=)[^&"]+/', 'hash=******', $message);
+        $message = preg_replace('/"notification_url":\s?\["([^"]+)"\]/', '"notification_url":["*********"]', $message);
         return preg_replace('/"number":\s?"(\d{6})\d{3,9}(\d{4})"/', '"number":"$1******$2"', $message);
     }
 
@@ -371,20 +370,15 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getPaymentsNotificationUrl(Order $order): string
     {
-        $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        $this->_appEmulation->startEnvironmentEmulation($storeId, Area::AREA_FRONTEND, true);
-
-        $notificationUrl = $this->storeManager->getStore($storeId)->getUrl(
+        $orderId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
+        return $this->storeManager->getStore($orderId)->getUrl(
             'koin/callback/payments',
             [
+                '_scope_to_url' => true,
                 '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
             ]
         );
-
-        $this->_appEmulation->stopEnvironmentEmulation();
-
-        return $notificationUrl;
     }
 
     public function getHash($scopeCode = null): string
@@ -394,19 +388,15 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getAntifraudCallbackUrl(Order $order): string
     {
-        $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-
-        $this->_appEmulation->startEnvironmentEmulation($storeId, Area::AREA_FRONTEND, true);
-        $notificationUrl = $this->storeManager->getStore($storeId)->getUrl(
+        $orderId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
+        return $this->storeManager->getStore($orderId)->getUrl(
             'koin/callback/risk',
             [
+                '_scope_to_url' => true,
                 '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
             ]
         );
-        $this->_appEmulation->stopEnvironmentEmulation();
-
-        return $notificationUrl;
     }
 
     public function getReturnUrl(string $incrementId): string
