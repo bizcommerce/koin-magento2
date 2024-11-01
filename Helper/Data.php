@@ -130,6 +130,11 @@ class Data extends \Magento\Payment\Helper\Data
      */
     protected $lockManager;
 
+    /**
+     * @var UrlInterface
+     */
+    protected $urlHelper;
+
     public function __construct(
         Context $context,
         LayoutFactory $layoutFactory,
@@ -153,7 +158,8 @@ class Data extends \Magento\Payment\Helper\Data
         DirectoryData $helperDirectory,
         File $file,
         HttpClient $httpClient,
-        LockManagerInterface $lockManager
+        LockManagerInterface $lockManager,
+        UrlInterface $urlHelper
     ) {
         parent::__construct($context, $layoutFactory, $paymentMethodFactory, $appEmulation, $paymentConfig, $initialConfig);
 
@@ -174,6 +180,7 @@ class Data extends \Magento\Payment\Helper\Data
         $this->file = $file;
         $this->httpClient = $httpClient;
         $this->lockManager = $lockManager;
+        $this->urlHelper = $urlHelper;
     }
 
     public function getAllowedMethods(): array
@@ -370,14 +377,13 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getPaymentsNotificationUrl(Order $order): string
     {
-        $orderId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->storeManager->getStore($orderId)->getUrl(
-            'koin/callback/payments',
-            [
-                '_query' => ['hash' => $this->getHash(0)],
-                '_secure' => true
-            ]
-        );
+        $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
+        return $this->urlHelper->getUrl( 'koin/callback/payments', [
+            '_scope' => $storeId,
+            '_query' => ['hash' => $this->getHash(0)],
+            '_secure' => true,
+            '_nosid' => true
+        ]);
     }
 
     public function getHash($scopeCode = null): string
