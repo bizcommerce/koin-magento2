@@ -370,10 +370,12 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getPaymentsNotificationUrl(Order $order): string
     {
-        $orderId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->storeManager->getStore($orderId)->getUrl(
+        $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
+        return $this->_urlBuilder->getRouteUrl(
             'koin/callback/payments',
             [
+                '_type' => UrlInterface::URL_TYPE_LINK,
+                '_scope' => $storeId,
                 '_scope_to_url' => true,
                 '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
@@ -388,10 +390,12 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getAntifraudCallbackUrl(Order $order): string
     {
-        $orderId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->storeManager->getStore($orderId)->getUrl(
+        $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
+        return $this->_urlBuilder->getRouteUrl(
             'koin/callback/risk',
             [
+                '_type' => UrlInterface::URL_TYPE_LINK,
+                '_scope' => $storeId,
                 '_scope_to_url' => true,
                 '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
@@ -401,7 +405,7 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getReturnUrl(string $incrementId): string
     {
-        return $this->storeManager->getStore()->getUrl(
+        return $this->_urlBuilder->getRouteUrl(
             'koin/success/',
             [
                 '_query' => [
