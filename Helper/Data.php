@@ -21,6 +21,7 @@ use Laminas\Http\Client as HttpClient;
 use Laminas\Http\Request;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Directory\Helper\Data as DirectoryData;
+use Magento\Framework\App\Area;
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ResourceConnection;
@@ -130,11 +131,6 @@ class Data extends \Magento\Payment\Helper\Data
      */
     protected $lockManager;
 
-    /**
-     * @var UrlInterface
-     */
-    protected $urlHelper;
-
     public function __construct(
         Context $context,
         LayoutFactory $layoutFactory,
@@ -158,8 +154,7 @@ class Data extends \Magento\Payment\Helper\Data
         DirectoryData $helperDirectory,
         File $file,
         HttpClient $httpClient,
-        LockManagerInterface $lockManager,
-        UrlInterface $urlHelper
+        LockManagerInterface $lockManager
     ) {
         parent::__construct($context, $layoutFactory, $paymentMethodFactory, $appEmulation, $paymentConfig, $initialConfig);
 
@@ -180,7 +175,6 @@ class Data extends \Magento\Payment\Helper\Data
         $this->file = $file;
         $this->httpClient = $httpClient;
         $this->lockManager = $lockManager;
-        $this->urlHelper = $urlHelper;
     }
 
     public function getAllowedMethods(): array
@@ -378,12 +372,19 @@ class Data extends \Magento\Payment\Helper\Data
     public function getPaymentsNotificationUrl(Order $order): string
     {
         $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->urlHelper->getUrl( 'koin/callback/payments', [
-            '_scope' => $storeId,
-            '_query' => ['hash' => $this->getHash(0)],
-            '_secure' => true,
-            '_nosid' => true
-        ]);
+        $this->_appEmulation->startEnvironmentEmulation($storeId, Area::AREA_FRONTEND, true);
+
+        $notificationUrl = $this->storeManager->getStore($storeId)->getUrl(
+            'koin/callback/payments',
+            [
+                '_query' => ['hash' => $this->getHash(0)],
+                '_secure' => true
+            ]
+        );
+
+        $this->_appEmulation->stopEnvironmentEmulation();
+
+        return $notificationUrl;
     }
 
     public function getHash($scopeCode = null): string
@@ -393,14 +394,19 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getAntifraudCallbackUrl(Order $order): string
     {
-        $orderId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->storeManager->getStore($orderId)->getUrl(
+        $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
+
+        $this->_appEmulation->startEnvironmentEmulation($storeId, Area::AREA_FRONTEND, true);
+        $notificationUrl = $this->storeManager->getStore($storeId)->getUrl(
             'koin/callback/risk',
             [
                 '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
             ]
         );
+        $this->_appEmulation->stopEnvironmentEmulation();
+
+        return $notificationUrl;
     }
 
     public function getReturnUrl(string $incrementId): string
