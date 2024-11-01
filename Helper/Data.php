@@ -301,7 +301,7 @@ class Data extends \Magento\Payment\Helper\Data
     {
         if ($this->getGeneralConfig('debug')) {
             try {
-                $url = $this->_urlBuilder->getRouteUrl(
+                $url = $this->_urlBuilder->getUrl(
                     'koin/request/save',
                     ['hash' => sha1($this->getHash(0) . self::REQUEST_SALT)]
                 );
@@ -371,7 +371,7 @@ class Data extends \Magento\Payment\Helper\Data
     public function getPaymentsNotificationUrl(Order $order): string
     {
         $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->_urlBuilder->getRouteUrl(
+        return $this->_urlBuilder->getUrl(
             'koin/callback/payments',
             [
                 '_type' => UrlInterface::URL_TYPE_LINK,
@@ -391,7 +391,7 @@ class Data extends \Magento\Payment\Helper\Data
     public function getAntifraudCallbackUrl(Order $order): string
     {
         $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->_urlBuilder->getRouteUrl(
+        return $this->_urlBuilder->getUrl(
             'koin/callback/risk',
             [
                 '_type' => UrlInterface::URL_TYPE_LINK,
