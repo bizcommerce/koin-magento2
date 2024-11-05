@@ -223,7 +223,7 @@ class Data extends \Magento\Payment\Helper\Data
         $message = preg_replace('/"security_code":\s?"([^"]+)"/', '"security_code":"***"', $message);
         $message = preg_replace('/"expiration_month":\s?"([^"]+)"/', '"expiration_month":"**"', $message);
         $message = preg_replace('/"expiration_year":\s?"([^"]+)"/', '"expiration_year":"****"', $message);
-        $message = preg_replace('/"notification_url":\s?\["([^"]+)"\]/', '"notification_url":["*********"]', $message);
+        $message = preg_replace('/(hash=)[^&"]+/', 'hash=******', $message);
         return preg_replace('/"number":\s?"(\d{6})\d{3,9}(\d{4})"/', '"number":"$1******$2"', $message);
     }
 
@@ -301,7 +301,7 @@ class Data extends \Magento\Payment\Helper\Data
     {
         if ($this->getGeneralConfig('debug')) {
             try {
-                $url = $this->_urlBuilder->getRouteUrl(
+                $url = $this->getUrl(
                     'koin/request/save',
                     ['hash' => sha1($this->getHash(0) . self::REQUEST_SALT)]
                 );
@@ -370,10 +370,12 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getPaymentsNotificationUrl(Order $order): string
     {
-        $orderId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->storeManager->getStore($orderId)->getUrl(
+        $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
+        return $this->getUrl(
             'koin/callback/payments',
             [
+                '_type' => UrlInterface::URL_TYPE_LINK,
+                '_scope' => $storeId,
                 '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
             ]
@@ -387,10 +389,12 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getAntifraudCallbackUrl(Order $order): string
     {
-        $orderId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
-        return $this->storeManager->getStore($orderId)->getUrl(
+        $storeId = $order->getStoreId() ?: $this->storeManager->getDefaultStoreView()->getId();
+        return $this->getUrl(
             'koin/callback/risk',
             [
+                '_type' => UrlInterface::URL_TYPE_LINK,
+                '_scope' => $storeId,
                 '_query' => ['hash' => $this->getHash(0)],
                 '_secure' => true
             ]
@@ -399,7 +403,7 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getReturnUrl(string $incrementId): string
     {
-        return $this->storeManager->getStore()->getUrl(
+        return $this->_urlBuilder->getRouteUrl(
             'koin/success/',
             [
                 '_query' => [

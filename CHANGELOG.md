@@ -104,3 +104,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.7.6
 - Fix: send only number postcode for addresses in BNPL
 - Fix: send number as quantity for transactions
+
+### v2.7.7
+- Fix: callback url for admin onrders 
