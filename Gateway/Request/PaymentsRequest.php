@@ -354,13 +354,10 @@ class PaymentsRequest
     /**
      * @return string
      */
-    protected function getExpirationDate(int $time = 1440): string
+    protected function getExpirationDate(string $methodCode = 'koin_redirect'): string
     {
-        $expirationTime = (int) $time;
-        $expirationTime = $expirationTime > 0 ? $expirationTime : \Koin\Payment\Helper\Order::DEFAULT_EXPIRATION_TIME;
-        $minutes = "+{$expirationTime} minutes";
-        $timeStamp = $this->dateTime->timestamp($minutes);
-        return (string) $this->dateTime->gmtDate('Y-m-d\TH:i:s', $timeStamp) . '.000Z';
+        $time = (int) $this->helper->getConfig('expiration_time', $methodCode) ?: 1440;
+        return $this->helper->getExpirationDate($time);
     }
 
     /**

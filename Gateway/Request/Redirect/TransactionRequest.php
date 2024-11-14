@@ -110,8 +110,7 @@ class TransactionRequest extends PaymentsRequest implements BuilderInterface
     protected function getPaymentMethod($order, $paymentMethodCode): \stdClass
     {
         $payment = parent::getPaymentMethod($order, $paymentMethodCode);
-        $time = $this->helper->getConfig('expiration_time', 'koin_redirect');
-        $payment->expiration_date = $this->getExpirationDate($time);
+        $payment->expiration_date = $this->getExpirationDate();
         return $payment;
     }
 

@@ -482,6 +482,21 @@ class Order extends \Magento\Payment\Helper\Data
         return $payment;
     }
 
+    public function updateRequestAdditionalData(Payment $payment, array $additionalData): Payment
+    {
+        try {
+            if (!empty($additionalData)) {
+                foreach ($additionalData as $key => $value) {
+                    $payment->setAdditionalInformation($key, $value);
+                }
+            }
+        } catch (\Exception $e) {
+            $this->_logger->warning($e->getMessage());
+        }
+
+        return $payment;
+    }
+
     /**
      * @throws LocalizedException
      */

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  *
@@ -25,6 +26,7 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Model\Config;
+use Magento\Sales\Api\Data\OrderInterface;
 
 class Pix extends AbstractInfo
 {
@@ -49,6 +51,9 @@ class Pix extends AbstractInfo
      * @var PriceCurrencyInterface
      */
     protected $priceCurrency;
+
+    /** @var  */
+    protected $order = null;
 
     /**
      * BankSlip constructor.
@@ -91,6 +96,34 @@ class Pix extends AbstractInfo
         return $payment->getAdditionalInformation('qr_code');
     }
 
+    public function getPendingStatus(): string
+    {
+        return \Koin\Payment\Gateway\Http\Client\Payments\Api::STATUS_PUBLISHED;
+    }
+
+    /**
+     * @return OrderInterface
+     */
+    public function getOrder()
+    {
+        if (!$this->order) {
+            try {
+                $this->order = $this->getInfo()->getOrder();
+            } catch (\Exception $e) {
+                $this->_logger->error($e->getMessage());
+            }
+        }
+        return $this->order;
+    }
+
+    public function getOrderIncrementId(): string
+    {
+        if ($this->getOrder()) {
+            return $this->getOrder()->getIncrementId();
+        }
+        return '';
+    }
+
     /**
      * @return string
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -109,6 +142,19 @@ class Pix extends AbstractInfo
     {
         $payment = $this->getInfo();
         return $payment->getAdditionalInformation('qr_code_url');
+    }
+
+    public function getExpiration(): int
+    {
+        try {
+            $expirationDateGmt = (string)$this->getInfo()->getAdditionalInformation('expiration_date');
+            if ($expirationDateGmt) {
+                return strtotime($expirationDateGmt);
+            }
+        } catch (\Exception $e) {
+            $this->_logger->error($e->getMessage());
+        }
+        return time() + 3600;
     }
 
 }
