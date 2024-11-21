@@ -13,6 +13,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Sales\Api\OrderRepositoryInterface;
 
 class Status extends Action implements HttpGetActionInterface, CsrfAwareActionInterface
 {
@@ -25,15 +26,22 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
     /** @var HelperData */
     protected $helperData;
 
+    /**
+     * @var OrderRepositoryInterface
+     */
+    protected $orderRepository;
+
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
         Json $json,
-        HelperData $helperData
+        HelperData $helperData,
+        OrderRepositoryInterface $orderRepository
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->json = $json;
         $this->helperData = $helperData;
+        $this->orderRepository = $orderRepository;
 
         parent::__construct($context);
     }
@@ -45,12 +53,12 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
         header('Cache-Control: no-cache');
         header('X-Accel-Buffering: no');
 
-        $orderIncrementId = $this->getRequest()->getParam('oId');
+        $orderId = $this->getRequest()->getParam('oId');
 
         $count = 0;
-        if ($orderIncrementId) {
+        if ($orderId) {
             while (true) {
-                $order = $this->helperData->loadOrder($orderIncrementId);
+                $order = $this->orderRepository->get($orderId);
                 $payment = $order->getPayment();
                 $result = [
                     'order_id' => $order->getId(),

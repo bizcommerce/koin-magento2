@@ -61,7 +61,7 @@ class Order extends \Magento\Payment\Helper\Data
     protected $orderFactory;
 
     /**
-     * @var OrderFactory
+     * @var OrderRepository
      */
     protected $orderRepository;
 
