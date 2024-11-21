@@ -58,6 +58,7 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
         $count = 0;
         if ($orderId) {
             while (true) {
+                $this->orderRepository->_resetState();
                 $order = $this->orderRepository->get($orderId);
                 $payment = $order->getPayment();
                 $result = [
