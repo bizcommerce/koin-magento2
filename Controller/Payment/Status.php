@@ -49,18 +49,17 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
     public function execute()
     {
         // Set headers for Server-Sent Events
-        $response = $this->getResponse();
-        $response->setHeader('Content-Type', 'text/event-stream', true);
-        $response->setHeader('Connection', 'keep-alive', true);
-        $response->setHeader('Cache-Control', 'no-cache', true);
-        $response->setHeader('X-Accel-Buffering', 'no', true);
-        $response->terminateOnSend(false);
-
         $orderId = $this->getRequest()->getParam('oId');
 
         $count = 0;
         if ($orderId) {
             while (true) {
+                $response = $this->getResponse();
+                $response->setHeader('Content-Type', 'text/event-stream', true);
+                $response->setHeader('Connection', 'keep-alive', true);
+                $response->setHeader('Cache-Control', 'no-cache', true);
+                $response->setHeader('X-Accel-Buffering', 'no', true);
+
                 $this->orderRepository->_resetState();
                 $order = $this->orderRepository->get($orderId);
                 $payment = $order->getPayment();
@@ -84,6 +83,7 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
                     break;
                 }
                 sleep(5);
+                $response->_resetState();
             }
         }
 
