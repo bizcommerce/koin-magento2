@@ -48,10 +48,12 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
 
     public function execute()
     {
-        header('Content-Type: text/event-stream');
-        header('Connection: keep-alive');
-        header('Cache-Control: no-cache');
-        header('X-Accel-Buffering: no');
+        // Set headers for Server-Sent Events
+        $response = $this->getResponse();
+        $response->setHeader('Content-Type', 'text/event-stream', true);
+        $response->setHeader('Connection', 'keep-alive', true);
+        $response->setHeader('Cache-Control', 'no-cache', true);
+        $response->setHeader('X-Accel-Buffering', 'no', true);
 
         $orderId = $this->getRequest()->getParam('oId');
 
@@ -69,9 +71,10 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
                     'is_paid' => $payment->getAdditionalInformation('status') == Api::STATUS_COLLECTED
                 ];
 
-                $this->getResponse()->setBody( "event: koin-pix\n");
-                $this->getResponse()->setBody( "data: " . json_encode($result) . "\n\n");
-                $this->getResponse()->sendResponse();
+                $data = "event: koin-pix\n";
+                $data .= "data: " . json_encode($result) . "\n\n";
+                $response->appendBody($data);
+
                 ob_flush();
                 flush();
                 $count++;
