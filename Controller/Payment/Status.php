@@ -69,8 +69,9 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
                     'is_paid' => $payment->getAdditionalInformation('status') == Api::STATUS_COLLECTED
                 ];
 
-                echo "event: koin-pix\n" .
-                    "data: " . json_encode($result) . "\n\n";
+                $this->getResponse()->setBody( "event: koin-pix\n");
+                $this->getResponse()->setBody( "data: " . json_encode($result) . "\n\n");
+                $this->getResponse()->sendResponse();
                 ob_flush();
                 flush();
                 $count++;
