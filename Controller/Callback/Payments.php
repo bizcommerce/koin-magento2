@@ -8,13 +8,14 @@
 namespace Koin\Payment\Controller\Callback;
 
 use Koin\Payment\Exception\OrderNotFinishedException;
+use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Koin\Payment\Controller\Callback;
 use Koin\Payment\Gateway\Http\Client\Payments\Api;
 use Magento\Sales\Model\Order as SalesOrder;
 
-class Payments extends Callback
+class Payments extends Callback implements HttpPostActionInterface
 {
     /**
      * @var string

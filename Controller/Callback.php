@@ -13,6 +13,7 @@ use Koin\Payment\Helper\Order as HelperOrder;
 use Koin\Payment\Model\CallbackFactory;
 use Koin\Payment\Model\ResourceModel\Callback as CallbackResourceModel;
 use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Backend\App\Action\Context;
@@ -20,7 +21,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
 
-abstract class Callback extends Action implements \Magento\Framework\App\CsrfAwareActionInterface
+abstract class Callback extends Action implements CsrfAwareActionInterface
 {
     const LOG_NAME = 'koin-callback';
 
