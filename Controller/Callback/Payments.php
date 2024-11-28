@@ -9,13 +9,14 @@ namespace Koin\Payment\Controller\Callback;
 
 use Koin\Payment\Exception\OrderNotFinishedException;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Koin\Payment\Controller\Callback;
 use Koin\Payment\Gateway\Http\Client\Payments\Api;
 use Magento\Sales\Model\Order as SalesOrder;
 
-class Payments extends Callback implements HttpPostActionInterface
+class Payments extends Callback implements CsrfAwareActionInterface, HttpPostActionInterface
 {
     /**
      * @var string
@@ -85,13 +86,12 @@ class Payments extends Callback implements HttpPostActionInterface
                     $koinStatus = $content['status']['type'] ?? $content['status'];
                     $koinState = $this->helperOrder->getStatus($koinStatus);
                     $order = $this->helperOrder->loadOrder($transaction['reference_id']);
+                    $statusCode = 404;
                     if ($order->getId()) {
                         $method = $order->getPayment()->getMethod();
                         $amount = $this->getCallbackAmount($order, $content);
                         $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $content, $amount, true);
                         $statusCode = 204;
-                    } elseif ($koinStatus == Api::STATUS_FAILED) {
-                        $statusCode = 404;
                     }
                 }
             }
