@@ -62,7 +62,7 @@ abstract class Callback extends Action implements \Magento\Framework\App\CsrfAwa
     /**
      * @var string
      */
-    protected $requestContent;
+    protected $requestContent = '';
 
     /**
      * @var ResultFactory
@@ -155,13 +155,24 @@ abstract class Callback extends Action implements \Magento\Framework\App\CsrfAwa
     {
         if (!$this->requestContent) {
             try {
-                $content = $request->getContent();
-                $this->requestContent = $this->json->unserialize($content);
+                $content = $request->getContent() ?: $this->getRawBody();
+                if ($content) {
+                    $this->requestContent = $this->json->unserialize($content);
+                }
             } catch (\Exception $e) {
                 $this->helperData->getLogger()->critical($e->getMessage());
             }
         }
         return $this->requestContent;
+    }
+
+    protected function getRawBody()
+    {
+        $requestBody = file_get_contents('php://input');
+        if (strlen($requestBody) > 0) {
+            return $requestBody;
+        }
+        return '';
     }
 
     /**
