@@ -111,3 +111,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.7.8
 - Fix: send only number for brazilian doc numbers CPF and CNPJ
 
+### v2.7.9
+- Fix: error when unserializing empty request body on callbacks
+
