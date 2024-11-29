@@ -61,7 +61,7 @@ class Order extends \Magento\Payment\Helper\Data
     protected $orderFactory;
 
     /**
-     * @var OrderFactory
+     * @var OrderRepository
      */
     protected $orderRepository;
 
@@ -475,6 +475,21 @@ class Order extends \Magento\Payment\Helper\Data
 
             $payment->setAdditionalInformation('status', $status);
             $payment->setIsTransactionClosed(false);
+        } catch (\Exception $e) {
+            $this->_logger->warning($e->getMessage());
+        }
+
+        return $payment;
+    }
+
+    public function updateRequestAdditionalData(Payment $payment, array $additionalData): Payment
+    {
+        try {
+            if (!empty($additionalData)) {
+                foreach ($additionalData as $key => $value) {
+                    $payment->setAdditionalInformation($key, $value);
+                }
+            }
         } catch (\Exception $e) {
             $this->_logger->warning($e->getMessage());
         }

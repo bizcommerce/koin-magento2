@@ -236,3 +236,4 @@ Card Installments,Cuotas de la Tarjeta
 "By default, Koin responds to orders as authorized (Authorized). If your contract responds to orders directly as captured (Collected), change this setting to Authorize and Capture ONLY if your contract already responds to orders as Collected. If you have any questions, please contact our Koin team.","Por defecto, Koin responde a los pedidos como autorizado (Authorized). Si su contrato responde a los pedidos directamente como capturado (Collected), cambie esta configuración a Autorizado y Capturar SÓLO si su contrato ya responde a los pedidos como Recogido. Si tiene alguna pregunta, póngase en contacto con nuestro equipo de Koin."
 "Order has been paid %1","Pedido pagado %1",
 "There was an error processing your request.","Hubo un error al procesar tu pedido, revisa los datos, por favor, si el problema persiste, contáctanos."
+"Your pix expires in:", "Tu pix expira en:"

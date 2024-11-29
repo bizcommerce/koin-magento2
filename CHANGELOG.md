@@ -114,3 +114,5 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.7.9
 - Fix: error when unserializing empty request body on callbacks
 
+### v2.8.0
+- Feat: added timer for pix payments

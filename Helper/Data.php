@@ -523,6 +523,10 @@ class Data extends \Magento\Payment\Helper\Data
         return preg_replace('/\D/', '', (string) $string);
     }
 
+    /**
+     * @param string $incrementId
+     * @return \Magento\Sales\Model\Order|OrderInterface
+     */
     public function loadOrder(string $incrementId): OrderInterface
     {
         return $this->order->loadByIncrementId($incrementId);
@@ -667,5 +671,17 @@ class Data extends \Magento\Payment\Helper\Data
             'state' => $address->getRegionCode() ?: $address->getRegion(),
             'country_code' => $address->getCountryId(),
         ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getExpirationDate(int $time = 1440): string
+    {
+        $expirationTime = (int) $time;
+        $expirationTime = $expirationTime > 0 ? $expirationTime : \Koin\Payment\Helper\Order::DEFAULT_EXPIRATION_TIME;
+        $minutes = "+{$expirationTime} minutes";
+        $timeStamp = $this->dateTime->timestamp($minutes);
+        return (string) $this->dateTime->gmtDate('Y-m-d\TH:i:s', $timeStamp) . '.000Z';
     }
 }

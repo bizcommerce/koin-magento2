@@ -53,7 +53,15 @@ class TransactionRequest extends PaymentsRequest implements BuilderInterface
         $request->descriptor = __('Order %1 on %2', $order->getRealOrderId(), $this->helper->getStoreName());
         $request->notification_url = [$this->helper->getPaymentsNotificationUrl($order)];
 
-        return ['request' => $request, 'client_config' => ['store_id' => $order->getStoreId()]];
+        return [
+            'request' => $request,
+            'client_config' => [
+                'store_id' => $order->getStoreId(),
+                'additional_data' => [
+                    'expiration_date' => $this->getExpirationDate('koin_pix')
+                ]
+            ]
+        ];
     }
 
     /**
@@ -63,8 +71,7 @@ class TransactionRequest extends PaymentsRequest implements BuilderInterface
     protected function getPaymentMethod($order, $paymentMethodCode): \stdClass
     {
         $payment = parent::getPaymentMethod($order, $paymentMethodCode);
-        $time = (int) $this->helper->getConfig('expiration_time', 'koin_pix');
-        $payment->expiration_date = $this->getExpirationDate($time);
+        $payment->expiration_date = $this->getExpirationDate('koin_pix');
         if ($this->helper->getConfig('use_custom_pix_key', 'koin_pix')) {
             $customPixKey = trim($this->helper->getConfig('custom_pix_key', 'koin_pix'));
             if ($customPixKey) {

@@ -232,3 +232,4 @@
 "By default, Koin responds to orders as authorized (Authorized). If your contract responds to orders directly as captured (Collected), change this setting to Authorize and Capture ONLY if your contract already responds to orders as Collected. If you have any questions, please contact our Koin team.", "By default, Koin responds to orders as authorized (Authorized). If your contract responds to orders directly as capture (Collected), change this setting to Authorize and Capture ONLY if your contract already responds to orders as Collected. If you have any questions, please contact our team."
 "Order has been paid %1","Order has been paid %1"
 "There was an error processing your request.","There was an error processing your request."
+"Your pix expires in:", "Your pix expires in:"
