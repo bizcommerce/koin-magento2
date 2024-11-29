@@ -111,6 +111,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.7.8
 - Fix: send only number for brazilian doc numbers CPF and CNPJ
 
+### v2.7.9
+- Fix: error when unserializing empty request body on callbacks
+
 ### v2.8.0
 - Feat: added timer for pix payments
-- Fix: don't unserialize when the request body is empty on the callbacks
