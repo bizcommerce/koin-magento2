@@ -94,8 +94,8 @@ class Client
 
         if ($this->helper->getGeneralConfig('use_sandbox')) {
             $headers['User-Agent'] = 'koin-oficial';
+            $headers['xdesp-mock-risk-juggler'] = 'verdict=inprogress|strategy=3DS2CHALLENGE';
         }
-
 
         return $headers;
     }
