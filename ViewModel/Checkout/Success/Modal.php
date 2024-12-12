@@ -21,9 +21,10 @@
 namespace Koin\Payment\ViewModel\Checkout\Success;
 
 use Magento\Checkout\Model\Session;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Model\Order;
 
-class Modal
+class Modal implements ArgumentInterface
 {
     /**
      * @var Order
