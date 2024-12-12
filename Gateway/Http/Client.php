@@ -165,13 +165,6 @@ class Client
     {
         $apiType = $this->getApiType();
         $api = $this->getApi($path, $apiType, $storeId);
-        if (
-            isset($data->payment_method)
-            && isset($data->payment_method->code)
-            && $data->payment_method->code == 'CARD'
-        ) {
-            $api->setHeaders($this->get3DSHeaders($storeId));
-        }
 
         $api->setMethod($method);
         if (!empty($data)) {
