@@ -555,6 +555,15 @@ class Order extends \Magento\Payment\Helper\Data
         return $payment;
     }
 
+    public function update3DSAdditionalInformation(Payment $payment, $transaction): Payment
+    {
+        if (isset($transaction['return_url'])) {
+            $payment->setAdditionalInformation('3ds_return_url', $transaction['return_url']);
+        }
+
+        return $payment;
+    }
+
     protected function verifyCcData($payment, $infoData): Payment
     {
         foreach ($infoData as $key) {

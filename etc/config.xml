@@ -19,6 +19,7 @@
             <general>
                 <refund_on_cancel>1</refund_on_cancel>
                 <show_payment_info>0</show_payment_info>
+                <sandbox_3ds_strategy>challenge</sandbox_3ds_strategy>
             </general>
             <payments>
                 <private_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />

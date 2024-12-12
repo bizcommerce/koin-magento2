@@ -20,5 +20,13 @@
                    ifconfig="koin/general/show_payment_info"
             />
         </referenceContainer>
+
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="koin.success.modal" template="Koin_Payment::checkout/success/modal.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Koin\Payment\ViewModel\Checkout\Success\Modal</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
     </body>
 </page>

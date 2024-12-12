@@ -121,3 +121,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Refactor: improved performance on checkout installment rules
 - Refactor: removed arrow function for compatibility with PHP 7.1, 7.2 and 7.3
 - Fix: save installment options on BNPL callbacks
+
+### v2.9.0
+- Feat: added 3DSv2 support
+- Feat: added new languages files, es_CO and es_MX

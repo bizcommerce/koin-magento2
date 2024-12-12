@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Koin\Payment\ViewModel\Checkout\Success\Modal $viewModel
+ */
+
+$viewModel = $block->getViewModel();
+$challengeUrl = $block->escapeHtml($viewModel->getChallengeUrl());
+?>
+
+<?php if ($challengeUrl): ?>
+    <div id="koin-modal-success" style="display:none;">
+        <div class="modal-content">
+            <iframe id="koin-modal-iframe" src="<?= $challengeUrl ?>" width="100%" height="400" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "koin_Payment/js/success/modal": {
+                    "challengeUrl": "<?= $challengeUrl ?>",
+                    "orderId": "<?= $block->escapeHtml($viewModel->getOrderId()) ?>",
+                    "orderUrl": "<?= $block->escapeHtml($viewModel->getOrderUrl()) ?>"
+                }
+            }
+        }
+    </script>
+<?php endif ?>

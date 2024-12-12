@@ -17,27 +17,31 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="koin-fingerprint" type="host">*.despegar.com/</value>
+                <value id="koin-fingerprint" type="host">*.despegar.com</value>
+                <value id="koin-src" type="host">*.koin.com.br</value>
             </values>
         </policy>
         <policy id="frame-src">
             <values>
-                <value id="koin-fingerprint-frame" type="host">*.despegar.com/</value>
+                <value id="koin-fingerprint-frame" type="host">*.despegar.com</value>
+                <value id="koin-3ds-frame" type="host">*.koin.com.br</value>
             </values>
         </policy>
         <policy id="frame-ancestors">
             <values>
-                <value id="koin-fingerprint-frame-ancestors" type="host">*.despegar.com/</value>
+                <value id="koin-fingerprint-frame-ancestors" type="host">*.despegar.com</value>
+                <value id="koin-3ds-frame-ancestors" type="host">*.koin.com.br</value>
             </values>
         </policy>
         <policy id="img-src">
             <values>
-                <value id="koin-fingerprint-img" type="host">*.despegar.com/</value>
+                <value id="koin-fingerprint-img" type="host">*.despegar.com</value>
+                <value id="koin-img" type="host">*.koin.com.br</value>
             </values>
         </policy>
         <policy id="connect-src">
             <values>
-                <value id="koin-fingerprint-connect" type="host">*.despegar.com/</value>
+                <value id="koin-fingerprint-connect" type="host">*.despegar.com</value>
             </values>
         </policy>
     </policies>
