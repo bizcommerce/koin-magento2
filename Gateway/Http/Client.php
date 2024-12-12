@@ -94,9 +94,15 @@ class Client
 
         if ($this->helper->getGeneralConfig('use_sandbox')) {
             $headers['User-Agent'] = 'koin-oficial';
-            $headers['xdesp-mock-risk-juggler'] = 'verdict=inprogress|strategy=3DS2CHALLENGE';
         }
 
+        return $headers;
+    }
+
+    protected function get3DSHeaders($storeId = null): array
+    {
+        $headers = $this->getDefaultHeaders($storeId);
+        $headers['xdesp-mock-risk-juggler'] = 'verdict=inprogress|strategy=3DS2CHALLENGE';
         return $headers;
     }
 
@@ -159,6 +165,14 @@ class Client
     {
         $apiType = $this->getApiType();
         $api = $this->getApi($path, $apiType, $storeId);
+        if (
+            isset($data->payment_method)
+            && isset($data->payment_method->code)
+            && $data->payment_method->code == 'CARD'
+        ) {
+            $api->setHeaders($this->get3DSHeaders($storeId));
+        }
+
         $api->setMethod($method);
         if (!empty($data)) {
             $api->setRawBody($this->json->serialize($data));

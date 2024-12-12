@@ -116,3 +116,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.8.0
 - Feat: added timer for pix payments
+
+### v2.8.1
+- Refactor: improed performance on checkout installments rules
