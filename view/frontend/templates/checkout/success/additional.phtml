@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Koin\Payment\ViewModel\Checkout\Success\Additional $viewModel
+ */
+
+$viewModel = $block->getViewModel();
+$challengeUrl = $block->escapeHtml($viewModel->getChallengeUrl());
+
+$orderUrl = $block->escapeHtml($viewModel->getOrderUrl());
+$statusUrl = $block->escapeHtml($viewModel->getStatusUrl());
+?>
+
+<?php if ($viewModel->isPending()): ?>
+    <script>
+        require(['jquery'], function($) {
+            const eventSource = new EventSource(`<?= $statusUrl ?>`);
+            eventSource.addEventListener('koin-payment-status', function(event) {
+                const data = JSON.parse(event.data);
+                if (data?.is_paid) {
+                    $(document.body).trigger('processStart');
+                    $('.koin-exp-time').hide();
+                    window.location.href = '<?= $orderUrl; ?>';
+                }
+            });
+
+            eventSource.onerror = function() {
+                eventSource.close();
+            };
+        });
+    </script>
+<?php endif ?>
+
+<?php if ($challengeUrl): ?>
+    <div id="koin-modal-success" style="display:none;">
+        <div class="modal-content">
+            <iframe id="koin-modal-iframe" src="<?= $challengeUrl ?>" width="100%" height="400" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "Koin_Payment/js/success/additional": {
+                    "challengeUrl": "<?= $challengeUrl ?>",
+                    "orderId": "<?= $block->escapeHtml($viewModel->getOrderId()) ?>",
+                    "orderUrl": "<?= $block->escapeHtml($viewModel->getOrderUrl()) ?>"
+                }
+            }
+        }
+    </script>
+<?php endif ?>

@@ -5,9 +5,7 @@ define([
     'use strict';
 
     return function (config) {
-        const orderUrl = config.orderUrl;
         const modalId = '#koin-modal-success';
-
 
         var options = {
             type: 'popup',
@@ -19,7 +17,6 @@ define([
                 class: 'action secondary action-close',
                 click: function () {
                     this.closeModal();
-                    window.location.href = orderUrl;
                 }
             }]
         };

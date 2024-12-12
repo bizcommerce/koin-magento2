@@ -20,11 +20,12 @@
 
 namespace Koin\Payment\ViewModel\Checkout\Success;
 
+use Koin\Payment\Gateway\Http\Client\Payments\Api;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Model\Order;
 
-class Modal implements ArgumentInterface
+class Additional implements ArgumentInterface
 {
     /**
      * @var Order
@@ -65,8 +66,30 @@ class Modal implements ArgumentInterface
         return $this->urlBuilder->getUrl('sales/order/view', ['order_id' => $this->getOrder()->getId()]);
     }
 
+    public function getStatusUrl(): string
+    {
+        return $this->urlBuilder->getUrl('koin/payment/status', ['oId' => $this->getOrder()->getId()]);
+    }
+
     public function getOrderId(): string
     {
         return $this->getOrder()->getIncrementId();
+    }
+
+    public function isPending(): bool
+    {
+        return in_array(
+            $this->getOrder()->getPayment()->getAdditionalInformation('status'),
+            $this->getPendingStatuses()
+        );
+    }
+
+    public function getPendingStatuses(): array
+    {
+        return [
+            Api::STATUS_PUBLISHED,
+            Api::STATUS_PENDING,
+            Api::STATUS_OPENED,
+        ];
     }
 }
