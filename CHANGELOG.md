@@ -119,3 +119,5 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.8.1
 - Refactor: improed performance on checkout installments rules
+- Refactor: removed arrow function for compatibility with PHP 7.1, 7.2 and 7.3
+- Fix: save installments options on BNPL callbacks
