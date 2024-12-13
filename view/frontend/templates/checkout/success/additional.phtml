@@ -2,6 +2,7 @@
 
 /**
  * @var \Magento\Framework\View\Element\Template $block
+ * @var \Magento\Framework\Escaper $escaper
  * @var \Koin\Payment\ViewModel\Checkout\Success\Additional $viewModel
  */
 
@@ -35,6 +36,7 @@ $statusUrl = $block->escapeHtml($viewModel->getStatusUrl());
 <?php if ($challengeUrl): ?>
     <div id="koin-modal-success" style="display:none;">
         <div class="modal-content">
+            <a href="<?= $challengeUrl ?>" id="koin-challenge-link" target="_blank"><?= $escaper->escapeHtml(__('Authorize')) ?></a>
 <!--            <iframe id="koin-modal-iframe" src="--><?php //= $challengeUrl ?><!--" width="100%" height="100%" frameborder="0"></iframe>-->
         </div>
     </div>

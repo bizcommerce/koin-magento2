@@ -5,7 +5,8 @@ define([
     'use strict';
 
     return function (config) {
-        window.open(config.challengeUrl, '_blank');
+        $('#koin-challenge-link').click();
+
         // const modalId = '#koin-modal-success';
         //
         // var options = {
