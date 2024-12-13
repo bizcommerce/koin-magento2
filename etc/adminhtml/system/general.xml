@@ -89,13 +89,13 @@
                 <depends>
                     <field id="use_sandbox">1</field>
                 </depends>
-                <comment><![CDATA[If enabled, <strong>SANDBOX</strong> credit card transactions will be done with 3DS]]></comment>
+                <comment><![CDATA[If enabled, SANDBOX credit card transactions will be done with 3DS header]]></comment>
             </field>
 
-            <field id="sandbox_3ds_trategy" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+            <field id="sandbox_3ds_strategy" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>3DS strategy</label>
                 <source_model>Koin\Payment\Model\Config\Source\ThreeDSStrategy</source_model>
-                <config_path>koin/general/sandbox_3ds_trategy</config_path>
+                <config_path>koin/general/sandbox_3ds_strategy</config_path>
                 <depends>
                     <field id="use_sandbox">1</field>
                     <field id="use_sandbox_3ds">1</field>

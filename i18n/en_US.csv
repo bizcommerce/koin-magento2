@@ -242,3 +242,4 @@
 "Challenge: with an OTP Challenge; Frictionless: without challenge to customer","Challenge: with an OTP Challenge; Frictionless: without challenge to customer"
 "If enabled, <strong>SANDBOX</strong> credit card transactions will be done with 3DS":"If enabled, <strong>SANDBOX</strong> credit card transactions will be done with 3DS"
 "In order to work properly all sandbox orders, you'll need to use the header 'xdesp-sandbox: true' during your navigation","In order to work properly all sandbox orders, you'll need to use the header 'xdesp-sandbox: true' during your navigation"
+"If enabled, SANDBOX credit card transactions will be done with 3DS header","If enabled, SANDBOX credit card transactions will be done with 3DS header"
