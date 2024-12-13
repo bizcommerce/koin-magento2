@@ -35,10 +35,10 @@ $statusUrl = $block->escapeHtml($viewModel->getStatusUrl());
 
 <?php if ($challengeUrl): ?>
     <div id="koin-modal-success" style="display:none;">
-        <div class="modal-content">
-            <a href="<?= $challengeUrl ?>" id="koin-challenge-link" target="_blank"><?= $escaper->escapeHtml(__('Authorize')) ?></a>
+        <a href="<?= $challengeUrl ?>" id="koin-challenge-link" target="_blank"><?= $escaper->escapeHtml(__('Authorize')) ?></a>
+<!--        <div class="modal-content">-->
 <!--            <iframe id="koin-modal-iframe" src="--><?php //= $challengeUrl ?><!--" width="100%" height="100%" frameborder="0"></iframe>-->
-        </div>
+<!--        </div>-->
     </div>
 
     <script type="text/x-magento-init">

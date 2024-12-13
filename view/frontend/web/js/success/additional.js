@@ -5,7 +5,8 @@ define([
     'use strict';
 
     return function (config) {
-        $('#koin-challenge-link').click();
+        //Document ready, click the link a#koin-challenge-link
+        document.getElementById('koin-challenge-link').click();
 
         // const modalId = '#koin-modal-success';
         //
