@@ -42,6 +42,10 @@ interface InstallmentsRulesInterface
     public const INTEREST_TYPE = 'interest_type';
     public const INTEREST_RATE = 'interest_rate';
     public const PRIORITY = 'priority';
+    public const CUSTOMER_GROUP_IDS = 'customer_group_ids';
+    public const PRODUCT_SET_IDS = 'product_set_ids';
+    public const CREDIT_CARD_BRANDS = 'credit_card_brands';
+    public const DAYS_OF_WEEK = 'days_of_week';
     public const START_DATE = 'start_date';
     public const END_DATE = 'end_date';
     public const MINIMUM_AMOUNT = 'minimum_amount';
@@ -105,6 +109,22 @@ interface InstallmentsRulesInterface
     public function getPriority(): int;
 
     public function setPriority(int $priority): void;
+
+    public function getCustomerGroupIds(): string;
+
+    public function setCustomerGroupIds(string $customerGroupIds): void;
+
+    public function getProductSetIds(): string;
+
+    public function setProductSetIds(string $productSetIds): void;
+
+    public function getCreditCardBrands(): string;
+
+    public function setCreditCardBrands(string $creditCardBrands): void;
+
+    public function getDaysOfWeek(): string;
+
+    public function setDaysOfWeek(string $daysOfWeek): void;
 
     public function getStartDate(): string;
 

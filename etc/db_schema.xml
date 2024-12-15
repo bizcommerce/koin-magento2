@@ -92,6 +92,10 @@
         <column xsi:type="varchar" name="interest_type" length="255" nullable="true" comment="Interest Type"/>
         <column xsi:type="decimal" name="interest_rate" precision="12" scale="4" nullable="true" comment="Interest Type"/>
         <column xsi:type="int" name="priority" padding="10" nullable="false" default="0" comment="Priority"/>
+        <column xsi:type="varchar" length="255" name="customer_group_ids" nullable="false" default="" comment="Customer Group IDS"/>
+        <column xsi:type="varchar" length="255" name="product_set_ids" nullable="false" default="" comment="Product Set IDS"/>
+        <column xsi:type="varchar" length="255" name="credit_card_brands" nullable="false" default="" comment="Credit Card Brand"/>
+        <column xsi:type="varchar" length="255" name="days_of_week" nullable="false" default="" comment="Days of the Week"/>
         <column xsi:type="date" name="start_date" nullable="true" comment="Rule Start Datetime"/>
         <column xsi:type="date" name="end_date" nullable="true" comment="Rule End Datetime"/>
         <column xsi:type="decimal" name="minimum_amount" precision="12" scale="4" nullable="true" comment="Minimum Amount"/>
@@ -111,6 +115,21 @@
             <column name="account_number"/>
             <column name="start_date"/>
             <column name="end_date"/>
+        </index>
+        <index referenceId="KOIN_INSTALLMENTS_RULES_PRIORITY" indexType="btree">
+            <column name="priority"/>
+        </index>
+        <index referenceId="KOIN_INSTALLMENTS_RULES_CUSTOMER_GROUP_IDS" indexType="btree">
+            <column name="customer_group_ids"/>
+        </index>
+        <index referenceId="KOIN_INSTALLMENTS_RULES_PRODUCT_SET" indexType="btree">
+            <column name="product_set_ids"/>
+        </index>
+        <index referenceId="KOIN_INSTALLMENTS_RULES_CREDIT_CARD_BRAND" indexType="btree">
+            <column name="credit_card_brands"/>
+        </index>
+        <index referenceId="KOIN_INSTALLMENTS_RULES_DAYS_OF_WEEK" indexType="btree">
+            <column name="days_of_week"/>
         </index>
         <index referenceId="KOIN_INSTALLMENTS_RULES_FULLTEXT" indexType="fulltext">
             <column name="account_number"/>
