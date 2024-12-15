@@ -243,3 +243,5 @@
 "If enabled, <strong>SANDBOX</strong> credit card transactions will be done with 3DS":"If enabled, <strong>SANDBOX</strong> credit card transactions will be done with 3DS"
 "In order to work properly all sandbox orders, you'll need to use the header 'xdesp-sandbox: true' during your navigation","In order to work properly all sandbox orders, you'll need to use the header 'xdesp-sandbox: true' during your navigation"
 "If enabled, SANDBOX credit card transactions will be done with 3DS header","If enabled, SANDBOX credit card transactions will be done with 3DS header"
+"Enable Default Installments","Enable Default Installments"
+"Always show default installment options. Disabling it will make the installments to work only with installments rules on checkout","Always show default installment options. Disabling it will make the installments to work only with installments rules on checkout"

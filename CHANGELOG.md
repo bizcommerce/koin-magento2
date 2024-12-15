@@ -125,3 +125,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.9.0
 - Feat: added 3DSv2 support
 - Feat: added new languages files, es_CO and es_MX
+
+### v2.10.0
+- Feat: Installments rules have priorities
+- Feat: Config to no use default installments and use installments rules only, instead

@@ -59,7 +59,12 @@ class Installments extends AbstractHelper
 
     public function getAllInstallments(float $total = 0, string $ccNumber = '', int $storeId = 0): array
     {
-        $allInstallments = $this->getDefaultInstallments($total);
+        $allInstallments = [];
+
+        if ($this->helper->getCcConfig('enable_default_installment')) {
+            $allInstallments = $this->getDefaultInstallments($total);
+        }
+
         try {
             $rules = $this->ruleValidator->getRules($total, $ccNumber, $storeId);
             if ($rules->count() > 0) {

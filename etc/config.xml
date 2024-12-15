@@ -152,6 +152,7 @@
                 <has_interest>0</has_interest>
                 <cctypes>AX,CA,VI</cctypes>
                 <show_logo_on_checkout>1</show_logo_on_checkout>
+                <enable_default_installment>1</enable_default_installment>
                 <interest_type>price</interest_type>
                 <interest_rate>1.99</interest_rate>
                 <interest_2_installments>4.5</interest_2_installments>

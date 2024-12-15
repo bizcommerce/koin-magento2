@@ -91,6 +91,7 @@
         <column xsi:type="boolean" name="has_interest" default="false" comment="Has Interest"/>
         <column xsi:type="varchar" name="interest_type" length="255" nullable="true" comment="Interest Type"/>
         <column xsi:type="decimal" name="interest_rate" precision="12" scale="4" nullable="true" comment="Interest Type"/>
+        <column xsi:type="int" name="priority" padding="10" nullable="false" default="0" comment="Priority"/>
         <column xsi:type="date" name="start_date" nullable="true" comment="Rule Start Datetime"/>
         <column xsi:type="date" name="end_date" nullable="true" comment="Rule End Datetime"/>
         <column xsi:type="decimal" name="minimum_amount" precision="12" scale="4" nullable="true" comment="Minimum Amount"/>

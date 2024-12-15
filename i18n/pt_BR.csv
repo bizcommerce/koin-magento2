@@ -251,3 +251,5 @@
 "If enabled, <strong>SANDBOX</strong> credit card transactions will be done with 3DS":"Se habilitado, transações de cartão de crédito <strong>SANDBOX</strong> serão feitas com 3DS"
 "In order to work properly all sandbox orders, you'll need to use the header 'xdesp-sandbox: true' during your navigation","Para funcionar corretamente todos os pedidos de sandbox, você precisará usar o cabeçalho 'xdesp-sandbox: true' durante a navegação"
 "If enabled, SANDBOX credit card transactions will be done with 3DS header","Se habilitado, transações de cartão de crédito SANDBOX serão feitas com o cabeçalho 3DS"
+"Enable Default Installments","Habilitar Parcelamento Padrão"
+"Always show default installment options. Disabling it will make the installments to work only with installments rules on checkout","Sempre mostrar as opções de parcelamento padrão. Desabilitar isso fará com que o parcelamento funcione apenas com as regras de parcelamento no checkout"

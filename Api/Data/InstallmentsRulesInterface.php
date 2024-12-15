@@ -24,30 +24,31 @@ interface InstallmentsRulesInterface
     /**
      * Constants for keys of data array. Identical to the name of the getter in snake case.
      */
-    const TITLE = 'title';
+    public const TITLE = 'title';
 
-    const DESCRIPTION = 'description';
+    public const DESCRIPTION = 'description';
 
-    const SHOW_INSTALLMENTS = 'show_installments';
+    public const SHOW_INSTALLMENTS = 'show_installments';
 
-    const ACCOUNT_NUMBER = 'account_number';
-    const PAYMENT_METHODS = 'payment_methods';
+    public const ACCOUNT_NUMBER = 'account_number';
+    public const PAYMENT_METHODS = 'payment_methods';
 
-    const EXCEPT_PAYMENT_METHODS = 'except_payment_methods';
-    const MIN_INSTALLMENTS = 'min_installments';
-    const MAX_INSTALLMENTS = 'max_installments';
-    const MAX_INSTALLMENTS_WITHOUT_INTEREST = 'max_installments_without_interest';
-    const MINIMUM_INSTALLMENT_AMOUNT = 'minimum_installment_amount';
-    const HAS_INTEREST = 'has_interest';
-    const INTEREST_TYPE = 'interest_type';
-    const INTEREST_RATE = 'interest_rate';
-    const START_DATE = 'start_date';
-    const END_DATE = 'end_date';
-    const MINIMUM_AMOUNT = 'minimum_amount';
-    const MAXIMUM_AMOUNT = 'maximum_amount';
-    const STATUS = 'status';
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    public const EXCEPT_PAYMENT_METHODS = 'except_payment_methods';
+    public const MIN_INSTALLMENTS = 'min_installments';
+    public const MAX_INSTALLMENTS = 'max_installments';
+    public const MAX_INSTALLMENTS_WITHOUT_INTEREST = 'max_installments_without_interest';
+    public const MINIMUM_INSTALLMENT_AMOUNT = 'minimum_installment_amount';
+    public const HAS_INTEREST = 'has_interest';
+    public const INTEREST_TYPE = 'interest_type';
+    public const INTEREST_RATE = 'interest_rate';
+    public const PRIORITY = 'priority';
+    public const START_DATE = 'start_date';
+    public const END_DATE = 'end_date';
+    public const MINIMUM_AMOUNT = 'minimum_amount';
+    public const MAXIMUM_AMOUNT = 'maximum_amount';
+    public const STATUS = 'status';
+    public const CREATED_AT = 'created_at';
+    public const UPDATED_AT = 'updated_at';
 
     public function getTitle(): string;
 
@@ -100,6 +101,10 @@ interface InstallmentsRulesInterface
     public function getInterestRate(): float;
 
     public function setInterestRate(float $interestRate): void;
+
+    public function getPriority(): int;
+
+    public function setPriority(int $priority): void;
 
     public function getStartDate(): string;
 

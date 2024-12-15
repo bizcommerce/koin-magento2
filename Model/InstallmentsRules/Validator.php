@@ -112,6 +112,9 @@ class Validator
                     )"
                 )
             );
+
+            //Order by priority
+            $collection->getSelect()->order('priority DESC');
         }
         return $collection;
     }
