@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Biz
  *
@@ -19,7 +20,7 @@
  * @license     https://www.bizcommerce.com.br/LICENSE.txt
  */
 
-namespace Koin\Payment\Model\Adminhtml\Source;
+namespace Koin\Payment\Model\Config\Source;
 
 /**
  * Class CcType

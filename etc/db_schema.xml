@@ -92,10 +92,10 @@
         <column xsi:type="varchar" name="interest_type" length="255" nullable="true" comment="Interest Type"/>
         <column xsi:type="decimal" name="interest_rate" precision="12" scale="4" nullable="true" comment="Interest Type"/>
         <column xsi:type="int" name="priority" padding="10" nullable="false" default="0" comment="Priority"/>
-        <column xsi:type="varchar" length="255" name="customer_group_ids" nullable="false" default="" comment="Customer Group IDS"/>
-        <column xsi:type="varchar" length="255" name="product_set_ids" nullable="false" default="" comment="Product Set IDS"/>
-        <column xsi:type="varchar" length="255" name="credit_card_brands" nullable="false" default="" comment="Credit Card Brand"/>
-        <column xsi:type="varchar" length="255" name="days_of_week" nullable="false" default="" comment="Days of the Week"/>
+        <column xsi:type="varchar" length="255" name="customer_group_ids" nullable="true" comment="Customer Group IDS"/>
+        <column xsi:type="varchar" length="255" name="product_set_ids" nullable="true" comment="Product Set IDS"/>
+        <column xsi:type="varchar" length="255" name="credit_card_brands" nullable="true" comment="Credit Card Brand"/>
+        <column xsi:type="varchar" length="255" name="days_of_week" nullable="true" comment="Days of the Week"/>
         <column xsi:type="date" name="start_date" nullable="true" comment="Rule Start Datetime"/>
         <column xsi:type="date" name="end_date" nullable="true" comment="Rule End Datetime"/>
         <column xsi:type="decimal" name="minimum_amount" precision="12" scale="4" nullable="true" comment="Minimum Amount"/>

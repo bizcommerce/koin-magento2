@@ -71,7 +71,7 @@
 
         <field id="cctypes" translate="label" type="multiselect" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Credit Card Types</label>
-            <source_model>Koin\Payment\Model\Adminhtml\Source\CcType</source_model>
+            <source_model>Koin\Payment\Model\Config\Source\CcType</source_model>
             <config_path>payment/koin_cc/cctypes</config_path>
         </field>
 
@@ -109,7 +109,7 @@
 
         <field id="min_installments" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Min Installments</label>
-            <source_model>Koin\Payment\Model\Adminhtml\Source\Installments</source_model>
+            <source_model>Koin\Payment\Model\Config\Source\Installments</source_model>
             <config_path>payment/koin_cc/min_installments</config_path>
             <depends>
                 <field id="enable_default_installment">1</field>
@@ -118,7 +118,7 @@
 
         <field id="max_installments" translate="label" type="select" sortOrder="101" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Max Installments</label>
-            <source_model>Koin\Payment\Model\Adminhtml\Source\Installments</source_model>
+            <source_model>Koin\Payment\Model\Config\Source\Installments</source_model>
             <config_path>payment/koin_cc/max_installments</config_path>
             <depends>
                 <field id="enable_default_installment">1</field>
@@ -127,7 +127,7 @@
 
         <field id="max_installments_without_interest" translate="label" type="select" sortOrder="102" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Max Installments Without Interest</label>
-            <source_model>Koin\Payment\Model\Adminhtml\Source\Installments</source_model>
+            <source_model>Koin\Payment\Model\Config\Source\Installments</source_model>
             <config_path>payment/koin_cc/max_installments_without_interest</config_path>
             <depends>
                 <field id="enable_default_installment">1</field>
@@ -154,7 +154,7 @@
 
         <field id="interest_type" translate="label" type="select" sortOrder="201" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Interest Type</label>
-            <source_model>Koin\Payment\Model\Adminhtml\Source\InterestType</source_model>
+            <source_model>Koin\Payment\Model\Config\Source\InterestType</source_model>
             <config_path>payment/koin_cc/interest_type</config_path>
             <depends>
                 <field id="has_interest">1</field>

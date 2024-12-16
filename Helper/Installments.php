@@ -21,9 +21,12 @@
 namespace Koin\Payment\Helper;
 
 use Koin\Payment\Model\InstallmentsRules\Validator;
+use Magento\Catalog\Model\Product;
+use Magento\Checkout\Model\Cart;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Quote\Model\Quote\Item;
 
 /**
  * Installments data helper, prepared for Koin Transparent
@@ -45,15 +48,23 @@ class Installments extends AbstractHelper
     /** @var Validator */
     protected $ruleValidator;
 
+    /** @var Cart */
+    protected $cart;
+
+    /** @var array */
+    protected $cartAttributeSetIds;
+
     public function __construct(
         Context $context,
         PriceCurrencyInterface $priceCurrency,
         Validator $ruleValidator,
-        Data $helper
+        Data $helper,
+        Cart $cart
     ) {
         $this->priceCurrency = $priceCurrency;
         $this->helper = $helper;
         $this->ruleValidator = $ruleValidator;
+        $this->cart = $cart;
         parent::__construct($context);
     }
 
@@ -70,6 +81,14 @@ class Installments extends AbstractHelper
             if ($rules->count() > 0) {
                 /** @var \Koin\Payment\Model\InstallmentsRules $rule */
                 foreach ($rules as $rule) {
+                    if ($rule->getProductSetIds()) {
+                        $attributeSetIds = $this->getCartAttributeSetIds();
+                        $productSetIds = explode(',', $rule->getProductSetIds());
+                        if (!array_intersect($attributeSetIds, $productSetIds)) {
+                            continue;
+                        }
+                    }
+
                     $interestType = $this->helper->getCcConfig('interest_type');
 
                     $allInstallments = $this->getInstallments(
@@ -326,6 +345,29 @@ class Installments extends AbstractHelper
             $this->logError($e->getMessage());
         }
         return 0;
+    }
+
+    protected function getCartAttributeSetIds(): array
+    {
+        if (!$this->cartAttributeSetIds) {
+            $this->cartAttributeSetIds = [];
+            $cart = $this->cart->getQuote();
+            if ($cart) {
+                /** @var Item $item */
+                foreach ($cart->getAllItems() as $item) {
+                    /** @var Product $product */
+                    $product = $item->getProduct();
+                    if ($product) {
+                        $productSetId = $product->getAttributeSetId();
+                        if ($productSetId) {
+                            $this->cartAttributeSetIds[] = $productSetId;
+                        }
+                    }
+                }
+            }
+            return $this->cartAttributeSetIds;
+        }
+        return [];
     }
 
     protected function logError(string $message): void

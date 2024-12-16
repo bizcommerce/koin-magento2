@@ -74,15 +74,15 @@ class Save extends Rule
      */
     public function execute()
     {
-        $installmentsRulePostData = $this->getRequest()->getPostValue();
-        if ($installmentsRulePostData) {
+        $rulesPostData = $this->getRequest()->getPostValue();
+        if ($rulesPostData) {
             $installmentsRule = $this->initRule();
-            $installmentsRulePostData['store_ids'] = implode(',', $installmentsRulePostData['store_ids']);
-            if (isset($installmentsRulePostData['entity_id']) && !$installmentsRulePostData['entity_id']) {
-                unset($installmentsRulePostData['entity_id']);
-            }
+            $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'store_ids');
+            $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'customer_group_ids');
+            $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'product_set_ids');
+            $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'days_of_week');
 
-            $installmentsRule->addData($installmentsRulePostData);
+            $installmentsRule->addData($rulesPostData);
 
             try {
                 $this->ruleRepository->save($installmentsRule);
@@ -101,5 +101,15 @@ class Save extends Rule
         }
 
         return $this->_redirect($this->_redirect->getRefererUrl());
+    }
+
+    protected function filterMultiSelectValues(array $data, string $field): array
+    {
+        $data[$field] = $data[$field] ? trim(implode(',', $data[$field])) : '';
+        if (!$data[$field]) {
+            $data[$field] = null;
+        }
+
+        return $data;
     }
 }

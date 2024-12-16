@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Biz
  *
@@ -24,7 +25,7 @@ namespace Koin\Payment\Model\Config\Source;
 use Magento\Payment\Model\MethodInterface;
 
 /**
- * Class PaymentAction
+ * Class ChargingType
  */
 class ChargingType implements \Magento\Framework\Data\OptionSourceInterface
 {
