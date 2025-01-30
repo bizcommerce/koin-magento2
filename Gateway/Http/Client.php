@@ -104,7 +104,7 @@ class Client
     {
         $headers = $this->getDefaultHeaders($storeId);
 
-        $strategy = $this->helper->getGeneralConfig('cc_3ds_strategy', $storeId);
+        $strategy = $this->helper->getGeneralConfig('sandbox_3ds_strategy', $storeId);
         $header = ($strategy == ThreeDSStrategy::CHALLENGE) ? '3DS2CHALLENGE' : '3DS2FRICTIONLESS';
         $headers['xdesp-mock-risk-juggler'] = 'verdict=inprogress|strategy=' . $header;
 
@@ -170,7 +170,7 @@ class Client
     {
         $apiType = $this->getApiType();
         $api = $this->getApi($path, $apiType, $storeId);
-        if ($this->helper->getGeneralConfig('use_3ds')) {
+        if ($this->helper->getGeneralConfig('use_sandbox_3ds')) {
             $api->setHeaders($this->get3DSHeaders($storeId));
         }
 

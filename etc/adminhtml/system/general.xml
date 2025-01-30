@@ -81,6 +81,27 @@
                 <comment><![CDATA[If enabled, the transaction will be done in Koin test environment]]></comment>
                 <tooltip>In order to work properly all sandbox orders, you'll need to use the header 'xdesp-sandbox: true' during your navigation</tooltip>
             </field>
+
+            <field id="use_sandbox_3ds" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Use Sandbox 3DS for Card transactions</label>
+                <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                <config_path>koin/general/use_sandbox_3ds</config_path>
+                <depends>
+                    <field id="use_sandbox">1</field>
+                </depends>
+                <comment><![CDATA[If enabled, SANDBOX credit card transactions will be done with 3DS header]]></comment>
+            </field>
+
+            <field id="sandbox_3ds_strategy" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>3DS strategy</label>
+                <source_model>Koin\Payment\Model\Config\Source\ThreeDSStrategy</source_model>
+                <config_path>koin/general/sandbox_3ds_strategy</config_path>
+                <depends>
+                    <field id="use_sandbox">1</field>
+                    <field id="use_sandbox_3ds">1</field>
+                </depends>
+                <comment><![CDATA[Challenge: with an OTP Challenge; Frictionless: without challenge to customer]]></comment>
+            </field>
         </group>
 
         <group id="koin_address" translate="label" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
