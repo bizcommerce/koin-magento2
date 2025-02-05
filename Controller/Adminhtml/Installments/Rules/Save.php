@@ -76,6 +76,9 @@ class Save extends Rule
     {
         $rulesPostData = $this->getRequest()->getPostValue();
         if ($rulesPostData) {
+            if (!$rulesPostData['entity_id']) {
+                unset($rulesPostData['entity_id']);
+            }
             $installmentsRule = $this->initRule();
             $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'store_ids');
             $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'customer_group_ids');
