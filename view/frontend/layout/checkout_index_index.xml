@@ -55,7 +55,8 @@
         </referenceBlock>
 
         <referenceContainer name="before.body.end">
-            <block class="Koin\Payment\Block\Checkout\Fingerprint" template="Koin_Payment::checkout/fingerprint.phtml" name="koin.payment.fingerprint" after="-"/>
+            <block class="Magento\Framework\View\Element\Template" ifconfig="payment/koin_redirect/active" template="Koin_Payment::checkout/bnpl/banner.phtml" name="koin.payment.bnpl.banner" after="-" />
+            <block class="Koin\Payment\Block\Checkout\Fingerprint" template="Koin_Payment::checkout/fingerprint.phtml" name="koin.payment.fingerprint" after="-" />
         </referenceContainer>
     </body>
 </page>
