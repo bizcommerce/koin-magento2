@@ -104,7 +104,7 @@ class Installments extends AbstractHelper
                         $rule->getShowInstallments(),
                         $rule->getDescription()
                     );
-                    $ruleInstallments = array_merge($allInstallments, $ruleInstallments);
+                    $allInstallments = array_merge($allInstallments, $ruleInstallments);
                 }
 
                 ksort($allInstallments);
