@@ -102,7 +102,8 @@ class Validator
         $today = $this->timeZone->date()->format('w');
         $collection->addFieldToFilter('days_of_week', [
             ['finset' => $today],
-            ['empty' => true]
+            ['empty' => true],
+            ['null' => true]
         ]);
 
         if ($creditCardNumber) {
