@@ -91,8 +91,7 @@ class Installments extends AbstractHelper
 
                     $interestType = $this->helper->getCcConfig('interest_type');
 
-                    $allInstallments = $this->getInstallments(
-                        $allInstallments,
+                    $ruleInstallments = $this->getInstallments(
                         $rule->getMinimumInstallmentAmount(),
                         $total,
                         $rule->getMaxInstallments() ?: 1,
@@ -105,6 +104,7 @@ class Installments extends AbstractHelper
                         $rule->getShowInstallments(),
                         $rule->getDescription()
                     );
+                    $ruleInstallments = array_merge($allInstallments, $ruleInstallments);
                 }
 
                 ksort($allInstallments);
@@ -130,7 +130,6 @@ class Installments extends AbstractHelper
                 $defaultInterestRate = (float) $this->helper->getCcConfig('interest_rate');
 
                 $allInstallments = $this->getInstallments(
-                    $allInstallments,
                     $minInstallmentAmount,
                     $total,
                     $maxInstallments,
@@ -268,7 +267,6 @@ class Installments extends AbstractHelper
     }
 
     public function getInstallments(
-        array $allInstallments,
         float $minInstallmentAmount,
         float $total,
         int $maxInstallments,
@@ -281,6 +279,7 @@ class Installments extends AbstractHelper
         bool $showInstallments = false,
         string $description = ''
     ): array {
+        $allInstallments = [];
         if ($minInstallmentAmount > 0) {
             while ($maxInstallments > ($total / $minInstallmentAmount)) {
                 $maxInstallments--;
@@ -301,12 +300,22 @@ class Installments extends AbstractHelper
             );
             $value = $this->getInstallmentPrice($total, $i, $hasInterest, $interestRate, $interestType);
             $grandTotal = $total;
+
             if (!$hasInterest) {
                 $interestRate = 0;
             } elseif ($hasInterest && $interestRate > 0) {
                 $grandTotal = round($value * $i, 2);
             }
-            $allInstallments[] = $this->getInstallmentItem($i, $interestRate, $value, $grandTotal, $ruleId, $showInstallments, $description);
+
+            $allInstallments[] = $this->getInstallmentItem(
+                $i,
+                $interestRate,
+                $value,
+                $grandTotal,
+                $ruleId,
+                $showInstallments,
+                $description
+            );
         }
         return $allInstallments;
     }
