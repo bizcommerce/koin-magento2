@@ -52,7 +52,7 @@ class Installments extends AbstractHelper
     protected $cart;
 
     /** @var array */
-    protected $cartAttributeSetIds;
+    protected $cartAttributeSetIds = [];
 
     public function __construct(
         Context $context,
@@ -358,8 +358,7 @@ class Installments extends AbstractHelper
 
     protected function getCartAttributeSetIds(): array
     {
-        if (!$this->cartAttributeSetIds) {
-            $this->cartAttributeSetIds = [];
+        if (empty($this->cartAttributeSetIds)) {
             $cart = $this->cart->getQuote();
             if ($cart) {
                 /** @var Item $item */
@@ -374,9 +373,8 @@ class Installments extends AbstractHelper
                     }
                 }
             }
-            return $this->cartAttributeSetIds;
         }
-        return [];
+        return $this->cartAttributeSetIds;
     }
 
     protected function logError(string $message): void
