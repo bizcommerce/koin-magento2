@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Biz
  *
@@ -19,15 +20,13 @@
  * @license     https://www.bizcommerce.com.br/LICENSE.txt
  */
 
-namespace Koin\Payment\Model\Adminhtml\Source;
+namespace Koin\Payment\Model\Config\Source;
 
-use Magento\Payment\Model\MethodInterface;
-
-/**
- * Class PaymentAction
- */
-class PaymentAction implements \Magento\Framework\Data\OptionSourceInterface
+class ThreeDSStrategy implements \Magento\Framework\Data\OptionSourceInterface
 {
+    public const CHALLENGE = 'challenge';
+
+    public const FRICTIONLESS = 'frictionless';
     /**
      * {@inheritdoc}
      */
@@ -35,12 +34,12 @@ class PaymentAction implements \Magento\Framework\Data\OptionSourceInterface
     {
         return [
             [
-                'value' => MethodInterface::ACTION_AUTHORIZE,
-                'label' => __('Authorize')
+                'value' => self::CHALLENGE,
+                'label' => __('Challenge')
             ],
             [
-                'value' => MethodInterface::ACTION_ORDER,
-                'label' => __('Authorize and Capture')
+                'value' => self::FRICTIONLESS,
+                'label' => __('Frictionless')
             ]
         ];
     }

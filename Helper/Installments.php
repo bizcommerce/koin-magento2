@@ -21,9 +21,12 @@
 namespace Koin\Payment\Helper;
 
 use Koin\Payment\Model\InstallmentsRules\Validator;
+use Magento\Catalog\Model\Product;
+use Magento\Checkout\Model\Cart;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Quote\Model\Quote\Item;
 
 /**
  * Installments data helper, prepared for Koin Transparent
@@ -45,30 +48,50 @@ class Installments extends AbstractHelper
     /** @var Validator */
     protected $ruleValidator;
 
+    /** @var Cart */
+    protected $cart;
+
+    /** @var array */
+    protected $cartAttributeSetIds = [];
+
     public function __construct(
         Context $context,
         PriceCurrencyInterface $priceCurrency,
         Validator $ruleValidator,
-        Data $helper
+        Data $helper,
+        Cart $cart
     ) {
         $this->priceCurrency = $priceCurrency;
         $this->helper = $helper;
         $this->ruleValidator = $ruleValidator;
+        $this->cart = $cart;
         parent::__construct($context);
     }
 
     public function getAllInstallments(float $total = 0, string $ccNumber = '', int $storeId = 0): array
     {
-        $allInstallments = $this->getDefaultInstallments($total);
+        $allInstallments = [];
+
+        if ($this->helper->getCcConfig('enable_default_installment')) {
+            $allInstallments = $this->getDefaultInstallments($total);
+        }
+
         try {
             $rules = $this->ruleValidator->getRules($total, $ccNumber, $storeId);
             if ($rules->count() > 0) {
                 /** @var \Koin\Payment\Model\InstallmentsRules $rule */
                 foreach ($rules as $rule) {
+                    if ($rule->getProductSetIds()) {
+                        $attributeSetIds = $this->getCartAttributeSetIds();
+                        $productSetIds = explode(',', $rule->getProductSetIds());
+                        if (!array_intersect($attributeSetIds, $productSetIds)) {
+                            continue;
+                        }
+                    }
+
                     $interestType = $this->helper->getCcConfig('interest_type');
 
-                    $allInstallments = $this->getInstallments(
-                        $allInstallments,
+                    $ruleInstallments = $this->getInstallments(
                         $rule->getMinimumInstallmentAmount(),
                         $total,
                         $rule->getMaxInstallments() ?: 1,
@@ -81,6 +104,7 @@ class Installments extends AbstractHelper
                         $rule->getShowInstallments(),
                         $rule->getDescription()
                     );
+                    $allInstallments = array_merge($allInstallments, $ruleInstallments);
                 }
 
                 ksort($allInstallments);
@@ -106,7 +130,6 @@ class Installments extends AbstractHelper
                 $defaultInterestRate = (float) $this->helper->getCcConfig('interest_rate');
 
                 $allInstallments = $this->getInstallments(
-                    $allInstallments,
                     $minInstallmentAmount,
                     $total,
                     $maxInstallments,
@@ -244,7 +267,6 @@ class Installments extends AbstractHelper
     }
 
     public function getInstallments(
-        array $allInstallments,
         float $minInstallmentAmount,
         float $total,
         int $maxInstallments,
@@ -257,6 +279,7 @@ class Installments extends AbstractHelper
         bool $showInstallments = false,
         string $description = ''
     ): array {
+        $allInstallments = [];
         if ($minInstallmentAmount > 0) {
             while ($maxInstallments > ($total / $minInstallmentAmount)) {
                 $maxInstallments--;
@@ -277,12 +300,22 @@ class Installments extends AbstractHelper
             );
             $value = $this->getInstallmentPrice($total, $i, $hasInterest, $interestRate, $interestType);
             $grandTotal = $total;
+
             if (!$hasInterest) {
                 $interestRate = 0;
             } elseif ($hasInterest && $interestRate > 0) {
                 $grandTotal = round($value * $i, 2);
             }
-            $allInstallments[] = $this->getInstallmentItem($i, $interestRate, $value, $grandTotal, $ruleId, $showInstallments, $description);
+
+            $allInstallments[] = $this->getInstallmentItem(
+                $i,
+                $interestRate,
+                $value,
+                $grandTotal,
+                $ruleId,
+                $showInstallments,
+                $description
+            );
         }
         return $allInstallments;
     }
@@ -321,6 +354,27 @@ class Installments extends AbstractHelper
             $this->logError($e->getMessage());
         }
         return 0;
+    }
+
+    protected function getCartAttributeSetIds(): array
+    {
+        if (empty($this->cartAttributeSetIds)) {
+            $cart = $this->cart->getQuote();
+            if ($cart) {
+                /** @var Item $item */
+                foreach ($cart->getAllItems() as $item) {
+                    /** @var Product $product */
+                    $product = $item->getProduct();
+                    if ($product) {
+                        $productSetId = $product->getAttributeSetId();
+                        if ($productSetId) {
+                            $this->cartAttributeSetIds[] = $productSetId;
+                        }
+                    }
+                }
+            }
+        }
+        return $this->cartAttributeSetIds;
     }
 
     protected function logError(string $message): void

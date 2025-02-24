@@ -100,6 +100,7 @@ class TransactionHandler implements HandlerInterface
         $payment = $paymentData->getPayment();
         $payment = $this->helperOrder->updateDefaultAdditionalInfo($payment, $transaction);
         $payment = $this->helperOrder->updateCreditCardAdditionalInformation($payment, $transaction);
+        $payment = $this->helperOrder->update3DSAdditionalInformation($payment, $transaction);
         $payment->setIsTransactionClosed(false);
         $status = $payment->getConfigData('order_status');
         $state = $this->helperOrder->getPaymentStatusState($payment);

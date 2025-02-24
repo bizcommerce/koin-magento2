@@ -22,28 +22,26 @@
 
 namespace Koin\Payment\Model\Config\Source;
 
-use Magento\Framework\Data\OptionSourceInterface;
-
-class InterestType implements OptionSourceInterface
+class InterestType implements \Magento\Framework\Data\OptionSourceInterface
 {
-    private \Koin\Payment\Model\Adminhtml\Source\InterestType $interestType;
-
-    public function __construct(
-        \Koin\Payment\Model\Adminhtml\Source\InterestType $interestType
-    ) {
-        $this->interestType = $interestType;
-    }
-
     public function toOptionArray()
     {
+        return [
+            'per_installments' => __('Per Installments'),
+            'price' => __('Amortization'),
+            'compound' => __('Compound'),
+            'simple' => __('Simple')
+        ];
+    }
+
+    public function toArray(): array
+    {
         $options = [];
-        foreach ($this->interestType->toOptionArray() as $value => $label) {
-            if ($value !== 'per_installments') {
-                $options[] = [
-                    'value' => $value,
-                    'label' => $label
-                ];
-            }
+        foreach ($this->toOptionArray() as $value => $label) {
+            $options[] = [
+                'value' => $value,
+                'label' => $label
+            ];
         }
         return $options;
     }

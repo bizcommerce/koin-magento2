@@ -50,6 +50,7 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
     {
         // Set headers for Server-Sent Events
         $orderId = $this->getRequest()->getParam('oId');
+        $hash = hash('sha512', $orderId);
 
         $count = 0;
         if ($orderId) {
@@ -68,10 +69,11 @@ class Status extends Action implements HttpGetActionInterface, CsrfAwareActionIn
                     'order_status' => $order->getStatus(),
                     'payment_status' => $payment->getAdditionalInformation('status'),
                     'qr_code' => $payment->getAdditionalInformation('qr_code') ?? '',
+                    'hash' => $hash,
                     'is_paid' => $payment->getAdditionalInformation('status') == Api::STATUS_COLLECTED
                 ];
 
-                $data =  "event: koin-pix\n" .
+                $data =  "event: koin-payment-status\n" .
                     "data: " . json_encode($result) . "\n\n";
                 $response->setBody($data);
                 $response->sendResponse();

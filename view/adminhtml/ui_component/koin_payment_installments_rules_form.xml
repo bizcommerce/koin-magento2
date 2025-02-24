@@ -264,7 +264,7 @@
             <formElements>
                 <select>
                     <settings>
-                        <options class="Koin\Payment\Model\Config\Source\InterestType"/>
+                        <options class="Koin\Payment\Model\Config\Source\InstallmentRules\InterestType"/>
                     </settings>
                 </select>
             </formElements>
@@ -276,6 +276,18 @@
                 <label translate="true">Interest Rate</label>
                 <notice translate="true">Use dot as a decimal separator, e.g.: 100.00</notice>
                 <dataScope>interest_rate</dataScope>
+            </settings>
+        </field>
+
+        <field name="priority" sortOrder="200" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Priority</label>
+                <dataScope>priority</dataScope>
+                <validation>
+                    <rule name="validate-number" xsi:type="boolean">true</rule>
+                    <rule name="validate-digits" xsi:type="boolean">true</rule>
+                </validation>
             </settings>
         </field>
 
@@ -332,7 +344,61 @@
             </settings>
         </field>
 
-        <field name="minimum_amount" sortOrder="110" formElement="input">
+        <field name="customer_group_ids" sortOrder="110" formElement="multiselect">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Customer Groups Allowed</label>
+                <dataScope>customer_group_ids</dataScope>
+                <notice translate="true">Empty means it'll not filter by this field</notice>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <caption translate="true">...</caption>
+                        <options class="Koin\Payment\Model\Config\Source\Customer\Groups"/>
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+
+        <field name="product_set_ids" sortOrder="120" formElement="multiselect">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Product Sets Allowed</label>
+                <dataScope>product_set_ids</dataScope>
+                <notice translate="true">Empty means it'll not filter by this field</notice>
+                <tooltip>
+                    <description translate="true">It is important to take into account that selecting specific product groups could affect performance</description>
+                </tooltip>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <caption translate="true">...</caption>
+                        <options class="Koin\Payment\Model\Config\Source\InstallmentRules\ProductSets"/>
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+
+        <field name="days_of_week" sortOrder="140" formElement="multiselect">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Days of the Week</label>
+                <dataScope>days_of_week</dataScope>
+                <notice translate="true">Empty means it'll not filter by this field</notice>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <caption translate="true">...</caption>
+                        <options class="Koin\Payment\Model\Config\Source\InstallmentRules\DaysOfWeek" />
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+
+        <field name="minimum_amount" sortOrder="200" formElement="input">
             <settings>
                 <dataType>text</dataType>
                 <label translate="true">Minimum Order Amount</label>
@@ -341,7 +407,7 @@
             </settings>
         </field>
 
-        <field name="maximum_amount" sortOrder="120" formElement="input">
+        <field name="maximum_amount" sortOrder="210" formElement="input">
             <settings>
                 <dataType>text</dataType>
                 <label translate="true">Maximum Order Amount</label>
@@ -349,6 +415,5 @@
                 <dataScope>maximum_amount</dataScope>
             </settings>
         </field>
-
     </fieldset>
 </form>

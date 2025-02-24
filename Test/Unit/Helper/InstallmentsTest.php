@@ -144,6 +144,7 @@ class InstallmentsTest extends TestCase
     public function testGetAllInstallmentsWithMinimumOfTwo()
     {
         $this->mockDataHelper([
+            'enable_default_installment' => '1',
             'min_installments' => '2',
             'max_installments' => '5',
             'minimum_installment_amount' => '30',
@@ -208,6 +209,7 @@ class InstallmentsTest extends TestCase
     public function testGetAllInstallmentsWithMinimumOfThree()
     {
         $this->mockDataHelper([
+            'enable_default_installment' => '1',
             'min_installments' => '3',
             'max_installments' => '5',
             'minimum_installment_amount' => '30',

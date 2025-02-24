@@ -121,3 +121,18 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Refactor: improved performance on checkout installment rules
 - Refactor: removed arrow function for compatibility with PHP 7.1, 7.2 and 7.3
 - Fix: save installment options on BNPL callbacks
+
+### v2.9.0
+- Feat: added 3DSv2 support
+- Feat: added new languages files, es_CO and es_MX
+
+### v2.10.0
+- Feat: Installments rules have priorities
+- Feat: Config to no use default installments and use installments rules only, instead
+- Feat: Use customer group to filter installments rules
+- Feat: Use Product Set ID to filter installments rules
+- Feat: Use day of the week for installments rules
+- Feat: Use credit card brand for installments rules
+
+### v2.10.1
+- Fix: error when filtering installments rules by product set

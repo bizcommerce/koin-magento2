@@ -29,7 +29,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\Source;
 use Magento\Payment\Helper\Data as PaymentHelper;
 use Magento\Payment\Model\CcConfig;
-use Koin\Payment\Model\Adminhtml\Source\CcType as SourceCcType;
+use Koin\Payment\Model\Config\Source\CcType as SourceCcType;
 use Magento\Payment\Model\CcGenericConfigProvider;
 
 /**

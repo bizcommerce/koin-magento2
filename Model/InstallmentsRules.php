@@ -184,6 +184,56 @@ class InstallmentsRules extends AbstractModel implements InstallmentsRulesInterf
         $this->setData(self::INTEREST_RATE, $interestRate);
     }
 
+    public function getPriority(): int
+    {
+        return (int) $this->getData(self::PRIORITY);
+    }
+
+    public function setPriority(int $priority): void
+    {
+        $this->setData(self::PRIORITY, $priority);
+    }
+
+    public function getCustomerGroupIds(): string
+    {
+        return (string) $this->getData(self::CUSTOMER_GROUP_IDS);
+    }
+
+    public function setCustomerGroupIds(string $customerGroupIds): void
+    {
+        $this->setData(self::CUSTOMER_GROUP_IDS, $customerGroupIds);
+    }
+
+    public function getProductSetIds(): string
+    {
+        return (string) $this->getData(self::PRODUCT_SET_IDS);
+    }
+
+    public function setProductSetIds(string $productSetIds): void
+    {
+        $this->setData(self::PRODUCT_SET_IDS, $productSetIds);
+    }
+
+    public function getCreditCardBrands(): string
+    {
+        return (string) $this->getData(self::CREDIT_CARD_BRANDS);
+    }
+
+    public function setCreditCardBrands(string $creditCardBrands): void
+    {
+        $this->setData(self::CREDIT_CARD_BRANDS, $creditCardBrands);
+    }
+
+    public function getDaysOfWeek(): string
+    {
+        return (string) $this->getData(self::DAYS_OF_WEEK);
+    }
+
+    public function setDaysOfWeek(string $daysOfWeek): void
+    {
+        $this->setData(self::DAYS_OF_WEEK, $daysOfWeek);
+    }
+
     public function getStartDate(): string
     {
         return (string) $this->getData(self::START_DATE);

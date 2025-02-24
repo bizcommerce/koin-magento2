@@ -88,33 +88,16 @@ $secondsInFuture = $block->getExpiration() - time();
         </dd>
     <?php endif;?>
 </dl>
+
 <?= $block->getChildHtml() ?>
 
 <?php if ($payment->getAdditionalInformation('status') === $block->getPendingStatus()): ?>
     <?php if ($payment->getParentId()): ?>
         <?php
         $orderUrl = $block->getUrl('sales/order/view', ['order_id' => $payment->getParentId()]);
-        $statusUrl = $block->getUrl('koin/payment/status', ['oId' => $payment->getParentId()]);
         ?>
         <script>
             koin.countdown(<?= $secondsInFuture ?>, '<?= $orderUrl; ?>');
-        </script>
-        <script>
-            require(['jquery'], function($) {
-                const eventSource = new EventSource(`<?= $statusUrl ?>`);
-                eventSource.addEventListener('koin-pix', function(event) {
-                    const data = JSON.parse(event.data);
-                    if (data.is_paid) {
-                        $(document.body).trigger('processStart');
-                        $('.koin-exp-time').hide();
-                        window.location.href = '<?= $orderUrl; ?>';
-                    }
-                });
-
-                eventSource.onerror = function() {
-                    eventSource.close();
-                };
-            });
         </script>
     <?php endif ?>
 <?php endif; ?>
