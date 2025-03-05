@@ -70,6 +70,7 @@
                 <model>KoinRedirectFacade</model>
                 <code>BNPL</code>
                 <title>BNPL</title>
+                <group>koin_payment</group>
                 <expiration_time>3600</expiration_time>
                 <use_default_checkout_instructions>1</use_default_checkout_instructions>
                 <payment_action>order</payment_action>
@@ -109,6 +110,7 @@
                 <model>KoinPixFacade</model>
                 <code>PIX</code>
                 <title>Pix</title>
+                <group>koin_payment</group>
                 <store_code>adobe</store_code>
                 <use_default_checkout_instructions>1</use_default_checkout_instructions>
                 <checkout_instructions>Você receberá o QRCode para efetuar o pagamento após finalizar o pedido</checkout_instructions>
@@ -144,6 +146,7 @@
                 <model>KoinPaymentCreditCardFacade</model>
                 <code>CARD</code>
                 <title>Cartão de Crédito</title>
+                <group>koin_payment</group>
                 <charging_type>authorize</charging_type>
                 <payment_action>order</payment_action>
                 <order_status>pending</order_status>
