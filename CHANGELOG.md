@@ -136,3 +136,13 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.10.1
 - Fix: error when filtering installments rules by product set
+
+### v2.11.0
+- Feat: added 3DS feature to credit card
+- Added new rules for installments
+
+### v2.11.1
+- Fix: remove unused extension attributes
+
+### v2.11.2
+- Fix: new link to BNPL checkout's banner 
