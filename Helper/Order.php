@@ -240,16 +240,14 @@ class Order extends \Magento\Payment\Helper\Data
     public function invoiceOrder(SalesOrder $order, $amount): SalesOrder
     {
         if ($amount == $order->getBaseGrandTotal()) {
-            /** @var Invoice $invoice */
-            $invoice = $order->prepareInvoice();
-            $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
-            $invoice->register();
-            $invoice->pay();
-            $this->invoiceRepository->save($invoice);
-            $order = $invoice->getOrder();
+            /** @var Payment $payment */
+            $payment = $order->getPayment();
+            $payment->setParentTransactionId($payment->getLastTransId());
+            $payment->registerCaptureNotification($order->getBaseGrandTotal());
 
             // Update the order
-            $order->getPayment()->setAdditionalInformation('captured', true);
+            $payment->setAdditionalInformation('captured', true);
+            return $payment->getOrder();
         }
         return $order;
     }
