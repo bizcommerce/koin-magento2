@@ -51,13 +51,6 @@ class OrderSaveAfter implements ObserverInterface
 
         try {
             if ($originalState != $order->getState()) {
-
-                if ($order->getState() == Order::STATE_COMPLETE) {
-                    if ($this->helper->getAntifraudConfig('active')) {
-                        $this->helperAntifraud->notification($order);
-                    }
-                }
-
                 if ($order->getState() == Order::STATE_CLOSED) {
                     if ($this->helper->getAntifraudConfig('active')) {
                         $this->helperAntifraud->removeAntifraud($order);
@@ -65,6 +58,7 @@ class OrderSaveAfter implements ObserverInterface
                 }
 
                 $this->notifyOrder($order);
+                $this->notifyAntifraud($order);
             }
 
             $this->addToQueue($order);
@@ -120,6 +114,28 @@ class OrderSaveAfter implements ObserverInterface
                     $order,
                     $notificationStatus
                 );
+            }
+        }
+    }
+
+    /**
+     * @param Order $order
+     * @return void
+     */
+    public function notifyAntifraud(Order $order): void
+    {
+        $notificationStatus = '';
+        if ($order->getState() == Order::STATE_COMPLETE) {
+            $notificationStatus = 'FINALIZED';
+        } elseif ($order->getState() == Order::STATE_CLOSED) {
+            $notificationStatus = 'REFUNDED';
+        } elseif ($order->getState() == Order::STATE_CANCELED) {
+            $notificationStatus = 'CANCELLED';
+        }
+
+        if ($notificationStatus !== '') {
+            if ($this->helper->getAntifraudConfig('active')) {
+                $this->helperAntifraud->notification($order, $notificationStatus);
             }
         }
     }
