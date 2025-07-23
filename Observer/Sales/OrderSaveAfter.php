@@ -51,12 +51,6 @@ class OrderSaveAfter implements ObserverInterface
 
         try {
             if ($originalState != $order->getState()) {
-                if ($order->getState() == Order::STATE_CLOSED) {
-                    if ($this->helper->getAntifraudConfig('active')) {
-                        $this->helperAntifraud->removeAntifraud($order);
-                    }
-                }
-
                 $this->notifyOrder($order);
                 $this->notifyAntifraud($order);
             }
@@ -93,6 +87,20 @@ class OrderSaveAfter implements ObserverInterface
         }
     }
 
+    private function getNotificationStatusForState(string $state): string
+    {
+        switch ($state) {
+            case Order::STATE_COMPLETE:
+                return 'FINALIZED';
+            case Order::STATE_CLOSED:
+                return 'REFUNDED';
+            case Order::STATE_CANCELED:
+                return 'CANCELLED';
+            default:
+                return '';
+        }
+    }
+
     /**
      * @param Order $order
      * @return void
@@ -100,14 +108,7 @@ class OrderSaveAfter implements ObserverInterface
     public function notifyOrder(Order $order): void
     {
         if ($order->getPayment()->getMethod() == \Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE) {
-            $notificationStatus = '';
-            if ($order->getState() == Order::STATE_COMPLETE) {
-                $notificationStatus = 'FINALIZED';
-            } elseif ($order->getState() == Order::STATE_CLOSED) {
-                $notificationStatus = 'REFUNDED';
-            } elseif ($order->getState() == Order::STATE_CANCELED) {
-                $notificationStatus = 'CANCELLED';
-            }
+            $notificationStatus = $this->getNotificationStatusForState($order->getState());
 
             if ($notificationStatus !== '') {
                 $this->helperOrder->notification(
@@ -118,25 +119,12 @@ class OrderSaveAfter implements ObserverInterface
         }
     }
 
-    /**
-     * @param Order $order
-     * @return void
-     */
     public function notifyAntifraud(Order $order): void
     {
-        $notificationStatus = '';
-        if ($order->getState() == Order::STATE_COMPLETE) {
-            $notificationStatus = 'FINALIZED';
-        } elseif ($order->getState() == Order::STATE_CLOSED) {
-            $notificationStatus = 'REFUNDED';
-        } elseif ($order->getState() == Order::STATE_CANCELED) {
-            $notificationStatus = 'CANCELLED';
-        }
+        $notificationStatus = $this->getNotificationStatusForState($order->getState());
 
-        if ($notificationStatus !== '') {
-            if ($this->helper->getAntifraudConfig('active')) {
-                $this->helperAntifraud->notification($order, $notificationStatus);
-            }
+        if ($notificationStatus !== '' && $this->helper->getAntifraudConfig('active')) {
+            $this->helperAntifraud->notification($order, $notificationStatus);
         }
     }
 }
