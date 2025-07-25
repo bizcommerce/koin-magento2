@@ -87,8 +87,9 @@ class OrderSaveAfter implements ObserverInterface
         }
     }
 
-    private function getNotificationStatusForState(string $state): string
+    private function getNotificationStatusForState(Order $order): string
     {
+        $state = $order->getState();
         switch ($state) {
             case Order::STATE_COMPLETE:
                 return 'FINALIZED';
@@ -96,6 +97,13 @@ class OrderSaveAfter implements ObserverInterface
                 return 'REFUNDED';
             case Order::STATE_CANCELED:
                 return 'CANCELLED';
+            case Order::STATE_PROCESSING:
+                // Check if order is fully paid by comparing total invoiced with grand total
+                // or if total due is zero (meaning no payment is due - order is paid)
+                if ($order->getTotalInvoiced() >= $order->getGrandTotal() || $order->getTotalDue() == 0) {
+                    return 'COLLECTED';
+                }
+                return 'AUTHORIZED';
             default:
                 return '';
         }
@@ -108,7 +116,7 @@ class OrderSaveAfter implements ObserverInterface
     public function notifyOrder(Order $order): void
     {
         if ($order->getPayment()->getMethod() == \Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE) {
-            $notificationStatus = $this->getNotificationStatusForState($order->getState());
+            $notificationStatus = $this->getNotificationStatusForState($order);
 
             if ($notificationStatus !== '') {
                 $this->helperOrder->notification(
@@ -121,10 +129,21 @@ class OrderSaveAfter implements ObserverInterface
 
     public function notifyAntifraud(Order $order): void
     {
-        $notificationStatus = $this->getNotificationStatusForState($order->getState());
+        if ($this->helper->getAntifraudConfig('active')) {
+            $notificationStatus = $this->getNotificationStatusForState($order);
+            $afStatus = $order->getPayment()->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
 
-        if ($notificationStatus !== '' && $this->helper->getAntifraudConfig('active')) {
-            $this->helperAntifraud->notification($order, $notificationStatus);
+            if ($notificationStatus !== '' && $notificationStatus !== $afStatus) {
+                try {
+                    $this->helperAntifraud->notification($order, $notificationStatus);
+                    $order->getPayment()->setAdditionalInformation(
+                        'koin_antifraud_notification_status',
+                        $notificationStatus
+                    );
+                } catch (\Exception $e) {
+                    $this->helper->log('Failed to send antifraud notification: ' . $e->getMessage());
+                }
+            }
         }
     }
 }
