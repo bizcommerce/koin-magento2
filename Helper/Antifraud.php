@@ -264,7 +264,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                             'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
                         ];
 
-                        $this->notify($evaluationId, $requestData, [], $order->getStoreId());
+                        $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
                     }
                 }
             }
@@ -288,7 +288,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                         'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
                     ];
 
-                    $this->notify($evaluationId, $requestData, [], $order->getStoreId());
+                    $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
                 }
             }
         }
