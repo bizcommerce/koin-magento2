@@ -672,7 +672,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         $data['address'] = $this->getAddressData($address);
         $data['phone'] = $this->getPhoneNumber($address);
         $data['document'] = [
-            'number' => $this->helperData->clearNumber($taxVat),
+            'number' => $this->helperData->clearNumber((string) $taxVat),
             'type' => $documentType
         ];
 
