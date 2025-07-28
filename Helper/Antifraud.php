@@ -281,7 +281,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             /** @var \Koin\Payment\Model\Antifraud $antifraud */
             foreach ($collection as $antifraud) {
                 $evaluationId = $antifraud->getEvaluationId();
-                if ($antifraud->getStatus() != 'received') {
+                if ($evaluationId && $antifraud->getStatus() != 'received') {
                     $requestData = [
                         'type' => 'STATUS',
                         'sub_type' => $status,
