@@ -288,6 +288,13 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                         'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
                     ];
 
+                    // Add 'full' parameter when status is REFUNDED
+                    if ($status === 'REFUNDED') {
+                        // Check if it's a full refund by comparing refunded amount with grand total
+                        $isFullRefund = $order->getTotalRefunded() >= $order->getGrandTotal();
+                        $requestData['full'] = $isFullRefund;
+                    }
+
                     $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
                 }
             }
