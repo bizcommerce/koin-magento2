@@ -373,7 +373,7 @@ class Order extends \Magento\Payment\Helper\Data
     {
         $requestData = [
             'type' => 'STATUS',
-            'sub_type' => $status,
+            'sub_type' => $status == 'PARTIALLY_REFUNDED' ? 'REFUNDED' : $status,
             'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
         ];
         $this->notify($order->getIncrementId(), $requestData, $order->getStoreId());

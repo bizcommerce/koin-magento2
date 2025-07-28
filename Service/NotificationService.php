@@ -60,12 +60,15 @@ class NotificationService
         }
 
         $payment = $order->getPayment();
-        $lastNotificationStatus = $payment->getAdditionalInformation('koin_last_notification_status') ?? '';
-        $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
 
         // Only send notification if status has changed
-        if ($lastNotificationStatus !== $notificationStatus && $antifraudNotificationStatus !== $notificationStatus) {
+        $lastNotificationStatus = $payment->getAdditionalInformation('koin_last_notification_status') ?? '';
+        if ($lastNotificationStatus !== $notificationStatus) {
             $this->notifyOrder($order, $notificationStatus);
+        }
+
+        $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
+        if ($antifraudNotificationStatus !== $notificationStatus) {
             $this->notifyAntifraud($order, $notificationStatus);
         }
     }
@@ -104,8 +107,12 @@ class NotificationService
      */
     public function sendNotificationForCreditmemo(Order $order): void
     {
-        // Always send REFUNDED status for any refund
-        $this->sendNotifications($order, 'REFUNDED');
+        // Check if it's a full or partial refund
+        if ($order->getTotalRefunded() < $order->getGrandTotal()) {
+            $this->sendNotifications($order, 'PARTIALLY_REFUNDED');
+        } else {
+            $this->sendNotifications($order, 'REFUNDED');
+        }
     }
 
     /**
@@ -185,7 +192,7 @@ class NotificationService
     {
         $payment = $order->getPayment();
         $payment->setAdditionalInformation($key, $value);
-        
+
         try {
             $this->orderRepository->save($order);
         } catch (\Exception $e) {

@@ -239,12 +239,11 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         if ($collection->getSize()) {
             /** @var \Koin\Payment\Model\Antifraud $antifraud */
             foreach ($collection as $antifraud) {
-                //Search onlyt for pending queue
+                //Search only for pending queue
                 $queue = $this->getQueue($antifraud->getId());
                 if ($queue && $queue->getId()) {
                     $this->cancelQueue($queue);
-                } else {
-                    $evaluationId = $antifraud->getEvaluationId();
+                } elseif ($evaluationId = $antifraud->getEvaluationId()) {
                     if ($antifraud->getStatus() == 'received') {
                         $requestPath = $this->helperData->getEndpointConfig('risk/cancel');
                         $request = __('DELETE: %s', str_replace('{evaluation_id}', $evaluationId, $requestPath));
@@ -278,6 +277,9 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         $collection->addFieldToFilter('increment_id', $order->getIncrementId());
 
         if ($collection->getSize()) {
+            //If partially refunded it'll send refund notification
+            $status = $status !== 'PARTIALLY_REFUNDED' ? $status : 'REFUNDED';
+
             /** @var \Koin\Payment\Model\Antifraud $antifraud */
             foreach ($collection as $antifraud) {
                 $evaluationId = $antifraud->getEvaluationId();
