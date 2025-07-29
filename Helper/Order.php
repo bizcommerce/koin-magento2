@@ -240,16 +240,14 @@ class Order extends \Magento\Payment\Helper\Data
     public function invoiceOrder(SalesOrder $order, $amount): SalesOrder
     {
         if ($amount == $order->getBaseGrandTotal()) {
-            /** @var Invoice $invoice */
-            $invoice = $order->prepareInvoice();
-            $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
-            $invoice->register();
-            $invoice->pay();
-            $this->invoiceRepository->save($invoice);
-            $order = $invoice->getOrder();
+            /** @var Payment $payment */
+            $payment = $order->getPayment();
+            $payment->setParentTransactionId($payment->getLastTransId());
+            $payment->registerCaptureNotification($order->getBaseGrandTotal());
 
             // Update the order
-            $order->getPayment()->setAdditionalInformation('captured', true);
+            $payment->setAdditionalInformation('captured', true);
+            return $payment->getOrder();
         }
         return $order;
     }
@@ -375,7 +373,7 @@ class Order extends \Magento\Payment\Helper\Data
     {
         $requestData = [
             'type' => 'STATUS',
-            'sub_type' => $status,
+            'sub_type' => $status == 'PARTIALLY_REFUNDED' ? 'REFUNDED' : $status,
             'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
         ];
         $this->notify($order->getIncrementId(), $requestData, $order->getStoreId());

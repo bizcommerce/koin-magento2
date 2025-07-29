@@ -239,12 +239,11 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         if ($collection->getSize()) {
             /** @var \Koin\Payment\Model\Antifraud $antifraud */
             foreach ($collection as $antifraud) {
-                //Search onlyt for pending queue
+                //Search only for pending queue
                 $queue = $this->getQueue($antifraud->getId());
                 if ($queue && $queue->getId()) {
                     $this->cancelQueue($queue);
-                } else {
-                    $evaluationId = $antifraud->getEvaluationId();
+                } elseif ($evaluationId = $antifraud->getEvaluationId()) {
                     if ($antifraud->getStatus() == 'received') {
                         $requestPath = $this->helperData->getEndpointConfig('risk/cancel');
                         $request = __('DELETE: %s', str_replace('{evaluation_id}', $evaluationId, $requestPath));
@@ -264,7 +263,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                             'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
                         ];
 
-                        $this->notify($evaluationId, $requestData, [], $order->getStoreId());
+                        $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
                     }
                 }
             }
@@ -278,17 +277,27 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         $collection->addFieldToFilter('increment_id', $order->getIncrementId());
 
         if ($collection->getSize()) {
+            //If partially refunded it'll send refund notification
+            $status = $status !== 'PARTIALLY_REFUNDED' ? $status : 'REFUNDED';
+
             /** @var \Koin\Payment\Model\Antifraud $antifraud */
             foreach ($collection as $antifraud) {
                 $evaluationId = $antifraud->getEvaluationId();
-                if ($antifraud->getStatus() != 'received') {
+                if ($evaluationId && $antifraud->getStatus() != 'received') {
                     $requestData = [
                         'type' => 'STATUS',
                         'sub_type' => $status,
                         'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
                     ];
 
-                    $this->notify($evaluationId, $requestData, [], $order->getStoreId());
+                    // Add 'full' parameter when status is REFUNDED
+                    if ($status === 'REFUNDED') {
+                        // Check if it's a full refund by comparing refunded amount with grand total
+                        $isFullRefund = $order->getTotalRefunded() >= $order->getGrandTotal();
+                        $requestData['full'] = $isFullRefund;
+                    }
+
+                    $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
                 }
             }
         }
@@ -672,7 +681,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         $data['address'] = $this->getAddressData($address);
         $data['phone'] = $this->getPhoneNumber($address);
         $data['document'] = [
-            'number' => $this->helperData->clearNumber($taxVat),
+            'number' => $this->helperData->clearNumber((string) $taxVat),
             'type' => $documentType
         ];
 

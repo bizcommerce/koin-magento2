@@ -145,4 +145,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Fix: remove unused extension attributes
 
 ### v2.11.2
-- Fix: new link to BNPL checkout's banner 
+- Fix: new link to BNPL checkout's banner
+
+### v2.11.3
+- Fix: Antifraud notification was not being sent to all events
+- Fix: Callback notification was creating offline invoice

@@ -9,7 +9,7 @@ namespace Koin\Payment\Observer\Sales;
 
 use Koin\Payment\Helper\Antifraud;
 use Koin\Payment\Helper\Data;
-use Koin\Payment\Helper\Order as HelperOrder;
+use Koin\Payment\Service\NotificationService;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order;
@@ -22,22 +22,22 @@ class OrderSaveAfter implements ObserverInterface
     /** @var Antifraud  */
     protected $helperAntifraud;
 
-    /** @var HelperOrder  */
-    protected $helperOrder;
+    /** @var NotificationService  */
+    protected $notificationService;
 
     /**
      * @param Data $helper
      * @param Antifraud $helperAntifraud
-     * @param HelperOrder $helperOrder
+     * @param NotificationService $notificationService
      */
     public function __construct(
         Data $helper,
         Antifraud $helperAntifraud,
-        HelperOrder $helperOrder
+        NotificationService $notificationService
     ) {
         $this->helper = $helper;
         $this->helperAntifraud = $helperAntifraud;
-        $this->helperOrder = $helperOrder;
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -51,20 +51,7 @@ class OrderSaveAfter implements ObserverInterface
 
         try {
             if ($originalState != $order->getState()) {
-
-                if ($order->getState() == Order::STATE_COMPLETE) {
-                    if ($this->helper->getAntifraudConfig('active')) {
-                        $this->helperAntifraud->notification($order);
-                    }
-                }
-
-                if ($order->getState() == Order::STATE_CLOSED) {
-                    if ($this->helper->getAntifraudConfig('active')) {
-                        $this->helperAntifraud->removeAntifraud($order);
-                    }
-                }
-
-                $this->notifyOrder($order);
+                $this->notificationService->sendNotificationForOrderState($order);
             }
 
             $this->addToQueue($order);
@@ -99,28 +86,4 @@ class OrderSaveAfter implements ObserverInterface
         }
     }
 
-    /**
-     * @param Order $order
-     * @return void
-     */
-    public function notifyOrder(Order $order): void
-    {
-        if ($order->getPayment()->getMethod() == \Koin\Payment\Model\Ui\CreditCard\ConfigProvider::CODE) {
-            $notificationStatus = '';
-            if ($order->getState() == Order::STATE_COMPLETE) {
-                $notificationStatus = 'FINALIZED';
-            } elseif ($order->getState() == Order::STATE_CLOSED) {
-                $notificationStatus = 'REFUNDED';
-            } elseif ($order->getState() == Order::STATE_CANCELED) {
-                $notificationStatus = 'CANCELLED';
-            }
-
-            if ($notificationStatus !== '') {
-                $this->helperOrder->notification(
-                    $order,
-                    $notificationStatus
-                );
-            }
-        }
-    }
 }

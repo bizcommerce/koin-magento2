@@ -49,4 +49,12 @@
     <event name="order_cancel_after">
         <observer name="biz_koin_order_cancel_after" instance="Koin\Payment\Observer\Sales\OrderCancelAfter"/>
     </event>
+
+    <event name="sales_order_invoice_save_after">
+        <observer name="koin_payment_invoice_save_after" instance="Koin\Payment\Observer\Sales\InvoiceSaveAfter"/>
+    </event>
+
+    <event name="sales_order_creditmemo_save_after">
+        <observer name="koin_payment_creditmemo_save_after" instance="Koin\Payment\Observer\Sales\CreditmemoSaveAfter"/>
+    </event>
 </config>
