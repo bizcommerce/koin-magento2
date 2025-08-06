@@ -68,7 +68,7 @@ class PaymentMethods implements \Magento\Framework\Data\OptionSourceInterface
         $options = ['' => __('-- Empty --')];
         /** @var \Magento\Payment\Api\Data\PaymentMethodInterface $method */
         foreach ($methodsList as $method) {
-            $options[$method->getCode()] = __($method->getTitle());
+            $options[$method->getCode()] = __($method->getTitle()) . ('(' . $method->getCode() . ')');
         }
 
         return $options;
