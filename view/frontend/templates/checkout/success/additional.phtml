@@ -8,15 +8,16 @@
 
 $viewModel = $block->getViewModel();
 $challengeUrl = $block->escapeHtml($viewModel->getChallengeUrl());
-
-$orderUrl = $block->escapeHtml($viewModel->getOrderUrl());
-$statusUrl = $block->escapeHtml($viewModel->getStatusUrl());
 ?>
 
 <?php if ($viewModel->isPending()): ?>
+    <?php
+    $orderUrl = $block->escapeHtml($viewModel->getOrderUrl());
+    $statusUrl = $block->escapeHtml($viewModel->getStatusUrl());
+    ?>
     <script>
         require(['jquery'], function($) {
-            const eventSource = new EventSource(`<?= $statusUrl ?>`);
+            const eventSource = new EventSource(`<?= $statusUrl; ?>`);
             eventSource.addEventListener('koin-payment-status', function(event) {
                 const data = JSON.parse(event.data);
                 if (data?.is_paid) {
@@ -31,7 +32,7 @@ $statusUrl = $block->escapeHtml($viewModel->getStatusUrl());
             };
         });
     </script>
-<?php endif ?>
+<?php endif; ?>
 
 <?php if ($challengeUrl): ?>
     <div id="koin-modal-success" style="display:none;">
@@ -52,4 +53,4 @@ $statusUrl = $block->escapeHtml($viewModel->getStatusUrl());
             }
         }
     </script>
-<?php endif ?>
+<?php endif; ?>

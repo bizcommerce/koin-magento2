@@ -21,6 +21,8 @@
 namespace Koin\Payment\ViewModel\Checkout\Success;
 
 use Koin\Payment\Gateway\Http\Client\Payments\Api;
+use Koin\Payment\Model\Ui\CreditCard\ConfigProvider as CcConfigProvider;
+use Koin\Payment\Model\Ui\Pix\ConfigProvider as PixConfigProvider;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Model\Order;
@@ -78,6 +80,11 @@ class Additional implements ArgumentInterface
 
     public function isPending(): bool
     {
+        $method = $this->getOrder()->getPayment()->getMethod();
+        if ($method !== CcConfigProvider::CODE && $method !== PixConfigProvider::CODE) {
+            return false;
+        }
+
         return in_array(
             $this->getOrder()->getPayment()->getAdditionalInformation('status'),
             $this->getPendingStatuses()
