@@ -22,7 +22,11 @@
         </referenceContainer>
 
         <referenceContainer name="before.body.end">
-            <block class="Magento\Framework\View\Element\Template" name="koin.success.additional" template="Koin_Payment::checkout/success/additional.phtml">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="koin.success.additional"
+                   template="Koin_Payment::checkout/success/additional.phtml"
+                   ifconfig="koin/general/account_number"
+            >
                 <arguments>
                     <argument name="view_model" xsi:type="object">Koin\Payment\ViewModel\Checkout\Success\Additional</argument>
                 </arguments>
