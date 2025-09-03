@@ -262,3 +262,6 @@ Card Installments,Cuotas de la Tarjeta
 "Saturday","Sábado"
 "Empty means it'll not filter by this field","Vacío significa que no se filtrará por este campo"
 "It is important to take into account that selecting specific product groups could affect performance","Es importante tener en cuenta que seleccionar grupos de productos específicos podría afectar la performance del sistema"
+"Allow Buy with Koin","Permitir Comprar con Koin"
+"Show BNPL Banner on Product Pages","Exhibir Banner de BNPL en Páginas de Producto"
+"Display ""Buy with Koin"" banner on product pages for direct BNPL checkout","Exhibir banner de ""Comprar con Koin"" en páginas de producto para pago directo con BNPL"
