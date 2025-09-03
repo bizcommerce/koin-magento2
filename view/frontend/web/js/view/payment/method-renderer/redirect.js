@@ -4,9 +4,11 @@
 define(
     [
         'Magento_Checkout/js/view/payment/default',
-        'mage/url'
+        'mage/url',
+        'jquery',
+        'jquery/jquery-storageapi'
     ],
-    function (Component, url) {
+    function (Component, url, $) {
         'use strict';
 
         return Component.extend({
@@ -22,7 +24,46 @@ define(
                     'taxvat'
                 ]);
 
+                // Auto-select this payment method if stored in checkout data
+                this.checkForPaymentPreselection();
+
                 return this;
+            },
+
+            /**
+             * Check checkout data for payment preselection using direct localStorage
+             */
+            checkForPaymentPreselection: function () {
+                try {
+                    var storageApi = $.initNamespaceStorage('mage-cache-storage').localStorage;
+                    var checkoutData = storageApi.get('checkout-data') || {};
+                    var storedPaymentMethod = checkoutData.selectedPaymentMethod;
+                    
+                    console.log('Koin BNPL: Checking stored payment method:', storedPaymentMethod);
+                    
+                    if (storedPaymentMethod === 'koin_redirect') {
+                        var self = this;
+                        console.log('Koin BNPL: Auto-selecting koin_redirect payment method');
+                        // Use setTimeout to ensure the payment methods are fully rendered
+                        setTimeout(function() {
+                            self.selectPaymentMethod();
+                            console.log('Koin BNPL: Payment method selected successfully');
+                            
+                            // Clear the stored payment method after successful selection to avoid conflicts
+                            setTimeout(function() {
+                                try {
+                                    checkoutData.selectedPaymentMethod = null;
+                                    storageApi.set('checkout-data', checkoutData);
+                                    console.log('Koin BNPL: Cleared stored payment method selection');
+                                } catch (error) {
+                                    console.warn('Koin BNPL: Could not clear stored payment method:', error);
+                                }
+                            }, 500);
+                        }, 1000);
+                    }
+                } catch (error) {
+                    console.warn('Koin BNPL: Could not read stored payment method:', error);
+                }
             },
 
             getCode: function() {

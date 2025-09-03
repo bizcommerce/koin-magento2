@@ -258,3 +258,6 @@
 "Saturday","Saturday"
 "Empty means it'll not filter by this field","Empty means it'll not filter by this field"
 "It is important to take into account that selecting specific product groups could affect performance","It is important to take into account that selecting specific product groups could affect performance"
+"Allow Buy with Koin","Allow Buy with Koin"
+"Show BNPL Banner on Product Pages","Show BNPL Banner on Product Pages"
+"Display ""Buy with Koin"" banner on product pages for direct BNPL checkout","Display ""Buy with Koin"" banner on product pages for direct BNPL checkout"
