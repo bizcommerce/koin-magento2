@@ -38,27 +38,18 @@ define(
                     var storageApi = $.initNamespaceStorage('mage-cache-storage').localStorage;
                     var checkoutData = storageApi.get('checkout-data') || {};
                     var storedPaymentMethod = checkoutData.selectedPaymentMethod;
-                    
-                    console.log('Koin BNPL: Checking stored payment method:', storedPaymentMethod);
-                    
+
                     if (storedPaymentMethod === 'koin_redirect') {
                         var self = this;
-                        console.log('Koin BNPL: Auto-selecting koin_redirect payment method');
-                        // Use setTimeout to ensure the payment methods are fully rendered
                         setTimeout(function() {
                             self.selectPaymentMethod();
-                            console.log('Koin BNPL: Payment method selected successfully');
-                            
-                            // Clear the stored payment method after successful selection to avoid conflicts
-                            setTimeout(function() {
-                                try {
-                                    checkoutData.selectedPaymentMethod = null;
-                                    storageApi.set('checkout-data', checkoutData);
-                                    console.log('Koin BNPL: Cleared stored payment method selection');
-                                } catch (error) {
-                                    console.warn('Koin BNPL: Could not clear stored payment method:', error);
-                                }
-                            }, 500);
+
+                            try {
+                                checkoutData.selectedPaymentMethod = null;
+                                storageApi.set('checkout-data', checkoutData);
+                            } catch (error) {
+                                console.warn('Koin BNPL: Could not clear stored payment method:', error);
+                            }
                         }, 1000);
                     }
                 } catch (error) {

@@ -16,6 +16,7 @@ namespace Koin\Payment\ViewModel\Product;
 
 use Koin\Payment\Helper\Data;
 use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\Repository;
@@ -112,7 +113,7 @@ class BnplBanner implements ArgumentInterface
     {
         try {
             return $this->assetRepo->getUrl('Koin_Payment::images/logo.png');
-        } catch (\Exception $e) {
+        } catch (LocalizedException $e) {
             return '';
         }
     }
@@ -147,11 +148,7 @@ class BnplBanner implements ArgumentInterface
      */
     public function isGuestCheckoutAllowed(): bool
     {
-        try {
-            return $this->koinHelper->getConfig('guest_checkout', 'options', 'checkout');
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $this->koinHelper->getConfig('guest_checkout', 'options', 'checkout');
     }
 
     /**
