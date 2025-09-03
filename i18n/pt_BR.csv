@@ -267,6 +267,7 @@
 "Empty means it'll not filter by this field","Vazio significa que não irá filtrar por esse campo"
 "It is important to take into account that selecting specific product groups could affect performance","É importante levar em consideração que a seleção de grupos de produtos específicos pode afetar a performance do site"
 "Allow Buy with Koin","Comprar com Koin"
+"Allow Buy with","Comprar com"
 "Show BNPL Banner on Product Pages","Exibir Banner BNPL nas Páginas do Produto"
 "Display ""Buy with Koin"" banner on product pages for direct BNPL checkout","Exibir banner ""Comprar com Koin"" nas páginas do produto para checkout direto BNPL"
 "Adding to cart...","Adicionando ao carrinho..."

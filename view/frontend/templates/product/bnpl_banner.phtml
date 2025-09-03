@@ -16,18 +16,17 @@ $viewModel = $block->getViewModel();
 ?>
 
 <?php if ($viewModel->isEnabled()): ?>
-<div class="koin-bnpl-banner" 
+<div class="koin-bnpl-banner"
      data-mage-init='{"koinBnplBanner": <?= $escaper->escapeHtmlAttr($viewModel->getJsonConfig()) ?>}'
      data-product-id="<?= $escaper->escapeHtmlAttr($viewModel->getProductId()) ?>"
      data-form-key="<?= $escaper->escapeHtmlAttr($viewModel->getFormKey()) ?>">
-    <button type="button" 
-            class="koin-bnpl-button action primary" 
+    <button type="button"
+            class="koin-bnpl-button action primary"
             id="koin-bnpl-banner-btn"
             data-original-text="<?= $escaper->escapeHtmlAttr($viewModel->getBannerText()) ?>">
-        <img src="<?= $escaper->escapeUrl($viewModel->getLogoUrl()) ?>" 
-             alt="Koin" 
-             class="koin-logo"/>
-        <span class="koin-text"><?= $escaper->escapeHtml($viewModel->getBannerText()) ?></span>
+        <span class="koin-text"><?= $escaper->escapeHtml($viewModel->getBannerText()) ?> <img src="<?= $escaper->escapeUrl($viewModel->getLogoUrl()) ?>"
+                                                                                              alt="Koin"
+                                                                                              class="koin-logo"/></span>
     </button>
 </div>
 <?php endif; ?>

@@ -101,7 +101,7 @@ class BnplBanner implements ArgumentInterface
      */
     public function getBannerText(): string
     {
-        return __('Allow Buy with Koin')->render();
+        return __('Allow Buy with')->render();
     }
 
     /**
@@ -112,7 +112,7 @@ class BnplBanner implements ArgumentInterface
     public function getLogoUrl(): string
     {
         try {
-            return $this->assetRepo->getUrl('Koin_Payment::images/logo.png');
+            return $this->assetRepo->getUrl('Koin_Payment::images/logo.svg');
         } catch (LocalizedException $e) {
             return '';
         }
