@@ -12,7 +12,7 @@
 .koin-bnpl-banner {
     margin-top: 15px;
     margin-bottom: 10px;
-    
+
     .koin-bnpl-button {
         display: flex;
         align-items: center;
@@ -29,32 +29,31 @@
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        
+
         &:hover:not(.disabled) {
             background: #00A055;
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
-        
+
         &:active:not(.disabled) {
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        
+
         &.disabled,
         &.loading {
             opacity: 0.7;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .koin-logo {
             height: 24px;
             width: auto;
             margin-right: 10px;
-            filter: brightness(0) invert(1); // Make logo white
         }
-        
+
         .koin-text {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.2;
@@ -69,7 +68,7 @@
             font-size: 15px;
             min-height: 48px;
             padding: 10px 16px;
-            
+
             .koin-logo {
                 height: 22px;
                 margin-right: 8px;
@@ -85,7 +84,7 @@
             font-size: 14px;
             min-height: 44px;
             padding: 8px 12px;
-            
+
             .koin-logo {
                 height: 20px;
                 margin-right: 6px;
