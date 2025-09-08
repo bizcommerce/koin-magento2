@@ -61,6 +61,7 @@ class TransactionHandler implements HandlerInterface
         /** @var PaymentDataObjectInterface $paymentData */
         $paymentData = $handlingSubject['payment'];
         $transaction = $response['transaction'];
+        $additionalData = $response['additional_data'] ?? [];
 
         if (isset($response['status_code']) && $response['status_code'] >= 300) {
             throw new LocalizedException(__('There was an error processing your request.'));
@@ -70,6 +71,7 @@ class TransactionHandler implements HandlerInterface
         $payment = $paymentData->getPayment();
         $payment = $this->helperOrder->updateDefaultAdditionalInfo($payment, $transaction);
         $payment = $this->helperOrder->updatePixAdditionalInfo($payment, $transaction);
+        $payment = $this->helperOrder->updateRequestAdditionalData($payment, $additionalData);
         $payment->setIsTransactionClosed(false);
 
         $state = $this->helperOrder->getPaymentStatusState($payment);

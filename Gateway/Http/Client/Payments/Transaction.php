@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  *
@@ -69,6 +70,11 @@ class Transaction implements ClientInterface
 
         $this->api->saveRequest($requestBody, $transaction['response'], $statusCode, $this->methodCode);
 
-        return ['status' => $status, 'status_code' => $statusCode, 'transaction' => $transaction['response']];
+        return [
+            'status' => $status,
+            'status_code' => $statusCode,
+            'transaction' => $transaction['response'],
+            'additional_data' => $config['additional_data'] ?? []
+        ];
     }
 }

@@ -114,3 +114,39 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.7.9
 - Fix: error when unserializing empty request body on callbacks
 
+### v2.8.0
+- Feat: added timer for pix payments
+
+### v2.8.1
+- Refactor: improved performance on checkout installment rules
+- Refactor: removed arrow function for compatibility with PHP 7.1, 7.2 and 7.3
+- Fix: save installment options on BNPL callbacks
+
+### v2.9.0
+- Feat: added 3DSv2 support
+- Feat: added new languages files, es_CO and es_MX
+
+### v2.10.0
+- Feat: Installments rules have priorities
+- Feat: Config to no use default installments and use installments rules only, instead
+- Feat: Use customer group to filter installments rules
+- Feat: Use Product Set ID to filter installments rules
+- Feat: Use day of the week for installments rules
+- Feat: Use credit card brand for installments rules
+
+### v2.10.1
+- Fix: error when filtering installments rules by product set
+
+### v2.11.0
+- Feat: added 3DS feature to credit card
+- Added new rules for installments
+
+### v2.11.1
+- Fix: remove unused extension attributes
+
+### v2.11.2
+- Fix: new link to BNPL checkout's banner
+
+### v2.11.3
+- Fix: Antifraud notification was not being sent to all events
+- Fix: Callback notification was creating offline invoice

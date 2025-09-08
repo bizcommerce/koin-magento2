@@ -10,6 +10,7 @@
 
 namespace Koin\Payment\Gateway\Http;
 
+use Koin\Payment\Model\Config\Source\ThreeDSStrategy;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Laminas\Http\Client as HttpClient;
 use Magento\Framework\Serialize\Serializer\Json;
@@ -92,10 +93,20 @@ class Client
             'X-Module-Version' => $this->helper->getModuleVersion()
         ];
 
-        if ($this->helper->getGeneralConfig('use_sandbox')) {
+        if ($this->helper->getGeneralConfig('use_sandbox', $storeId)) {
             $headers['User-Agent'] = 'koin-oficial';
         }
 
+        return $headers;
+    }
+
+    protected function get3DSHeaders($storeId = null): array
+    {
+        $headers = $this->getDefaultHeaders($storeId);
+
+        $strategy = $this->helper->getGeneralConfig('sandbox_3ds_strategy', $storeId);
+        $header = ($strategy == ThreeDSStrategy::CHALLENGE) ? '3DS2CHALLENGE' : '3DS2FRICTIONLESS';
+        $headers['xdesp-mock-risk-juggler'] = 'verdict=inprogress|strategy=' . $header;
 
         return $headers;
     }
@@ -159,6 +170,10 @@ class Client
     {
         $apiType = $this->getApiType();
         $api = $this->getApi($path, $apiType, $storeId);
+        if ($this->helper->getGeneralConfig('use_sandbox_3ds')) {
+            $api->setHeaders($this->get3DSHeaders($storeId));
+        }
+
         $api->setMethod($method);
         if (!empty($data)) {
             $api->setRawBody($this->json->serialize($data));

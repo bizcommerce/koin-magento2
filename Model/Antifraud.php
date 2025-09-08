@@ -161,7 +161,7 @@ class Antifraud extends AbstractModel implements AntifraudInterface
      */
     public function setMessage($message)
     {
-         $this->getData(self::MESSAGE, $message);
+         $this->setData(self::MESSAGE, $message);
     }
 
     /**

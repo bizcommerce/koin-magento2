@@ -32,6 +32,8 @@ $mediaUrl = $this->getMediaUrl();
 $title = $block->getTitle();
 $emv = $block->getEmv();
 $qrCodeImage = $block->getQRCodeImage();
+$secondsInFuture = $block->getExpiration() - time();
+
 ?>
 <dl class="payment-method koin-content">
 
@@ -55,6 +57,16 @@ $qrCodeImage = $block->getQRCodeImage();
                         onclick="koin.copyCode(this, '.pix-qrcode', false)">
                     <?= $block->escapeHtml(__('Copy code')) ?>
                 </button>
+
+                <div class="koin-exp-time simple-countdown" style="display:none">
+                    <span class="koin-exp-in">
+                        <?= __('Your pix expires in:') ?>
+                    </span>
+                    <span class="countdown-days"></span>
+                    <span class="countdown-hour"></span>
+                    <span class="countdown-min"></span>
+                    <span class="countdown-sec"></span>
+                </div>
             </div>
         </div>
     </dd>
@@ -76,4 +88,16 @@ $qrCodeImage = $block->getQRCodeImage();
         </dd>
     <?php endif;?>
 </dl>
+
 <?= $block->getChildHtml() ?>
+
+<?php if ($payment->getAdditionalInformation('status') === $block->getPendingStatus()): ?>
+    <?php if ($payment->getParentId()): ?>
+        <?php
+        $orderUrl = $block->getUrl('sales/order/view', ['order_id' => $payment->getParentId()]);
+        ?>
+        <script>
+            koin.countdown(<?= $secondsInFuture ?>, '<?= $orderUrl; ?>');
+        </script>
+    <?php endif; ?>
+<?php endif; ?>

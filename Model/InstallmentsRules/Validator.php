@@ -4,6 +4,7 @@ namespace Koin\Payment\Model\InstallmentsRules;
 
 use Koin\Payment\Model\ResourceModel\InstallmentsRules\Collection;
 use Koin\Payment\Model\ResourceModel\InstallmentsRules\CollectionFactory;
+use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Stdlib\DateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
@@ -29,16 +30,21 @@ class Validator
     /** @var TimezoneInterface */
     protected $timeZone;
 
+    /** @var CustomerSession */
+    protected $customerSession;
+
     public function __construct(
         CollectionFactory $collectionFactory,
         StoreManagerInterface $storeManager,
         TimezoneInterface $timeZone,
-        DateTime $dateTime
+        DateTime $dateTime,
+        CustomerSession $customerSession,
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->storeManager = $storeManager;
         $this->dateTime = $dateTime;
         $this->timeZone = $timeZone;
+        $this->customerSession = $customerSession;
     }
 
     /**
@@ -87,6 +93,19 @@ class Validator
             ['null' => true]
         ]);
 
+        $customerGroupId = $this->customerSession->getCustomerGroupId();
+        $collection->addFieldToFilter('customer_group_ids', [
+            ['finset' => $customerGroupId],
+            ['null' => true]
+        ]);
+
+        $today = $this->timeZone->date()->format('w');
+        $collection->addFieldToFilter('days_of_week', [
+            ['finset' => $today],
+            ['empty' => true],
+            ['null' => true]
+        ]);
+
         if ($creditCardNumber) {
             $ccNumbers = preg_replace('/\D/', '', $creditCardNumber);
             $collection->getSelect()->where(
@@ -112,6 +131,9 @@ class Validator
                     )"
                 )
             );
+
+            //Order by priority
+            $collection->getSelect()->order('priority DESC');
         }
         return $collection;
     }

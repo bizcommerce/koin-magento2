@@ -61,7 +61,7 @@ class Order extends \Magento\Payment\Helper\Data
     protected $orderFactory;
 
     /**
-     * @var OrderFactory
+     * @var OrderRepository
      */
     protected $orderRepository;
 
@@ -240,16 +240,14 @@ class Order extends \Magento\Payment\Helper\Data
     public function invoiceOrder(SalesOrder $order, $amount): SalesOrder
     {
         if ($amount == $order->getBaseGrandTotal()) {
-            /** @var Invoice $invoice */
-            $invoice = $order->prepareInvoice();
-            $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
-            $invoice->register();
-            $invoice->pay();
-            $this->invoiceRepository->save($invoice);
-            $order = $invoice->getOrder();
+            /** @var Payment $payment */
+            $payment = $order->getPayment();
+            $payment->setParentTransactionId($payment->getLastTransId());
+            $payment->registerCaptureNotification($order->getBaseGrandTotal());
 
             // Update the order
-            $order->getPayment()->setAdditionalInformation('captured', true);
+            $payment->setAdditionalInformation('captured', true);
+            return $payment->getOrder();
         }
         return $order;
     }
@@ -375,7 +373,7 @@ class Order extends \Magento\Payment\Helper\Data
     {
         $requestData = [
             'type' => 'STATUS',
-            'sub_type' => $status,
+            'sub_type' => $status == 'PARTIALLY_REFUNDED' ? 'REFUNDED' : $status,
             'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
         ];
         $this->notify($order->getIncrementId(), $requestData, $order->getStoreId());
@@ -434,6 +432,12 @@ class Order extends \Magento\Payment\Helper\Data
                 $payment->setAdditionalInformation('installments', $content['installments']);
             }
 
+            if (isset($content['installments'])) {
+                $payment->setAdditionalInformation('installments', $content['installments']);
+            } else if (isset($content['installment_option']) && isset($content['installment_option']['installments'])) {
+                $payment->setAdditionalInformation('installments', $content['installment_option']['installments']);
+            }
+
             if (isset($content['transaction']['reference_id'])) {
                 $payment->setAdditionalInformation('reference_id', $content['transaction']['reference_id']);
             }
@@ -475,6 +479,21 @@ class Order extends \Magento\Payment\Helper\Data
 
             $payment->setAdditionalInformation('status', $status);
             $payment->setIsTransactionClosed(false);
+        } catch (\Exception $e) {
+            $this->_logger->warning($e->getMessage());
+        }
+
+        return $payment;
+    }
+
+    public function updateRequestAdditionalData(Payment $payment, array $additionalData): Payment
+    {
+        try {
+            if (!empty($additionalData)) {
+                foreach ($additionalData as $key => $value) {
+                    $payment->setAdditionalInformation($key, $value);
+                }
+            }
         } catch (\Exception $e) {
             $this->_logger->warning($e->getMessage());
         }
@@ -530,6 +549,15 @@ class Order extends \Magento\Payment\Helper\Data
         $this->customerSession->setData('cc_cid', $ccNumber);
         $payment->setAdditionalInformation('cc_cid', $ccCid);
         $payment->setAdditionalInformation('credit_card_cvv', $ccCid);
+
+        return $payment;
+    }
+
+    public function update3DSAdditionalInformation(Payment $payment, $transaction): Payment
+    {
+        if (isset($transaction['return_url'])) {
+            $payment->setAdditionalInformation('3ds_return_url', $transaction['return_url']);
+        }
 
         return $payment;
     }

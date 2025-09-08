@@ -73,8 +73,7 @@ class Success extends Template
     public function getPayment()
     {
         /** @var \Magento\Payment\Model\MethodInterface $payment */
-        $payment = $this->order->getPayment()->getMethodInstance();
-        return $payment;
+        return $this->order->getPayment()->getMethodInstance();
     }
 
     /**

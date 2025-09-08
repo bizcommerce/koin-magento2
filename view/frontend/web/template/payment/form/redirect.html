@@ -14,12 +14,7 @@
                 <dd class="content">
                     <!-- ko if: (useDefaultInstructions())-->
                     <div class="image redirect">
-                        <img class="koin-image" data-bind="attr: {
-                            'src': getCheckoutImage(),
-                             'alt': 'Koin',
-                             'width': '50%'
-                             }"
-                        >
+                        <koin-checkout-banner />
                     </div>
                     <!-- /ko -->
 
