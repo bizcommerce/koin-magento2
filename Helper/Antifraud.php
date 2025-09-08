@@ -239,32 +239,36 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         if ($collection->getSize()) {
             /** @var \Koin\Payment\Model\Antifraud $antifraud */
             foreach ($collection as $antifraud) {
-                //Search only for pending queue
-                $queue = $this->getQueue($antifraud->getId());
-                if ($queue && $queue->getId()) {
-                    $this->cancelQueue($queue);
-                } elseif ($evaluationId = $antifraud->getEvaluationId()) {
-                    if ($antifraud->getStatus() == 'received') {
-                        $requestPath = $this->helperData->getEndpointConfig('risk/cancel');
-                        $request = __('DELETE: %s', str_replace('{evaluation_id}', $evaluationId, $requestPath));
-                        $this->api->logRequest($request);
-                        $response = $this->api->evaluation()->cancel($evaluationId);
-                        $this->api->logResponse($response);
-                        $this->api->saveRequest($request, $response['response'], $response['status']);
+                try {
+                    //Search only for pending queue
+                    $queue = $this->getQueue($antifraud->getId());
+                    if ($queue && $queue->getId()) {
+                        $this->cancelQueue($queue);
+                    } elseif ($evaluationId = $antifraud->getEvaluationId()) {
+                        if ($antifraud->getStatus() == 'received') {
+                            $requestPath = $this->helperData->getEndpointConfig('risk/cancel');
+                            $request = __('DELETE: %s', str_replace('{evaluation_id}', $evaluationId, $requestPath));
+                            $this->api->logRequest($request);
+                            $response = $this->api->evaluation()->cancel($evaluationId);
+                            $this->api->logResponse($response);
+                            $this->api->saveRequest($request, $response['response'], $response['status']);
 
-                        if ($response['status'] < 300) {
-                            $antifraud->setStatus(Api::STATUS_ABORTED);
-                            $this->antifraudRepository->save($antifraud);
+                            if ($response['status'] < 300) {
+                                $antifraud->setStatus(Api::STATUS_ABORTED);
+                                $this->antifraudRepository->save($antifraud);
+                            }
+                        } else {
+                            $requestData = [
+                                'type' => 'STATUS',
+                                'sub_type' => 'CANCELLED',
+                                'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
+                            ];
+
+                            $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
                         }
-                    } else {
-                        $requestData = [
-                            'type' => 'STATUS',
-                            'sub_type' => 'CANCELLED',
-                            'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
-                        ];
-
-                        $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
                     }
+                } catch (\Exception $e) {
+                    $this->helperData->log($e->getMessage());
                 }
             }
         }
@@ -282,22 +286,26 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
 
             /** @var \Koin\Payment\Model\Antifraud $antifraud */
             foreach ($collection as $antifraud) {
-                $evaluationId = $antifraud->getEvaluationId();
-                if ($evaluationId && $antifraud->getStatus() != 'received') {
-                    $requestData = [
-                        'type' => 'STATUS',
-                        'sub_type' => $status,
-                        'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
-                    ];
+                try {
+                    $evaluationId = $antifraud->getEvaluationId();
+                    if ($evaluationId && $antifraud->getStatus() != 'received') {
+                        $requestData = [
+                            'type' => 'STATUS',
+                            'sub_type' => $status,
+                            'notification_date' => $this->dateTime->gmtDate('Y-m-d\TH:i:s') . '.000Z'
+                        ];
 
-                    // Add 'full' parameter when status is REFUNDED
-                    if ($status === 'REFUNDED') {
-                        // Check if it's a full refund by comparing refunded amount with grand total
-                        $isFullRefund = $order->getTotalRefunded() >= $order->getGrandTotal();
-                        $requestData['full'] = $isFullRefund;
+                        // Add 'full' parameter when status is REFUNDED
+                        if ($status === 'REFUNDED') {
+                            // Check if it's a full refund by comparing refunded amount with grand total
+                            $isFullRefund = $order->getTotalRefunded() >= $order->getGrandTotal();
+                            $requestData['full'] = $isFullRefund;
+                        }
+
+                        $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
                     }
-
-                    $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
+                } catch (\Exception $e) {
+                    $this->helperData->log($e->getMessage());
                 }
             }
         }
@@ -492,6 +500,9 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                 $antifraud = $this->antifraudRepository->get($queue->getResourceId());
                 if ($antifraud && $antifraud->getId()) {
                     $order = $this->helperOrder->loadOrder($antifraud->getIncrementId());
+                    if (!$order->getId()) {
+                        throw new \Exception(__('Order %1 not found.', $antifraud->getIncrementId()));
+                    }
                     $orderData = [
                         'transaction' => [
                             'total_amount' => [
@@ -774,7 +785,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
 
             if ($orderItem->getDiscountAmount()) {
                 $product['discount_amount'] = [
-                    'currency_code' => $order->getOrderCurrencyCode(),
+                    'currency_code' => $this->getOrderCurrencyCode($order),
                     'value' => (float) $orderItem->getDiscountAmount()
                 ];
             }

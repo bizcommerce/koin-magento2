@@ -458,7 +458,7 @@ class Data extends \Magento\Payment\Helper\Data
 
     public function getDefaultCountryCode(): string
     {
-        return $this->helperDirectory->getDefaultCountry();
+        return (string) $this->helperDirectory->getDefaultCountry();
     }
 
     public function getCategoryName(int $categoryId): string
@@ -646,7 +646,7 @@ class Data extends \Magento\Payment\Helper\Data
             $this->log($e->getMessage());
         }
 
-        return $currencyCode;
+        return (string) $currencyCode;
     }
 
     /**
