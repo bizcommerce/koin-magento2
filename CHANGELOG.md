@@ -150,3 +150,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.11.3
 - Fix: Antifraud notification was not being sent to all events
 - Fix: Callback notification was creating offline invoice
+
+### v2.11.5
+- Fix: Error when sending order to fraud analysis and there's not currency code on the order
