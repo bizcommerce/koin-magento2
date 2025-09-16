@@ -30,7 +30,6 @@ define([
         'Magento_Customer/js/model/customer',
         'Magento_Payment/js/view/payment/cc-form',
         'Koin_Payment/js/model/credit-card-validation/credit-card-number-validator',
-        'Magento_Payment/js/model/credit-card-validation/credit-card-data',
         'Magento_Checkout/js/model/totals',
         'Magento_Checkout/js/action/get-payment-information',
         'Magento_Payment/js/model/credit-card-validation/validator',
@@ -49,7 +48,6 @@ define([
         customer,
         Component,
         cardNumberValidator,
-        creditCardData,
         totals,
         getPaymentInformationAction
     ) {
@@ -69,7 +67,18 @@ define([
                 installmentsUrl: '',
                 installmentsId: '',
                 showInstallmentsWarning: ko.observable(true),
-                debounceTimer: null
+                debounceTimer: null,
+                isPciCompliance: window.checkoutConfig.payment.koin_cc.enable_pci_compliance || false,
+                pciClientKey: window.checkoutConfig.payment.koin_cc.pci_client_key || '',
+                pciLanguage: window.checkoutConfig.payment.koin_cc.pci_language || 'pt',
+                koinCheckout: null,
+                cardToken: '',
+                cardBin: '',
+                cardLast4: '',
+                isKoinSdkLoaded: ko.observable(false),
+                isCardConfirmed: ko.observable(false),
+                confirmedCardDisplay: ko.observable(''),
+                showPciForm: ko.observable(true)
             },
 
             /** @inheritdoc */
@@ -87,10 +96,20 @@ define([
                         'selectedCardType',
                         'creditCardOwner',
                         'creditCardInstallments',
-                        'installmentsId'
+                        'installmentsId',
+                        'cardToken',
+                        'cardBin',
+                        'cardLast4',
+                        'isCardConfirmed',
+                        'confirmedCardDisplay',
+                        'showPciForm'
                     ]);
 
                 this.creditCardVerificationNumber('');
+
+                if (this.isPciCompliance && this.pciClientKey) {
+                    this.loadKoinSdk();
+                }
 
                 setCouponCodeAction.registerSuccessCallback(function() {
                     self.updateInstallmentsValues();
@@ -110,19 +129,6 @@ define([
 
                     if (value === '' || value === null) {
                         return false;
-                    }
-                    result = cardNumberValidator(value);
-
-                    if (!result.isValid) {
-                        return false;
-                    }
-
-                    if (result.card !== null) {
-                        creditCardData.creditCard = result.card;
-                    }
-
-                    if (result.isValid) {
-                        creditCardData.koinCreditCardNumber = value;
                     }
 
                     self.updateInstallmentsValues();
@@ -153,20 +159,39 @@ define([
                 const installments = iRule[0] || '1';
                 const ruleId = iRule[1] || '0';
 
-                return {
-                    'method': this.item.method,
-                    'additional_data': {
-                        'taxvat': this.taxvat(),
-                        'cc_cid': this.creditCardVerificationNumber(),
-                        'cc_type': this.creditCardType(),
-                        'cc_exp_year': this.creditCardExpYear(),
-                        'cc_exp_month': this.creditCardExpMonth(),
-                        'cc_number': this.koinCreditCardNumber(),
-                        'cc_owner': this.creditCardOwner(),
-                        'installments': installments,
-                        'rule_id': ruleId
-                    }
-                };
+                if (this.isPciCompliance) {
+                    return {
+                        'method': this.item.method,
+                        'additional_data': {
+                            'taxvat': this.taxvat(),
+                            'cc_type': this.creditCardType(),
+                            'cc_exp_year': this.creditCardExpYear(),
+                            'cc_exp_month': this.creditCardExpMonth(),
+                            'cc_owner': this.creditCardOwner(),
+                            'installments': installments,
+                            'rule_id': ruleId,
+                            'card_token': this.cardToken(),
+                            'cc_bin': this.cardBin(),
+                            'cc_last4': this.cardLast4(),
+                            'is_pci_compliance': true
+                        }
+                    };
+                } else {
+                    return {
+                        'method': this.item.method,
+                        'additional_data': {
+                            'taxvat': this.taxvat(),
+                            'cc_cid': this.creditCardVerificationNumber(),
+                            'cc_type': this.creditCardType(),
+                            'cc_exp_year': this.creditCardExpYear(),
+                            'cc_exp_month': this.creditCardExpMonth(),
+                            'cc_number': this.koinCreditCardNumber(),
+                            'cc_owner': this.creditCardOwner(),
+                            'installments': installments,
+                            'rule_id': ruleId
+                        }
+                    };
+                }
             },
 
             /**
@@ -182,6 +207,9 @@ define([
              * @return {Boolean}
              */
             validate: function () {
+                if (this.isPciCompliance) {
+                    return this.validatePciForm();
+                }
                 const $form = $('#' + 'form_' + this.getCode());
                 return ($form.validation() && $form.validation('isValid'));
             },
@@ -206,7 +234,7 @@ define([
             updateInstallmentsValues: function() {
 
                 var self = this;
-                if (self.koinCreditCardNumber().length > 6) {
+                if (self.koinCreditCardNumber().length >= 6) {
 
                     if (self.debounceTimer !== null) {
                         clearTimeout(self.debounceTimer);
@@ -279,6 +307,152 @@ define([
                 });
 
                 return title;
+            },
+
+            loadKoinSdk: function() {
+                var self = this;
+                if (!window.koinCheckout) {
+                    var script = document.createElement('script');
+                    script.src = 'https://portal-dev.koin.com.br/checkout/static/scripts/sdk/tokenize.js';
+                    script.onload = function() {
+                        self.initializeKoinCheckout();
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    this.initializeKoinCheckout();
+                }
+            },
+
+            initializeKoinCheckout: function() {
+                var self = this;
+                var containerId = '#koin-checkout-container-' + this.getCode();
+                var retryCount = 0;
+                var maxRetries = 10;
+
+                var initSdk = function() {
+                    try {
+                        var container = document.querySelector(containerId);
+                        if (!container) {
+                            retryCount++;
+                            if (retryCount < maxRetries) {
+                                console.warn('Container not found, retrying in 100ms:', containerId, 'attempt:', retryCount);
+                                setTimeout(initSdk, 100);
+                                return;
+                            } else {
+                                console.error('Container not found after', maxRetries, 'attempts:', containerId);
+                                return;
+                            }
+                        }
+
+                        self.koinCheckout = window.koinCheckout
+                            .initialize({
+                                clientKey: self.pciClientKey,
+                                language: self.pciLanguage
+                            })
+                            .mount(containerId)
+                            .onSuccess(function(data) {
+                                self.handleKoinSuccess(data);
+                            })
+                            .onError(function(error) {
+                                self.handleKoinError(error);
+                            });
+                        self.isKoinSdkLoaded(true);
+                        console.log('Koin SDK initialized successfully');
+                    } catch (error) {
+                        retryCount++;
+                        console.error('Failed to initialize Koin Checkout:', error);
+                        if (retryCount < maxRetries && !self.isKoinSdkLoaded()) {
+                            console.log('Retrying Koin SDK initialization... attempt:', retryCount);
+                            setTimeout(initSdk, 500);
+                        }
+                    }
+                };
+
+                // Wait a bit to ensure DOM is ready, then start initialization
+                setTimeout(initSdk, 100);
+            },
+
+            handleKoinSuccess: function(data) {
+                this.cardToken(data.secure_token || '');
+                this.cardBin(data.bin || '');
+                this.cardLast4(data.last_four || '');
+                this.creditCardType(data.card_brand || '');
+
+                // Set confirmed state and create display string
+                this.isCardConfirmed(true);
+                this.showPciForm(false);
+                this.confirmedCardDisplay(this.formatConfirmedCard());
+
+                // Now fetch installments with the card data
+                if (data.bin && data.bin.length >= 6) {
+                    this.koinCreditCardNumber(data.bin);
+                    this.updateInstallmentsValues();
+                }
+            },
+
+            handleKoinError: function(error) {
+                console.error('Koin Checkout Error:', error);
+            },
+
+            validatePciForm: function() {
+                if (!this.isCardConfirmed()) {
+                    alert('Please confirm your card data first.');
+                    return false;
+                }
+                if (!this.cardToken()) {
+                    alert('Card token is missing. Please confirm your card data again.');
+                    return false;
+                }
+                if (!this.installmentsId()) {
+                    alert('Please select an installment option.');
+                    return false;
+                }
+                return true;
+            },
+
+            confirmCardData: function() {
+                var self = this;
+                if (this.isPciCompliance && this.koinCheckout) {
+                    this.koinCheckout.tokenize();
+                }
+            },
+
+            editCardData: function() {
+                // Reset to edit mode
+                this.isCardConfirmed(false);
+                this.showPciForm(true);
+                this.confirmedCardDisplay('');
+
+                // Reset installments dropdown
+                this.installments.removeAll();
+                this.hasInstallments(false);
+                this.showInstallmentsWarning(true);
+                this.installmentsId('');
+            },
+
+            formatConfirmedCard: function() {
+                const cardBin = this.cardBin().substring(0, 4) + " " + this.cardBin().substring(4, 6);
+                return cardBin + '** **** ' + (this.cardLast4() || '');
+            },
+
+            tokenizeAndPlaceOrder: function() {
+                var self = this;
+                if (this.isPciCompliance) {
+                    if (this.isCardConfirmed()) {
+                        // Card already confirmed, place order directly
+                        this.placeOrder();
+                    } else {
+                        // Confirm card first, then place order
+                        this.koinCheckout.tokenize().then(function(data) {
+                            self.handleKoinSuccess(data);
+                            self.placeOrder();
+                        }).catch(function(error) {
+                            self.handleKoinError(error);
+                        });
+                    }
+                } else {
+                    this.placeOrder();
+                }
             },
 
             getCcIcons: function(type) {

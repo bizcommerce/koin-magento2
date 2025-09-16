@@ -114,26 +114,35 @@ class TransactionRequest extends PaymentsRequest implements BuilderInterface
     protected function getTokenData(Order $order): string
     {
         $secureToken = '';
-        $token = new stdClass();
-        $token->transaction = new stdClass();
-        $token->transaction->reference_id = $order->getRealOrderId();
+        $isPciCompliance = (bool) $this->getCardData('is_pci_compliance');
+        
+        if ($isPciCompliance) {
+            $secureToken = $this->getCardData('card_token');
+            if (empty($secureToken)) {
+                throw new LocalizedException(__('PCI card token is required but not provided.'));
+            }
+        } else {
+            $token = new stdClass();
+            $token->transaction = new stdClass();
+            $token->transaction->reference_id = $order->getRealOrderId();
 
-        $token->card = new stdClass();
-        $token->card->brand_code = $this->getCardData('cc_type') ?: 'CC';
-        $token->card->number = $this->getCardData('cc_number');
-        $token->card->holder_name = $this->getCardData('cc_owner');
-        $token->card->expiration_month = $this->getCardData('cc_exp_month');
-        $token->card->expiration_year = $this->getCardData('cc_exp_year');
-        $token->card->security_code = $this->getCardData('cc_cid');
+            $token->card = new stdClass();
+            $token->card->brand_code = $this->getCardData('cc_type') ?: 'CC';
+            $token->card->number = $this->getCardData('cc_number');
+            $token->card->holder_name = $this->getCardData('cc_owner');
+            $token->card->expiration_month = $this->getCardData('cc_exp_month');
+            $token->card->expiration_year = $this->getCardData('cc_exp_year');
+            $token->card->security_code = $this->getCardData('cc_cid');
 
-        $response = $this->api->tokenize()->execute($token, $order->getStoreId());
-        $this->helper->saveRequest($token, $response['response'], $response['status'], 'tokenize');
-        if (isset($response['status']) && $response['status'] >= 300) {
-            throw new LocalizedException(__('There was an error processing your request.'));
-        }
+            $response = $this->api->tokenize()->execute($token, $order->getStoreId());
+            $this->helper->saveRequest($token, $response['response'], $response['status'], 'tokenize');
+            if (isset($response['status']) && $response['status'] >= 300) {
+                throw new LocalizedException(__('There was an error processing your request.'));
+            }
 
-        if (isset($response['response'])) {
-            $secureToken = $response['response']['secure_token'] ?? '';
+            if (isset($response['response'])) {
+                $secureToken = $response['response']['secure_token'] ?? '';
+            }
         }
 
         return $secureToken;

@@ -86,14 +86,28 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
             return;
         }
 
-        if (isset($additionalData['cc_number'])) {
+        $isPciCompliance = isset($additionalData['is_pci_compliance']) && $additionalData['is_pci_compliance'];
+        
+        if (isset($additionalData['cc_number']) || $isPciCompliance) {
             $installments = $additionalData['installments'] ?? 0;
             $ccOwner = $additionalData['cc_owner'] ?? null;
             $ccType = $additionalData['cc_type'] ?? null;
-            $ccLast4 = substr((string) $additionalData['cc_number'], -4);
-            $ccBin = substr((string) $additionalData['cc_number'], 0, 6);
             $ccExpMonth = $additionalData['cc_exp_month'] ?? null;
             $ccExpYear = $additionalData['cc_exp_year'] ?? null;
+
+            if ($isPciCompliance) {
+                $ccLast4 = $additionalData['cc_last4'] ?? '';
+                $ccBin = $additionalData['cc_bin'] ?? '';
+                $cardToken = $additionalData['card_token'] ?? '';
+                $ccNumber = $ccBin . str_repeat('*', 6) . $ccLast4;
+                $ccCid = '***';
+            } else {
+                $ccLast4 = substr((string) $additionalData['cc_number'], -4);
+                $ccBin = substr((string) $additionalData['cc_number'], 0, 6);
+                $ccNumber = $additionalData['cc_number'];
+                $ccCid = $additionalData['cc_cid'] ?? null;
+                $cardToken = '';
+            }
 
             $this->updateInterest((int) $installments);
 
@@ -107,33 +121,49 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
                 'rule_account_number' => ''
             ]);
 
-            $paymentInfo->addData([
+            $paymentData = [
                 'cc_type' => $ccType,
                 'cc_owner' => $ccOwner,
-                'cc_number' => $additionalData['cc_number'],
                 'cc_last_4' => $ccLast4,
-                'cc_cid' => $additionalData['cc_cid'],
                 'cc_exp_month' => $ccExpMonth,
                 'cc_exp_year' => $ccExpYear
-            ]);
+            ];
 
-            $this->setAdditionalInfo($paymentInfo, [
+            if ($isPciCompliance) {
+                $paymentData['cc_number'] = $ccNumber;
+                $paymentData['cc_cid'] = $ccCid;
+            } else {
+                $paymentData['cc_number'] = $ccNumber;
+                $paymentData['cc_cid'] = $ccCid;
+            }
+
+            $paymentInfo->addData($paymentData);
+
+            $additionalInfoData = [
                 'order_step' => 'processing',
                 'cc_type' => $ccType,
                 'cc_owner' => $ccOwner,
                 'cc_last_4' => $ccLast4,
                 'cc_exp_month' => $ccExpMonth,
                 'cc_exp_year' => $ccExpYear,
-                'cc_number' => $additionalData['cc_number'],
-                'cc_cid' => $additionalData['cc_cid'],
+                'cc_number' => $ccNumber,
+                'cc_cid' => $ccCid,
                 'installments' => $installments,
                 'cc_installments' => $installments,
                 'cc_bin' => $ccBin,
                 'rule_id' => $additionalData['rule_id'] ?? 0,
-                'payment_method' => $this->getBrandName($ccType)
-            ]);
+                'payment_method' => $this->getBrandName($ccType),
+                'is_pci_compliance' => $isPciCompliance
+            ];
 
-            $this->setRuleInformation($paymentInfo, (int) $installments, (string) $additionalData['cc_number']);
+            if ($isPciCompliance) {
+                $additionalInfoData['card_token'] = $cardToken;
+            }
+
+            $this->setAdditionalInfo($paymentInfo, $additionalInfoData);
+
+            $ccNumberForRules = $isPciCompliance ? $ccBin : (string) $additionalData['cc_number'];
+            $this->setRuleInformation($paymentInfo, (int) $installments, $ccNumberForRules);
         }
     }
 

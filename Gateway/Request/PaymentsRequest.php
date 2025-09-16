@@ -175,7 +175,7 @@ class PaymentsRequest
         $payerData->email = $order->getCustomerEmail();
         $payerData->document = $this->getDocument($customerTaxVat);
 
-        $phoneNumber = $this->helper->formatPhoneNumber($address->getTelephone());
+        $phoneNumber = $this->helper->formatPhoneNumber($address->getTelephone() ?: '');
         $payerData->phone = new \stdClass();
         $payerData->phone->area = substr($phoneNumber, 0, 2);
         $payerData->phone->number = substr($phoneNumber, 2, 9);
@@ -203,7 +203,7 @@ class PaymentsRequest
         $buyerData->email = $order->getCustomerEmail();
         $buyerData->document = $this->getDocument($customerTaxVat);
 
-        $phoneNumber = $this->helper->formatPhoneNumber($address->getTelephone());
+        $phoneNumber = $this->helper->formatPhoneNumber($address->getTelephone() ?: '');
         $buyerData->phone = new \stdClass();
         $buyerData->phone->area = substr($phoneNumber, 0, 2);
         $buyerData->phone->number = substr($phoneNumber, 2, 9);

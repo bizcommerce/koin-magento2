@@ -31,6 +31,8 @@ use Magento\Payment\Helper\Data as PaymentHelper;
 use Magento\Payment\Model\CcConfig;
 use Koin\Payment\Model\Config\Source\CcType as SourceCcType;
 use Magento\Payment\Model\CcGenericConfigProvider;
+use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Locale\ResolverInterface;
 
 /**
  * Class ConfigProvider
@@ -71,6 +73,16 @@ class ConfigProvider extends CcGenericConfigProvider
     private $sourceCcType;
 
     /**
+     * @var EncryptorInterface
+     */
+    private $encryptor;
+
+    /**
+     * @var ResolverInterface
+     */
+    private $localeResolver;
+
+    /**
      * @var array
      */
     private array $icons = [];
@@ -84,6 +96,8 @@ class ConfigProvider extends CcGenericConfigProvider
      * @param PaymentHelper $paymentHelper
      * @param Source $assetSource
      * @param SourceCcType $sourceCcType
+     * @param EncryptorInterface $encryptor
+     * @param ResolverInterface $localeResolver
      */
     public function __construct(
         Session $checkoutSession,
@@ -93,7 +107,9 @@ class ConfigProvider extends CcGenericConfigProvider
         UrlInterface $urlBuilder,
         PaymentHelper $paymentHelper,
         Source $assetSource,
-        SourceCcType $sourceCcType
+        SourceCcType $sourceCcType,
+        EncryptorInterface $encryptor,
+        ResolverInterface $localeResolver
     ) {
         parent::__construct($ccConfig, $paymentHelper, [self::CODE]);
         $this->checkoutSession = $checkoutSession;
@@ -102,6 +118,8 @@ class ConfigProvider extends CcGenericConfigProvider
         $this->urlBuilder = $urlBuilder;
         $this->assetSource = $assetSource;
         $this->sourceCcType = $sourceCcType;
+        $this->encryptor = $encryptor;
+        $this->localeResolver = $localeResolver;
     }
 
     /**
@@ -147,7 +165,10 @@ class ConfigProvider extends CcGenericConfigProvider
                     'show_logo_on_checkout' => (int) $this->helper->getConfig('show_logo_on_checkout', self::CODE),
                     'customer_taxvat' => $customerTaxvat,
                     'icons' => $this->getIcons(),
-                    'availableTypes' => $this->getCcAvailableTypes($methodCode)
+                    'availableTypes' => $this->getCcAvailableTypes($methodCode),
+                    'enable_pci_compliance' => (bool) $this->helper->getConfig('enable_pci_compliance', self::CODE),
+                    'pci_client_key' => $this->getDecryptedPciClientKey(),
+                    'pci_language' => $this->getKoinSdkLanguage()
                 ],
                 'ccform' => [
                     'grandTotal' => [$methodCode => $grandTotal],
@@ -195,5 +216,41 @@ class ConfigProvider extends CcGenericConfigProvider
         }
 
         return $this->icons;
+    }
+
+    /**
+     * Get decrypted PCI client key
+     *
+     * @return string
+     */
+    private function getDecryptedPciClientKey(): string
+    {
+        $encryptedKey = $this->helper->getConfig('pci_client_key', self::CODE);
+        if (empty($encryptedKey)) {
+            return '';
+        }
+
+        try {
+            return $this->encryptor->decrypt($encryptedKey);
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
+    /**
+     * Get Koin SDK language based on store locale
+     *
+     * @return string
+     */
+    private function getKoinSdkLanguage(): string
+    {
+        $locale = $this->localeResolver->getLocale();
+        $allowedLanguages = ['pt', 'es', 'en'];
+
+        // Extract language prefix (e.g., 'pt' from 'pt_BR')
+        $langPrefix = substr($locale, 0, 2);
+
+        // Return allowed language or fallback to language prefix
+        return in_array($langPrefix, $allowedLanguages) ? $langPrefix : 'en';
     }
 }
