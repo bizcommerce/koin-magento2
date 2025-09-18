@@ -201,13 +201,17 @@
                             <!-- /ko -->
                         </div>
                         <button type="button"
-                                class="action secondary"
+                                class="action secondary koin-confirm-btn-outline"
                                 data-bind="click: confirmCardData,
                                           enable: isKoinSdkLoaded,
-                                          visible: !isCardConfirmed()"
-                                class="action secondary koin-confirm-btn">
+                                          visible: !isCardConfirmed()">
                             <span><!-- ko i18n: 'Confirm Card Data'--><!-- /ko --></span>
                         </button>
+                        <div data-bind="visible: showInstallmentsWarning" class="installments-alert">
+                            <!-- ko if: isPciCompliance -->
+                            <small><!-- ko i18n: 'Please confirm your card data to see installments options' --><!-- /ko --></small>
+                            <!-- /ko -->
+                        </div>
 
                         <!-- Show confirmed card display -->
                         <!-- ko if: isCardConfirmed() -->
@@ -220,9 +224,9 @@
                                     </div>
                                 </div>
                                 <button type="button"
-                                        class="action secondary"
+                                        class="action secondary koin-edit-btn-outline"
                                         data-bind="click: editCardData">
-                                    <span><!-- ko i18n: 'Edit'--><!-- /ko --></span>
+                                    <span><!-- ko i18n: 'Change Card'--><!-- /ko --></span>
                                 </button>
                             </div>
                         </div>
@@ -247,9 +251,6 @@
                                     value: installmentsId">
                         </select>
                         <div data-bind="visible: showInstallmentsWarning" class="installments-alert">
-                            <!-- ko if: isPciCompliance -->
-                            <small><!-- ko i18n: 'Please confirm your card data to see installments options' --><!-- /ko --></small>
-                            <!-- /ko -->
                             <!-- ko if: !isPciCompliance -->
                             <small><!-- ko i18n: 'Insert your card number to see installments options' --><!-- /ko --></small>
                             <!-- /ko -->

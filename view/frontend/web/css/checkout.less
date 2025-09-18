@@ -136,6 +136,49 @@
     margin-bottom: 10px;
 }
 
+// Outline style buttons
+.koin-confirm-btn-outline {
+    background: transparent !important;
+    border: 2px solid #1979c3 !important;
+    color: #1979c3 !important;
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+
+    &:hover {
+        background: #1979c3 !important;
+        color: #fff !important;
+        border-color: #1979c3 !important;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.koin-edit-btn-outline {
+    background: transparent !important;
+    border: 2px solid #1979c3 !important;
+    color: #1979c3 !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+
+    &:before {
+        content: "\270E";
+        margin-right: 8px;
+        font-size: 14px;
+    }
+
+    &:hover {
+        background: #1979c3 !important;
+        color: #fff !important;
+        border-color: #1979c3 !important;
+    }
+}
+
 .koin-confirmed-card-display {
     border: 1px solid #ccc;
     padding: 15px;

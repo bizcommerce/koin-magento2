@@ -3,7 +3,7 @@
 "PCI Client Key","Chave do Cliente PCI"
 "Enable PCI compliant credit card fields using Koin Checkout SDK","Habilitar campos de cartão de crédito compatíveis com PCI usando o SDK do Koin Checkout"
 "Client key provided by Koin for PCI compliant checkout","Chave do cliente fornecida pela Koin para checkout compatível com PCI"
-"Secure Card Information","Informações Seguras do Cartão"
+"Secure Card Information","Informações do Cartão"
 "Loading secure payment form...","Carregando formulário de pagamento seguro..."
 "PCI card token is required but not provided.","Token do cartão PCI é obrigatório, mas não foi fornecido."
 "Confirm Card Data","Confirmar Dados do Cartão"
@@ -289,3 +289,4 @@
 "An error occurred while adding the product to cart. Please try again.","Ocorreu um erro ao adicionar o produto ao carrinho. Tente novamente."
 "Payment method stored in localStorage","Método de pagamento armazenado no localStorage"
 "Error storing payment method","Erro ao armazenar método de pagamento"
+"Change Card","Trocar Cartão"

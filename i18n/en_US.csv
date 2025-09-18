@@ -3,7 +3,7 @@
 "PCI Client Key","PCI Client Key"
 "Enable PCI compliant credit card fields using Koin Checkout SDK","Enable PCI compliant credit card fields using Koin Checkout SDK"
 "Client key provided by Koin for PCI compliant checkout","Client key provided by Koin for PCI compliant checkout"
-"Secure Card Information","Secure Card Information"
+"Secure Card Information","Card Information"
 "Loading secure payment form...","Loading secure payment form..."
 "PCI card token is required but not provided.","PCI card token is required but not provided."
 "Confirm Card Data","Confirm Card Data"
@@ -281,3 +281,4 @@
 "An error occurred while adding the product to cart. Please try again.","An error occurred while adding the product to cart. Please try again."
 "Payment method stored in localStorage","Payment method stored in localStorage"
 "Error storing payment method","Error storing payment method"
+"Change Card","Change Card"

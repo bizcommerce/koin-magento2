@@ -3,7 +3,7 @@ Koin - Callback Listing,Koin - Listado de Llamadas de Retorno
 "PCI Client Key","Clave de Cliente PCI"
 "Enable PCI compliant credit card fields using Koin Checkout SDK","Habilitar campos de tarjeta de crédito compatibles con PCI usando el SDK de Koin Checkout"
 "Client key provided by Koin for PCI compliant checkout","Clave de cliente proporcionada por Koin para checkout compatible con PCI"
-"Secure Card Information","Información Segura de la Tarjeta"
+"Secure Card Information","Información de la Tarjeta"
 "Loading secure payment form...","Cargando formulario de pago seguro..."
 "PCI card token is required but not provided.","Se requiere el token de tarjeta PCI pero no se proporcionó."
 "Confirm Card Data","Confirmar Datos de Tarjeta"
@@ -285,3 +285,4 @@ Card Installments,Cuotas de la Tarjeta
 "An error occurred while adding the product to cart. Please try again.","Ocurrió un error al agregar el producto al carrito. Por favor, inténtalo de nuevo."
 "Payment method stored in localStorage","Metodo de pago almacenado en localStorage"
 "Error storing payment method","Error al almacenar el método de pago"
+"Change Card","Cambiar Tarjeta"
