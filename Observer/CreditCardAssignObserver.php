@@ -87,7 +87,7 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
         }
 
         $isPciCompliance = isset($additionalData['is_pci_compliance']) && $additionalData['is_pci_compliance'];
-        
+
         if (isset($additionalData['cc_number']) || $isPciCompliance) {
             $installments = $additionalData['installments'] ?? 0;
             $ccOwner = $additionalData['cc_owner'] ?? null;
@@ -129,13 +129,8 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
                 'cc_exp_year' => $ccExpYear
             ];
 
-            if ($isPciCompliance) {
-                $paymentData['cc_number'] = $ccNumber;
-                $paymentData['cc_cid'] = $ccCid;
-            } else {
-                $paymentData['cc_number'] = $ccNumber;
-                $paymentData['cc_cid'] = $ccCid;
-            }
+            $paymentData['cc_number'] = $ccNumber;
+            $paymentData['cc_cid'] = $ccCid;
 
             $paymentInfo->addData($paymentData);
 

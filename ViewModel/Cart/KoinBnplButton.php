@@ -103,6 +103,7 @@ class KoinBnplButton implements ArgumentInterface
         try {
             return $this->assetRepo->getUrl('Koin_Payment::images/logo.svg');
         } catch (LocalizedException $e) {
+            $this->koinHelper->log($e->getMessage());
             return '';
         }
     }
@@ -127,6 +128,7 @@ class KoinBnplButton implements ArgumentInterface
         try {
             return $this->formKey->getFormKey();
         } catch (\Exception $e) {
+            $this->koinHelper->log($e->getMessage());
             return '';
         }
     }

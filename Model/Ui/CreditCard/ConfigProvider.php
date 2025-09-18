@@ -233,6 +233,7 @@ class ConfigProvider extends CcGenericConfigProvider
         try {
             return $this->encryptor->decrypt($encryptedKey);
         } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
             return '';
         }
     }
