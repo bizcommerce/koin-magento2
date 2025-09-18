@@ -1,0 +1,112 @@
+//
+// DISCLAIMER
+//
+// Do not edit or add to this file if you wish to upgrade this extension to newer
+// version in the future.
+//
+// @category    Koin
+// @package     Koin_Payment
+//
+
+// BNPL Banner Styles
+.koin-bnpl-banner {
+    margin-top: 15px;
+    margin-bottom: 10px;
+
+    .koin-bnpl-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 50px;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #00BF63;
+        color: #FFFFFF;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        &:hover:not(.disabled) {
+            background: #00A055;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active:not(.disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        &.disabled,
+        &.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .koin-logo {
+            height: 24px;
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .koin-text {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.2;
+        }
+    }
+}
+
+// Mobile responsive
+@media (max-width: 767px) {
+    .koin-bnpl-banner {
+        .koin-bnpl-button {
+            font-size: 15px;
+            min-height: 48px;
+            padding: 10px 16px;
+
+            .koin-logo {
+                height: 22px;
+                margin-right: 8px;
+            }
+        }
+    }
+}
+
+// Small mobile
+@media (max-width: 480px) {
+    .koin-bnpl-banner {
+        .koin-bnpl-button {
+            font-size: 14px;
+            min-height: 44px;
+            padding: 8px 12px;
+
+            .koin-logo {
+                height: 20px;
+                margin-right: 6px;
+            }
+        }
+    }
+}
+
+// Loading animation
+.koin-bnpl-button.loading .koin-text::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #FFFFFF;
+    animation: koin-spin 1s linear infinite;
+}
+
+@keyframes koin-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

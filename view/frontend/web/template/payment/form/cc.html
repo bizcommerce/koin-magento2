@@ -39,6 +39,7 @@
                 </legend><br />
                 <!-- /ko -->
 
+                <!-- ko if: !isPciCompliance -->
                 <div class="field number cc-number required" data-bind="visible: showCardData">
                     <div class="credit-card-types-container required">
                         <label data-bind="attr: {for: getCode() + '_cc_type'}" class="label">
@@ -185,6 +186,54 @@
                     </div>
                 </div>
                 <!-- /ko -->
+                <!-- /ko -->
+
+                <!-- ko if: isPciCompliance -->
+                <div class="field pci-container required">
+                    <span><!-- ko i18n: 'Secure Card Information'--><!-- /ko --></span>
+                    <div class="control">
+                        <!-- Show SDK form when not confirmed, display none if isCardConfirmed() -->
+                        <div data-bind="attr: {id: 'koin-checkout-container-' + getCode()}, visible: !isCardConfirmed()" class="koin-pci-container">
+                            <!-- ko if: !isKoinSdkLoaded() -->
+                            <div class="koin-pci-loading">
+                                <span><!-- ko i18n: 'Loading secure payment form...'--><!-- /ko --></span>
+                            </div>
+                            <!-- /ko -->
+                        </div>
+                        <button type="button"
+                                class="action secondary koin-confirm-btn-outline"
+                                data-bind="click: confirmCardData,
+                                          enable: isKoinSdkLoaded,
+                                          visible: !isCardConfirmed()">
+                            <span><!-- ko i18n: 'Confirm Card Data'--><!-- /ko --></span>
+                        </button>
+                        <div data-bind="visible: showInstallmentsWarning" class="installments-alert">
+                            <!-- ko if: isPciCompliance -->
+                            <small><!-- ko i18n: 'Please confirm your card data to see installments options' --><!-- /ko --></small>
+                            <!-- /ko -->
+                        </div>
+
+                        <!-- Show confirmed card display -->
+                        <!-- ko if: isCardConfirmed() -->
+                        <div class="koin-confirmed-card-display">
+                            <div>
+                                <div>
+                                    <strong data-bind="text: confirmedCardDisplay"></strong>
+                                    <div class="koin-card-status">
+                                        <span><!-- ko i18n: 'Card confirmed'--><!-- /ko --></span>
+                                    </div>
+                                </div>
+                                <button type="button"
+                                        class="action secondary koin-edit-btn-outline"
+                                        data-bind="click: editCardData">
+                                    <span><!-- ko i18n: 'Change Card'--><!-- /ko --></span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </div>
+                <!-- /ko -->
 
                 <div class="field installments required" data-bind="attr: {id: getCode() + '_installments_div'}">
                     <label data-bind="attr: {for: getCode() + '_installments'}" class="label">
@@ -194,7 +243,7 @@
                         <select name="payment[installments]"
                                 class="select"
                                 data-bind="attr: {'id': getCode() + '_cc_installments', 'data-validate': JSON.stringify({required:true})},
-                                    enable: hasInstallments,
+                                    enable: hasInstallments && (!isPciCompliance || isCardConfirmed()),
                                     options: installments,
                                     optionsValue: 'id',
                                     optionsText: 'text',
@@ -202,7 +251,9 @@
                                     value: installmentsId">
                         </select>
                         <div data-bind="visible: showInstallmentsWarning" class="installments-alert">
+                            <!-- ko if: !isPciCompliance -->
                             <small><!-- ko i18n: 'Insert your card number to see installments options' --><!-- /ko --></small>
+                            <!-- /ko -->
                         </div>
                     </div>
                 </div>
@@ -251,7 +302,7 @@
                 <button class="action primary checkout"
                         type="submit"
                         data-bind="
-                        click: placeOrder,
+                        click: isPciCompliance ? tokenizeAndPlaceOrder : placeOrder,
                         attr: {title: $t('Place Order')}
                         ">
                     <span data-bind="i18n: 'Place Order'"></span>

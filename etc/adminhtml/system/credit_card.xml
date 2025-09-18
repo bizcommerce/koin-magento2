@@ -75,6 +75,23 @@
             <config_path>payment/koin_cc/cctypes</config_path>
         </field>
 
+        <field id="enable_pci_compliance" translate="label comment" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Enable PCI Compliance to the form?</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>payment/koin_cc/enable_pci_compliance</config_path>
+            <comment><![CDATA[Enable PCI compliant credit card fields using Koin Checkout SDK]]></comment>
+        </field>
+
+        <field id="pci_client_key" translate="label comment" type="obscure" sortOrder="36" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>PCI Client Key</label>
+            <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+            <config_path>payment/koin_cc/pci_client_key</config_path>
+            <comment><![CDATA[Client key provided by Koin for PCI compliant checkout]]></comment>
+            <depends>
+                <field id="enable_pci_compliance">1</field>
+            </depends>
+        </field>
+
         <field id="order_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>New Order Status</label>
             <source_model>Magento\Sales\Model\Config\Source\Order\Status\Newprocessing</source_model>

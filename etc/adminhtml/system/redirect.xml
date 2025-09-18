@@ -35,6 +35,20 @@
             <comment><![CDATA[If not, Koin's logo besides the method title]]></comment>
         </field>
 
+        <field id="show_bnpl_product_banner" translate="label comment" type="select" sortOrder="115" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Show BNPL Banner on Product Pages</label>
+            <config_path>payment/koin_redirect/show_bnpl_product_banner</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <comment><![CDATA[Display "Buy with Koin" banner on product pages for direct BNPL checkout]]></comment>
+        </field>
+
+        <field id="show_bnpl_cart_banner" translate="label comment" type="select" sortOrder="116" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+            <label>Show BNPL Button on Cart Page</label>
+            <config_path>payment/koin_redirect/show_bnpl_cart_banner</config_path>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <comment><![CDATA[Display "Allow Buy with Koin" button on shopping cart page below Proceed to Checkout]]></comment>
+        </field>
+
         <field id="use_default_checkout_instructions" translate="label comment" type="select" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
             <label>Use Default Checkout Instructions</label>
             <config_path>payment/koin_redirect/use_default_checkout_instructions</config_path>
