@@ -157,3 +157,4 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.12.0
 - Feat: Widget Banner for BNPL
 - Feat: Button Buy with Pix Parcelado with options to show on product page and cart
+- Feat: PCI Compliance option for credit card payments, new config in credit card system configuration
