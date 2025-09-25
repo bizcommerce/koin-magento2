@@ -38,6 +38,8 @@
                 <payments_uri_sandbox>https://api-sandbox.koin.com.br/</payments_uri_sandbox>
                 <antifraud_uri>https://api-antifraud.koin.com.br/</antifraud_uri>
                 <antifraud_uri_sandbox>https://api-sandbox.koin.com.br/</antifraud_uri_sandbox>
+                <pci_sdk_url>https://api-v1.koinsecure.com/checkout/static/scripts/sdk/tokenize.js</pci_sdk_url>
+                <pci_sdk_url_sandbox>https://portal-dev.koin.com.br/checkout/static/scripts/sdk/tokenize.js</pci_sdk_url_sandbox>
                 <secure>
                     <tokenize>v1/payment/tokenize</tokenize>
                 </secure>

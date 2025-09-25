@@ -168,7 +168,8 @@ class ConfigProvider extends CcGenericConfigProvider
                     'availableTypes' => $this->getCcAvailableTypes($methodCode),
                     'enable_pci_compliance' => (bool) $this->helper->getConfig('enable_pci_compliance', self::CODE),
                     'pci_client_key' => $this->getDecryptedPciClientKey(),
-                    'pci_language' => $this->getKoinSdkLanguage()
+                    'pci_language' => $this->getKoinSdkLanguage(),
+                    'pci_sdk_url' => $this->getPciSdkUrl()
                 ],
                 'ccform' => [
                     'grandTotal' => [$methodCode => $grandTotal],
@@ -253,5 +254,18 @@ class ConfigProvider extends CcGenericConfigProvider
 
         // Return allowed language or fallback to language prefix
         return in_array($langPrefix, $allowedLanguages) ? $langPrefix : 'en';
+    }
+
+    /**
+     * Get PCI SDK URL based on sandbox configuration
+     *
+     * @return string
+     */
+    private function getPciSdkUrl(): string
+    {
+        $configPath = $this->helper->getGeneralConfig('use_sandbox')
+            ? 'pci_sdk_url_sandbox'
+            : 'pci_sdk_url';
+        return $this->helper->getEndpointConfig($configPath) ?: '';
     }
 }
