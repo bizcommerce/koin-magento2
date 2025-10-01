@@ -313,7 +313,7 @@ define([
                 var self = this;
                 if (!window.koinCheckout) {
                     var script = document.createElement('script');
-                    script.src = 'https://portal-dev.koin.com.br/checkout/static/scripts/sdk/tokenize.js';
+                    script.src = window.checkoutConfig.payment.koin_cc.pci_sdk_url;
                     script.onload = function() {
                         self.initializeKoinCheckout();
                     };
