@@ -1,25 +1,23 @@
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
-/**
- * @api
- */
-define(
-    [
-        'mage/storage',
-        'Magento_Checkout/js/model/error-processor',
-        'Magento_Checkout/js/model/full-screen-loader',
-        'Magento_Customer/js/customer-data',
-        'Magento_Checkout/js/model/payment/place-order-hooks',
-        'underscore',
-        'jquery',
-        'Magento_Ui/js/modal/modal'
-    ],
-    function (storage, errorProcessor, fullScreenLoader, customerData, hooks, _, $, modal) {
-        'use strict';
+define([
+    'mage/storage',
+    'Magento_Checkout/js/model/error-processor',
+    'Magento_Checkout/js/model/full-screen-loader',
+    'Magento_Customer/js/customer-data',
+    'Magento_Checkout/js/model/payment/place-order-hooks',
+    'underscore',
+    'jquery',
+    'Magento_Ui/js/modal/modal'
+], function (storage, errorProcessor, fullScreenLoader, customerData, hooks, _, $, modal) {
+    'use strict';
 
+    return function (placeOrderAction) {
         return function (serviceUrl, payload, messageContainer) {
+            var method = payload?.paymentMethod?.method;
+
+            if (!method || !method.includes('koin') || method === 'koin_redirect') {
+                return placeOrderAction(serviceUrl, payload, messageContainer);
+            }
+
             var headers = {}, redirectURL = '';
 
             fullScreenLoader.startLoader();
@@ -34,8 +32,8 @@ define(
                     errorProcessor.process(response, messageContainer);
                     redirectURL = response.getResponseHeader('errorRedirectAction');
                     var modalElement = $('#bnpl-modal');
-                    var method = payload?.paymentMethod?.method;
-                    if (modalElement.length > 0 && method && method.includes('koin') && method !== 'koin_redirect') {
+
+                    if (modalElement.length > 0) {
                         var options = {
                             type: 'popup',
                             responsive: true,
@@ -49,7 +47,7 @@ define(
                                 },
                                 {
                                     text: $.mage.__('Select BNPL'),
-                                    class: "action primary select-bnpl",
+                                    class: 'action primary select-bnpl',
                                     click: function () {
                                         $('#koin_redirect').click();
                                         this.closeModal();
@@ -57,7 +55,7 @@ define(
                                 }
                             ]
                         };
-                        var popup = modal(options, modalElement);
+                        modal(options, modalElement);
                         modalElement.modal('openModal');
                         return;
                     }
@@ -94,5 +92,5 @@ define(
                 }
             );
         };
-    }
-);
+    };
+});

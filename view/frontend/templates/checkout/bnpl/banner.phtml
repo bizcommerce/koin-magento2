@@ -25,7 +25,7 @@ $instructions = $viewModel->getInstructionsContent();
 ?>
 <?php if ($viewModel->canShowModal()): ?>
 <div id="bnpl-modal" style="display:none;">
-    <div class="content"><?= $instructions ?></div>
+    <div class="content"><?= $escaper->escapeHtml($instructions, ['p', 'br', 'strong', 'em', 'u', 'a', 'h1', 'h2', 'h3', 'span', 'div']) ?></div>
 </div>
 <?php endif; ?>
 
