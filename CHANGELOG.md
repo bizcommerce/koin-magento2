@@ -161,3 +161,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.12.1
 - Fix: Adjust endpoints for PCI Credit Card Form
+
+
+### v2.13.0:
+- feat: Creating a bnpl modal after payment fail

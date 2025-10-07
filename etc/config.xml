@@ -87,6 +87,7 @@
                 <show_logo_on_checkout>1</show_logo_on_checkout>
                 <show_bnpl_product_banner>0</show_bnpl_product_banner>
                 <show_bnpl_cart_banner>0</show_bnpl_cart_banner>
+                <show_payment_error_modal>0</show_payment_error_modal>
                 <use_default_checkout_instructions>1</use_default_checkout_instructions>
                 <text_email_validation>Seu pedido foi recebido, e estamos aguardando a confirmação do seu e-mail para análise</text_email_validation>
                 <text_provider_review>Seu pedido foi recebido e encontra-se em análise com a nossa equipe</text_provider_review>
