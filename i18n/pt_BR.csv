@@ -296,3 +296,5 @@
 "Instructions to be shown in BNPL modal, it can be HTML","Instruções a serem exibidas na modal do BNPL, pode conter HTML"
 "Close","Fechar"
 "Select BNPL","Selecionar BNPL"
+"Enable Antifraud Strategies on Success Page","Ativar Estratégias Antifraude na Página de Sucesso"
+"If 'Yes', the payment method using Koin Antifraud will display a validation for the final customer.","Se 'Sim', o método de pagamento que usa o Koin Antifraud exibirá uma validação para o cliente final."

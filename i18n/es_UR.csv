@@ -292,3 +292,5 @@ Card Installments,Cuotas de la Tarjeta
 "Instructions to be shown in BNPL modal, it can be HTML","Instrucciones que se mostrarán en el modal BNPL, puede contener HTML"
 "Close","Cerrar"
 "Select BNPL","Seleccionar BNPL"
+"Enable Antifraud Strategies on Success Page","Activar Estrategias Antifraude en la Página de Éxito"
+"If 'Yes', the payment method using Koin Antifraud will display a validation for the final customer.","Si 'Sí', el método de pago que utiliza Koin Antifraud mostrará una validación para el cliente final."
