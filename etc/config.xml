@@ -65,6 +65,9 @@
             <customer>
                 <customer_type_company_value>pj</customer_type_company_value>
             </customer>
+            <fraud_analysis>
+                <active_strategy>0</active_strategy>
+            </fraud_analysis>
         </koin>
         <payment>
             <koin_redirect>
