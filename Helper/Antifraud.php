@@ -438,6 +438,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             }
 
         } catch (\Exception $e) {
+            $this->helperData->log($e->getMessage());
             if (isset($antifraud) && $antifraud->getId()) {
                 $this->updateAntifraud(
                     $antifraud,

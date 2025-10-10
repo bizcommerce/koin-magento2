@@ -51,7 +51,7 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
     {
         $orderId = $this->getRequest()->getParam('oId');
 
-        if (!$orderId || !$order = $this->validateRequest($orderId)) {
+        if (!$orderId || !$this->validateRequest($orderId)) {
             $this->response->setHttpResponseCode(403);
             return $this->response;
         }
@@ -61,9 +61,10 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
         $this->response->setHeader('Cache-Control', 'no-cache', true);
         $this->response->setHeader('X-Accel-Buffering', 'no', true);
 
-        $limit = 720;
+        $limit = 60;
         for ($i = 0; $i < $limit; $i++) {
             try {
+                $order = $this->orderRepository->get($orderId);
                 $isApproved = $order->getData('koin_antifraud_status') == AntifraudHelper::APPROVED_STATUS;
 
                 $result = [
@@ -96,11 +97,12 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
         return $this->response;
     }
 
-    private function validateRequest(int|string $orderId)
+    private function validateRequest(int|string $orderId): bool
     {
         try {
-            return $this->orderRepository->get($orderId);
-        } catch (\Exception $e) {
+            $this->orderRepository->get($orderId);
+            return true;
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
             return false;
         }
     }
