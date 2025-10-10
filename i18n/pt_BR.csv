@@ -153,7 +153,6 @@
 "If 'yes', it'll trigger a capture command to payment method provider, it depends on availability of the payment method to send capture commands to the issuer","Se 'sim', irá disparar um comando de captura ao método de pagamento, depende da disponibilidade do método de pagamento em efetuar captura ao gateway (fazer a captura online pela plataforma)"
 "Koin - Card with Antifraud","Koin - Cartão com Antifraude"
 "Credit Card with Antifraud","Cartão de Crédito com Antifraude"
-"To work with Fraud Analysis, it's mandatory to enable Magento Cron functions, the fraud analysis are sent to koin through crontab","Para funcionar com a Análise de Fraude, é necessário habilitar as funções de Cron do Magento, a análise de fraude é enviada para a Koin através da crontab"
 "Credit Card Information not provided","Informações do Cartão de Crédito não fornecidas"
 "Card Installments","Parcelamento"
 "What is this?","O que é isso?"

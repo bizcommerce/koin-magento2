@@ -16,7 +16,6 @@
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
     <group id="koin_fraud_analysis" translate="label comment" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
         <label>Fraud Analysis (Other Payment Methods)</label>
-        <comment>To work with Fraud Analysis, it's mandatory to enable Magento Cron functions, the fraud analysis are sent to koin through crontab</comment>
 
         <field id="active" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Enabled</label>

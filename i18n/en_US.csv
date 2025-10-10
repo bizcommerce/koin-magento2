@@ -148,7 +148,6 @@
 "If 'yes', it'll trigger a capture command to payment method provider, it depends on availability of the payment method to send capture commands to the issuer","If 'yes', it'll trigger a capture command to payment method provider, it depends on availability of the payment method to send capture commands to the issuer"
 "Koin - Card with Antifraud","Koin - Card with Antifraud"
 "Credit Card with Antifraud","Credit Card with Antifraud"
-"To work with Fraud Analysis, it's mandatory to enable Magento Cron functions, the fraud analysis are sent to koin through crontab","To work with Fraud Analysis, it's mandatory to enable Magento Cron functions, the fraud analysis are sent to koin through crontab"
 "Credit Card Information not provided","Credit Card Information not provided"
 "Card Installments","Card Installments"
 "What is this?","What is this?"

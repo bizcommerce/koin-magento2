@@ -9,7 +9,7 @@ $viewModel = $block->getViewModel();
 $strategyUrl = $block->escapeHtml($viewModel->getStrategyLink());
 ?>
 
-<?php if ($viewModel->isPending() && $strategyUrl): ?>
+<?php if ($viewModel->isPending() && $strategyUrl && $viewModel->isStrategiesEnabled()): ?>
     <?php
     $antifraudStrategyUrl = $block->escapeHtml($viewModel->getAntifraudStrategyUrl());
     ?>

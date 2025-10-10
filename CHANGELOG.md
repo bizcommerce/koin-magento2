@@ -165,3 +165,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.13.0:
 - feat: Creating a bnpl modal after payment fail
+
+### v2.14.0:
+- feat: Remove the antifraud queue and implement the antifraud strategies

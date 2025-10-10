@@ -24,30 +24,20 @@ use Koin\Payment\Gateway\Http\Client\Payments\Api;
 use Koin\Payment\Model\Ui\CreditCard\ConfigProvider as CcConfigProvider;
 use Koin\Payment\Model\Ui\Pix\ConfigProvider as PixConfigProvider;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Model\Order;
+use Koin\Payment\Helper\Data as HelperData;
 
 class AntifraudStrategy implements ArgumentInterface
 {
-    /**
-     * @var Order
-     */
-    protected $order;
-
-    protected $urlBuilder;
-
-    /**
-     * @var Session
-     */
-    protected $checkoutSession;
-
     public function __construct(
-        Session $checkoutSession,
-        \Magento\Framework\UrlInterface $urlBuilder
-    ) {
-        $this->checkoutSession = $checkoutSession;
-        $this->urlBuilder = $urlBuilder;
-
+        protected Session $checkoutSession,
+        protected UrlInterface $urlBuilder,
+        protected HelperData $helperData,
+        protected ?Order $order = null
+    )
+    {
     }
 
     protected function getOrder(): Order
@@ -79,6 +69,11 @@ class AntifraudStrategy implements ArgumentInterface
             $this->getOrder()->getPayment()->getAdditionalInformation('status'),
             $this->getPendingStatuses()
         );
+    }
+
+    public function isStrategiesEnabled(): bool
+    {
+        return (bool) $this->helperData->getAntifraudConfig('active_strategy');
     }
 
     public function getPendingStatuses(): array

@@ -149,7 +149,6 @@ Capture Approved Orders,Capturar Pedidos Aprobados
 "If 'yes', it'll trigger a capture command to payment method provider, it depends on availability of the payment method to send capture commands to the issuer","Si 'sí', se activará un comando de captura al proveedor del método de pago, depende de la disponibilidad del método de pago para enviar comandos de captura al emisor"
 Koin - Card with Antifraud,Koin - Tarjeta con Antifraude
 Credit Card with Antifraud,Tarjeta de Crédito con Antifraude
-"To work with Fraud Analysis, it's mandatory to enable Magento Cron functions, the fraud analysis are sent to koin through crontab","Para trabajar con el Análisis de Fraude, es obligatorio habilitar las funciones de Cron de Magento, el análisis de fraude se envía a Koin a través de crontab"
 Credit Card Information not provided,Información de la Tarjeta de Crédito no proporcionada
 Card Installments,Cuotas de la Tarjeta
 What is this?,¿Qué es esto?
