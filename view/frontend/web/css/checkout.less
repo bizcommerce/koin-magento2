@@ -205,6 +205,16 @@
         display: flex;
         flex-direction: column;
     }
+
+    .modal-inner-wrap:has(#koin-modal-antifraud-strategy) {
+        top: 10%;
+
+        .modal-content {
+            #koin-modal-iframe {
+                min-height: 30vh;
+            }
+        }
+    }
 }
 
 

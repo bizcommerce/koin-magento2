@@ -20,22 +20,19 @@
 
 namespace Koin\Payment\ViewModel\Checkout\Success;
 
-use Koin\Payment\Gateway\Http\Client\Payments\Api;
-use Koin\Payment\Model\Ui\CreditCard\ConfigProvider as CcConfigProvider;
-use Koin\Payment\Model\Ui\Pix\ConfigProvider as PixConfigProvider;
+use Koin\Payment\Helper\Data as HelperData;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Model\Order;
-use Koin\Payment\Helper\Data as HelperData;
 
 class AntifraudStrategy implements ArgumentInterface
 {
     public function __construct(
-        protected Session $checkoutSession,
+        protected Session      $checkoutSession,
         protected UrlInterface $urlBuilder,
-        protected HelperData $helperData,
-        protected ?Order $order = null
+        protected HelperData   $helperData,
+        protected ?Order       $order = null
     )
     {
     }
@@ -50,7 +47,7 @@ class AntifraudStrategy implements ArgumentInterface
 
     public function getStrategyLink(): string
     {
-        return (string)  $this->getOrder()->getPayment()->getAdditionalInformation('koin_antifraud_strategy_link');
+        return (string) $this->getOrder()->getPayment()->getAdditionalInformation('koin_antifraud_strategy_link');
     }
 
     public function getAntifraudStrategyUrl(): string
@@ -60,28 +57,16 @@ class AntifraudStrategy implements ArgumentInterface
 
     public function isPending(): bool
     {
-        $method = $this->getOrder()->getPayment()->getMethod();
-        if ($method !== CcConfigProvider::CODE && $method !== PixConfigProvider::CODE) {
-            return false;
-        }
-
-        return in_array(
-            $this->getOrder()->getPayment()->getAdditionalInformation('status'),
-            $this->getPendingStatuses()
-        );
+        return in_array($this->getOrder()->getStatus(), $this->getPendingStatuses());
     }
 
     public function isStrategiesEnabled(): bool
     {
-        return (bool) $this->helperData->getAntifraudConfig('active_strategy');
+        return (bool)$this->helperData->getAntifraudConfig('active_strategy');
     }
 
     public function getPendingStatuses(): array
     {
-        return [
-            Api::STATUS_PUBLISHED,
-            Api::STATUS_PENDING,
-            Api::STATUS_OPENED,
-        ];
+        return explode(',', $this->helperData->getAntifraudConfig('order_status'));
     }
 }

@@ -19,7 +19,7 @@ define([
                     type: 'popup',
                     modalClass: 'koin-modal-antifraud-strategy',
                     responsive: true,
-                    innerScroll: true,
+                    innerScroll: false,
                     buttons: [{
                         text: $.mage.__('Close'),
                         class: 'action secondary',

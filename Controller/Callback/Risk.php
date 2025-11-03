@@ -62,7 +62,7 @@ class Risk extends Callback
                     $content['status'],
                     $content['score'],
                     $content['analysis_type'],
-                    !empty($content['strategies']['link']) ? $content['strategies']['link'] : null
+                    !empty($content['strategies'][0]['link']) ? $content['strategies'][0]['link'] : null
                 );
 
                 /** @var \Koin\Payment\Model\Callback $callBack */

@@ -171,3 +171,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.14.1:
 - fix: adjust the  alignment for bnpl modal
+
+### v2.14.2:
+- fix: show iframe on strategy modal on success page
