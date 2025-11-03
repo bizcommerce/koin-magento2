@@ -192,4 +192,19 @@
     }
 }
 
+.modal-popup._show {
+    .modal-inner-wrap:has(#bnpl-modal) {
+        top: 50%;
+        transform: translateY(-50%);
+        -webkit-transform: translateY(-50%);
+        margin: auto;
+    }
+
+    .modal-content {
+        max-height: 95vh;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
 

@@ -168,3 +168,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.14.0:
 - feat: Remove the antifraud queue and implement the antifraud strategies
+
+### v2.14.1:
+- fix: adjust the  alignment for bnpl modal
