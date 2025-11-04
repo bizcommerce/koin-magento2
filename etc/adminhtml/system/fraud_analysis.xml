@@ -90,7 +90,7 @@
         </field>
 
         <field id="approved_status" translate="label comment" type="select" sortOrder="132" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Aproved Order Status</label>
+            <label>Approved Order Status</label>
             <source_model>Koin\Payment\Model\Config\Source\Order\ProcessingComplete</source_model>
             <config_path>koin/fraud_analysis/approved_status</config_path>
             <depends>

@@ -174,3 +174,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.14.2:
 - fix: show iframe on strategy modal on success page
+
+### v2.14.3:
+- feat: display strategies modal in the order page
