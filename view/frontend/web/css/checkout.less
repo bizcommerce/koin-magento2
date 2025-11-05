@@ -193,17 +193,20 @@
 }
 
 .modal-popup._show {
-    .modal-inner-wrap:has(#bnpl-modal) {
-        top: 50%;
-        transform: translateY(-50%);
-        -webkit-transform: translateY(-50%);
-        margin: auto;
-    }
+    .modal-inner-wrap:has(#bnpl-modal), .modal-inner-wrap:has(#koin-modal-antifraud-strategy) {
+        top: 10%;
 
-    .modal-content {
-        max-height: 95vh;
-        display: flex;
-        flex-direction: column;
+        .modal-content {
+            height: 100%;
+
+            #bnpl-modal {
+                height: 100%;
+            }
+
+            #koin-modal-iframe {
+                min-height: 30vh;
+            }
+        }
     }
 }
 

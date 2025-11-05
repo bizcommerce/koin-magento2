@@ -423,7 +423,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             if ($content && $response['status'] < 300) {
                 $status = $content['status'] ?? null;
                 if ($status && isset($content['score'])) {
-                    $strategyLink = !empty($content['strategies']) ? $content['strategies']['link'] : null;
+                    $strategyLink = $content['strategies'][0]['link'] ?? null;
                     $score = $content['score'];
                     $analysisType = $content['analysis_type'] ?? null;
                     $antifraudId = $content['id'] ?? null;
