@@ -162,21 +162,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### v2.12.1
 - Fix: Adjust endpoints for PCI Credit Card Form
 
-
 ### v2.13.0:
 - feat: Creating a bnpl modal after payment fail
-
-### v2.14.0:
-- feat: Remove the antifraud queue and implement the antifraud strategies
-
-### v2.14.1:
-- fix: adjust the  alignment for bnpl modal
-
-### v2.14.2:
-- fix: show iframe on strategy modal on success page
-
-### v2.14.3:
-- feat: display strategies modal in the order page
-
-### v2.14.4:
-- fix: adjust the alignment for bnpl and strategies modal
+- feat: Implement the antifraud strategies
+- fix: installments error when saving data
