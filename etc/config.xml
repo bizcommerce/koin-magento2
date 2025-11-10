@@ -67,6 +67,7 @@
             </customer>
             <fraud_analysis>
                 <active_strategy>0</active_strategy>
+                <enable_listener>0</enable_listener>
             </fraud_analysis>
         </koin>
         <payment>

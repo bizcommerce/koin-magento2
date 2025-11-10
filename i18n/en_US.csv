@@ -289,3 +289,5 @@
 "Select BNPL","Select BNPL"
 "Enable Antifraud Strategies on Success Page","Enable Antifraud Strategies on Success Page"
 "If 'Yes', the payment method using Koin Antifraud will display a validation for the final customer.","If 'Yes', the payment method using Koin Antifraud will display a validation for the final customer."
+"If set to 'Yes', the order status will not be updated when the order is approved or denied.","If set to 'Yes', the order status will not be updated when the order is approved or denied."
+"Enable Listener Mode","Enable Listener Mode"

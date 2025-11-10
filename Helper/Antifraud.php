@@ -290,49 +290,51 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
     public function updateOrder($order, $status, $score, $strategyLink): void
     {
         try {
-            if ($status == self::APPROVED_STATUS) {
-                $changeStatusApproved = $this->helperData->getAntifraudConfig('change_status_approved');
-                $approvedStatus = false;
+            if (!$this->isListenerEnabled()) {
+                if ($status == self::APPROVED_STATUS) {
+                    $changeStatusApproved = $this->helperData->getAntifraudConfig('change_status_approved');
+                    $approvedStatus = false;
 
-                $captureApproved = $this->helperData->getAntifraudConfig('capture_approved_orders');
-                if ($captureApproved && $order->canInvoice()) {
-                    $this->helperOrder->captureOrder($order);
-                }
-
-                if ($changeStatusApproved) {
-                    $approvedStatus = $this->helperData->getAntifraudConfig('approved_status');
-                }
-
-                $message = __('The order was approved by Fraud Analysis', $order->getIncrementId());
-                $orderState = $this->helperOrder->getStatusState($approvedStatus);
-
-                $order->addCommentToStatusHistory($message, $approvedStatus);
-                $order->setState($orderState);
-            } elseif ($status == self::REJECTED_STATUS) {
-                $cancelDenied = $this->helperData->getAntifraudConfig('cancel_denied_orders');
-                $changeStatusDenied = $this->helperData->getAntifraudConfig('change_status_denied');
-                $deniedStatus = false;
-                if ($cancelDenied) {
-                    $deniedStatus = $this->helperData->getAntifraudConfig('denied_cancelled_status');
-                    if ($order->canCancel()) {
-                        $order->cancel();
-                    } else {
-                        $this->helperOrder->credimemoOrder($order);
+                    $captureApproved = $this->helperData->getAntifraudConfig('capture_approved_orders');
+                    if ($captureApproved && $order->canInvoice()) {
+                        $this->helperOrder->captureOrder($order);
                     }
-                } elseif ($changeStatusDenied) {
-                    $deniedStatus = $this->helperData->getAntifraudConfig('denied_status');
+
+                    if ($changeStatusApproved) {
+                        $approvedStatus = $this->helperData->getAntifraudConfig('approved_status');
+                    }
+
+                    $message = __('The order was approved by Fraud Analysis', $order->getIncrementId());
+                    $orderState = $this->helperOrder->getStatusState($approvedStatus);
+
+                    $order->addCommentToStatusHistory($message, $approvedStatus);
+                    $order->setState($orderState);
+                } elseif ($status == self::REJECTED_STATUS) {
+                    $cancelDenied = $this->helperData->getAntifraudConfig('cancel_denied_orders');
+                    $changeStatusDenied = $this->helperData->getAntifraudConfig('change_status_denied');
+                    $deniedStatus = false;
+                    if ($cancelDenied) {
+                        $deniedStatus = $this->helperData->getAntifraudConfig('denied_cancelled_status');
+                        if ($order->canCancel()) {
+                            $order->cancel();
+                        } else {
+                            $this->helperOrder->credimemoOrder($order);
+                        }
+                    } elseif ($changeStatusDenied) {
+                        $deniedStatus = $this->helperData->getAntifraudConfig('denied_status');
+                    }
+
+                    $orderState = $this->helperOrder->getStatusState($deniedStatus);
+                    $message = __('The order %1 was repproved by Fraud Analysis', $order->getIncrementId());
+
+                    $order->addCommentToStatusHistory($message, $deniedStatus);
+                    $order->setState($orderState);
+
+                    /** @var \Magento\Sales\Model\Order\Payment $payment */
+                    $payment = $order->getPayment();
+                    $payment->setIsFraudDetected(true);
+                    $this->helperOrder->savePayment($payment);
                 }
-
-                $orderState = $this->helperOrder->getStatusState($deniedStatus);
-                $message = __('The order %1 was repproved by Fraud Analysis', $order->getIncrementId());
-
-                $order->addCommentToStatusHistory($message, $deniedStatus);
-                $order->setState($orderState);
-
-                /** @var \Magento\Sales\Model\Order\Payment $payment */
-                $payment = $order->getPayment();
-                $payment->setIsFraudDetected(true);
-                $this->helperOrder->savePayment($payment);
             }
 
             if ($strategyLink) {
@@ -373,6 +375,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                     ],
                     'reference_id' => $order->getIncrementId(),
                     'country_code' => $this->helperData->getDefaultCountryCode(),
+                    'listener_mode' => $this->isListenerEnabled(),
                     'redirected' => false
                 ],
                 'buyer' => $this->getBuyerData($order),
@@ -797,4 +800,8 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         return $installments > 0 ? $installments : 1;
     }
 
+    public function isListenerEnabled(): bool
+    {
+        return (bool) $this->helperData->getAntifraudConfig('enable_listener');
+    }
 }

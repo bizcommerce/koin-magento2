@@ -293,3 +293,5 @@ Card Installments,Cuotas de la Tarjeta
 "Select BNPL","Seleccionar BNPL"
 "Enable Antifraud Strategies on Success Page","Activar Estrategias Antifraude en la Página de Éxito"
 "If 'Yes', the payment method using Koin Antifraud will display a validation for the final customer.","Si 'Sí', el método de pago que utiliza Koin Antifraud mostrará una validación para el cliente final."
+"If set to 'Yes', the order status will not be updated when the order is approved or denied.","Si se establece en 'Sí', el estado del pedido no se actualizará cuando el pedido sea aprobado o rechazado."
+"Enable Listener Mode", "Habilitar Modo Listener"
