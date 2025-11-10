@@ -51,7 +51,7 @@ define([
             },
 
             setupSSE: function () {
-                eventSource = new EventSource(config.antifraudStrategyUrl.slice(0, -1) + '?SSE=true');
+                eventSource = new EventSource(config.antifraudStrategyUrl.replace(/\/$/, '') + '?SSE=true');
 
                 eventSource.addEventListener('koin-payment-antifraud-strategy', (event) => {
                     const data = JSON.parse(event.data);
