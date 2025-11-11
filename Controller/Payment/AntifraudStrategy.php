@@ -50,12 +50,34 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
     public function execute()
     {
         $orderId = $this->getRequest()->getParam('oId');
+        $isSSE = $this->getRequest()->getParam('SSE');
 
         if (!$orderId || !$this->validateRequest($orderId)) {
             $this->response->setHttpResponseCode(403);
             return $this->response;
         }
 
+        return $isSSE ? $this->sseDataChecking($orderId) : $this->dataChecking($orderId);
+    }
+
+    private function validateRequest(int|string $orderId): bool
+    {
+        try {
+            $this->orderRepository->get($orderId);
+            return true;
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            return false;
+        }
+    }
+
+    private function isApproved(string $orderId): bool
+    {
+        $order = $this->orderRepository->get($orderId);
+        return $order->getData('koin_antifraud_status') == AntifraudHelper::APPROVED_STATUS;
+    }
+
+    private function sseDataChecking(string $orderId): Http
+    {
         $this->response->setHeader('Content-Type', 'text/event-stream', true);
         $this->response->setHeader('Connection', 'keep-alive', true);
         $this->response->setHeader('Cache-Control', 'no-cache', true);
@@ -77,7 +99,6 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
 
                 $this->response->appendBody($data);
                 $this->response->sendResponse();
-
                 ob_flush();
                 flush();
 
@@ -86,24 +107,24 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
                 }
 
                 sleep(5);
-
             } catch (\Exception $e) {
                 $this->response->setBody("event: error\ndata: " . $this->json->serialize(['error' => $e->getMessage()]) . "\n\n");
                 $this->response->sendResponse();
                 return $this->response;
             }
         }
-
         return $this->response;
     }
 
-    private function validateRequest(int|string $orderId): bool
+    private function dataChecking(string $orderId): \Magento\Framework\Controller\Result\Json
     {
-        try {
-            $this->orderRepository->get($orderId);
-            return true;
-        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-            return false;
-        }
+        /** @var \Magento\Framework\Controller\Result\Json $resultJson */
+        $resultJson = $this->resultJsonFactory->create();
+        $isApproved = $this->isApproved($orderId);
+
+        return $resultJson->setData([
+            'order_id' => $orderId,
+            'is_approved' => $isApproved,
+        ]);
     }
 }
