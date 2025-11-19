@@ -378,7 +378,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                     'listener_mode' => $this->isListenerEnabled(),
                     'redirected' => false
                 ],
-                'buyer' => $this->getBuyerData($order),
+                'buyer' => $this->getBuyerData($order, true),
                 'items' => $this->getOrderItems($order),
                 'payments' => $this->getPaymentData($order),
                 'type' => self::DEFAULT_TYPE,
