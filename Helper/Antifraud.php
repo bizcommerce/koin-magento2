@@ -537,9 +537,9 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             if ($address->getVatId()) {
                 $taxVat = $address->getVatId();
             }
-            $taxVat = $order->getPayment()->getAdditionalInformation('koin_customer_taxvat') ?: $taxVat;
         }
 
+        $taxVat = $order->getPayment()->getAdditionalInformation('koin_customer_taxvat') ?: $taxVat;
         $documentType = self::DEFAULT_DOCUMENT_TYPE;
         if ($this->helperData->validateCnpj((string) $taxVat)) {
             $documentType = 'cnpj';
