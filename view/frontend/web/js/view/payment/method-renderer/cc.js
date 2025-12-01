@@ -158,7 +158,6 @@ define([
                 const iRule = this.installmentsId() ? this.installmentsId().split('-') : '';
                 const installments = iRule[0] || '1';
                 const ruleId = iRule[1] || '0';
-                this.isPciCompliance = true
                 if (this.isPciCompliance) {
                     return {
                         'method': this.item.method,
