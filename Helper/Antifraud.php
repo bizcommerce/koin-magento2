@@ -362,7 +362,6 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             throw new \Exception(__('Order not found.'));
         }
         $antifraud = $this->antifraudFactory->create();
-        $antifraud->setStatus(Api::STATUS_QUEUED);
         $antifraud->setIncrementId($order->getIncrementId());
         $antifraud->setSessionId($order->getData('koin_antifraud_fingerprint'));
 
@@ -504,7 +503,6 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             Api::STATUS_DENIED,
             Api::STATUS_APPROVED,
             Api::STATUS_RECEIVED,
-            Api::STATUS_QUEUED,
             Api::STATUS_ABORTED
         ];
     }

@@ -99,7 +99,6 @@ Settings,Configuraciones
 Fraud Analysis,Análisis de Fraude
 Cancel Denied Orders,Cancelar Pedidos Denegados
 Change Status Denied Orders,Cambiar Estado de Pedidos Denegados
-Manage Queue,Administrar Cola
 Anti Fraud ID,ID Antifraude
 Evaluation ID,ID de Evaluación
 Analysis Type,Tipo de Análisis
@@ -119,7 +118,6 @@ Status used to denied but not cancelled orders,Estado utilizado para pedidos den
 denied,denegado
 approved,aprobado
 received,recibido
-queued,en cola
 Method,Método
 The order was approved by Fraud Analysis,El pedido fue aprobado por el Análisis de Fraude
 The order was repproved by Fraud Analysis,El pedido fue denegado por el Análisis de Fraude

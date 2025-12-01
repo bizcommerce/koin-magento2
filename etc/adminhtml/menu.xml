@@ -24,15 +24,6 @@
              action="koin/callback/grid"
         />
 
-        <add id="Koin_Payment::queue"
-             title="Manage Queue"
-             module="Koin_Payment"
-             sortOrder="20"
-             parent="Koin_Payment::menu"
-             resource="Koin_Payment::queue"
-             action="koin/queue/grid"
-        />
-
         <add id="Koin_Payment::fraud_analysis"
              title="Fraud Analysis"
              module="Koin_Payment"

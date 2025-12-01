@@ -169,3 +169,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.14.0:
 - feat: create Listener mode in the antifraud
+
+### v2.14.1:
+- fix: add bin on payment additional data and remove the queue listing page
