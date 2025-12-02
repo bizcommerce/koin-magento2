@@ -172,3 +172,4 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### v2.15.0:
 - fix: add bin on payment additional data and remove the queue listing page
+- fix: change bin length verification to 6 or greater
