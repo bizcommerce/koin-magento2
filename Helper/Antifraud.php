@@ -752,7 +752,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             }
         }
 
-        return (is_numeric($ccBin) && strlen($ccBin) == 6) ? $ccBin : null;
+        return (is_numeric($ccBin) && strlen($ccBin) >= 6) ? $ccBin : null;
     }
 
 
