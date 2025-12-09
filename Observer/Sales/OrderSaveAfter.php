@@ -43,8 +43,9 @@ class OrderSaveAfter implements ObserverInterface
                 $this->notificationService->sendNotificationForOrderState($order);
             }
 
-            $this->sendAntifraud($order);
-
+            if (!$order->getData(Antifraud::KOIN_ANTIFRAUD_STATUS)) {
+                $this->sendAntifraud($order);
+            }
         } catch (\Exception $e) {
             $this->helper->log($e->getMessage());
         }

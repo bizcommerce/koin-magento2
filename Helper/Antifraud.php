@@ -50,6 +50,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
     public const PAYMENT_METHOD_CREDIT_CARD = 'CreditCard';
     public const PAYMENT_METHOD_CASH = 'Cash';
     public const DEFAULT_TYPE = 'Ecommerce';
+    public const KOIN_ANTIFRAUD_STATUS = 'koin_antifraud_status';
 
     /**
      * Data constructor.
@@ -343,7 +344,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                 $this->helperOrder->savePayment($payment);
             }
 
-            $order->setData('koin_antifraud_status', $status);
+            $order->setData(self::KOIN_ANTIFRAUD_STATUS, $status);
             $order->setData('koin_antifraud_score', $score);
             $this->orderRepository->save($order);
         } catch (\Exception $e) {

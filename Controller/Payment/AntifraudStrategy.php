@@ -73,7 +73,7 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
     private function isApproved(string $orderId): bool
     {
         $order = $this->orderRepository->get($orderId);
-        return $order->getData('koin_antifraud_status') == AntifraudHelper::APPROVED_STATUS;
+        return $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS) == AntifraudHelper::APPROVED_STATUS;
     }
 
     private function sseDataChecking(string $orderId): Http
@@ -87,7 +87,7 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
         for ($i = 0; $i < $limit; $i++) {
             try {
                 $order = $this->orderRepository->get($orderId);
-                $isApproved = $order->getData('koin_antifraud_status') == AntifraudHelper::APPROVED_STATUS;
+                $isApproved = $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS) == AntifraudHelper::APPROVED_STATUS;
 
                 $result = [
                     'order_id' => $order->getId(),
