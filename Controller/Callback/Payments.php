@@ -117,13 +117,14 @@ class Payments extends Callback implements CsrfAwareActionInterface, HttpPostAct
             if (isset($content['transaction'])) {
                 $transaction = $content['transaction'];
                 $order = $this->helperOrder->loadOrder($transaction['reference_id']);
-                $response = $this->api->query()->execute($content['order_id'], $order->getStoreId());
+                $statusCode = 404;
 
-                if (isset($response['status'])) {
-                    $koinStatus = $response['status']['type'] ?? $response['status'];
-                    $koinState = $this->helperOrder->getStatus($koinStatus);
-                    $statusCode = 404;
-                    if ($order->getId()) {
+                if ($order->getId()) {
+                    $response = $this->api->query()->execute($content['order_id'], $order->getStoreId());
+
+                    if (isset($response['status'])) {
+                        $koinStatus = $response['status']['type'] ?? $response['status'];
+                        $koinState = $this->helperOrder->getStatus($koinStatus);
                         $method = $order->getPayment()->getMethod();
                         $amount = $this->getCallbackAmount($order, $response);
                         $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $response, $amount, true);
