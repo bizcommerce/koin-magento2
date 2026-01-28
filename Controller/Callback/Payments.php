@@ -8,16 +8,50 @@
 namespace Koin\Payment\Controller\Callback;
 
 use Koin\Payment\Exception\OrderNotFinishedException;
+use Koin\Payment\Helper\Antifraud as HelperAntifraud;
+use Koin\Payment\Helper\Data as HelperData;
+use Koin\Payment\Helper\Order as HelperOrder;
+use Koin\Payment\Model\CallbackFactory;
+use Koin\Payment\Model\ResourceModel\Callback as CallbackResourceModel;
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Koin\Payment\Controller\Callback;
 use Koin\Payment\Gateway\Http\Client\Payments\Api;
+use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order as SalesOrder;
 
 class Payments extends Callback implements CsrfAwareActionInterface, HttpPostActionInterface
 {
+    public function __construct(
+        Context               $context,
+        Json                  $json,
+        ResultFactory         $resultFactory,
+        HelperData            $helperData,
+        HelperAntifraud       $helperAntifraud,
+        HelperOrder           $helperOrder,
+        CallbackResourceModel $callbackResourceModel,
+        CallbackFactory       $callbackFactory,
+        ManagerInterface      $eventManager,
+        protected Api         $api
+    )
+    {
+        parent::__construct(
+            $context,
+            $json,
+            $resultFactory,
+            $helperData,
+            $helperAntifraud,
+            $helperOrder,
+            $callbackResourceModel,
+            $callbackFactory,
+            $eventManager
+        );
+    }
+
     /**
      * @var string
      */
@@ -71,8 +105,8 @@ class Payments extends Callback implements CsrfAwareActionInterface, HttpPostAct
         $statusCode = 500;
         $method = '';
         $koinStatus = '';
-        $content = [];
-
+        $response = [];
+        $transaction = [];
         $result = $this->resultFactory->create(ResultFactory::TYPE_RAW);
 
         try {
@@ -82,15 +116,18 @@ class Payments extends Callback implements CsrfAwareActionInterface, HttpPostAct
 
             if (isset($content['transaction'])) {
                 $transaction = $content['transaction'];
-                if (isset($content['status'])) {
-                    $koinStatus = $content['status']['type'] ?? $content['status'];
-                    $koinState = $this->helperOrder->getStatus($koinStatus);
-                    $order = $this->helperOrder->loadOrder($transaction['reference_id']);
-                    $statusCode = 404;
-                    if ($order->getId()) {
+                $order = $this->helperOrder->loadOrder($transaction['reference_id']);
+                $statusCode = 404;
+
+                if ($order->getId()) {
+                    $response = $this->api->query()->execute($content['order_id'], $order->getStoreId());
+
+                    if (isset($response['status'])) {
+                        $koinStatus = $response['status']['type'] ?? $response['status'];
+                        $koinState = $this->helperOrder->getStatus($koinStatus);
                         $method = $order->getPayment()->getMethod();
-                        $amount = $this->getCallbackAmount($order, $content);
-                        $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $content, $amount, true);
+                        $amount = $this->getCallbackAmount($order, $response);
+                        $this->helperOrder->updateOrder($order, $koinStatus, $koinState, $response, $amount, true);
                         $statusCode = 204;
                     }
                 }
@@ -111,7 +148,7 @@ class Payments extends Callback implements CsrfAwareActionInterface, HttpPostAct
             $callBack->setStatus($koinStatus);
             $callBack->setMethod($method);
             $callBack->setIncrementId($transaction['reference_id'] ?? '');
-            $callBack->setPayload($this->json->serialize($content));
+            $callBack->setPayload($this->json->serialize($response));
             $this->callbackResourceModel->save($callBack);
         }
 
