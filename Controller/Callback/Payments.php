@@ -106,7 +106,7 @@ class Payments extends Callback implements CsrfAwareActionInterface, HttpPostAct
         $method = '';
         $koinStatus = '';
         $response = [];
-
+        $transaction = [];
         $result = $this->resultFactory->create(ResultFactory::TYPE_RAW);
 
         try {
