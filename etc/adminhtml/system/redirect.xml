@@ -58,7 +58,7 @@
 
         <field id="payment_error_modal_store_name" translate="label comment" type="text" sortOrder="118" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>BNPL Modal Store Name</label>
-            <validate>required-entry validate-alphanum-with-spaces</validate>
+            <validate>required-entry</validate>
             <config_path>payment/koin_redirect/payment_error_modal_store_name</config_path>
             <comment><![CDATA[Store name to be displayed in the BNPL modal.]]></comment>
             <depends>
@@ -68,7 +68,7 @@
 
         <field id="payment_error_modal_installment" translate="label comment" type="text" sortOrder="119" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>BNPL Modal Installments</label>
-            <validate>integer</validate>
+            <validate>required-entry validate-number validate-greater-than-zero</validate>
             <config_path>payment/koin_redirect/payment_error_modal_installment</config_path>
             <comment><![CDATA[Number of installments to be displayed in the BNPL modal.]]></comment>
             <depends>
