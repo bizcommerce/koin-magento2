@@ -38,7 +38,7 @@ define([
                         });
                         KoinPopup.openModal({
                             loja: window.bnplModalStoreName,
-                            parcelas: window.bnplModalInstallment ?? 6,
+                            parcelas: window.bnplModalInstallment || 6,
                             onConfirm: function() {
                                 $('#koin_redirect').click();
                             }});
