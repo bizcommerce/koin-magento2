@@ -31,32 +31,17 @@ define([
                 function (response) {
                     errorProcessor.process(response, messageContainer);
                     redirectURL = response.getResponseHeader('errorRedirectAction');
-                    var modalElement = $('#bnpl-modal');
-
-                    if (modalElement.length > 0) {
-                        var options = {
-                            type: 'popup',
-                            responsive: true,
-                            innerScroll: true,
-                            buttons: [
-                                {
-                                    text: $.mage.__('Close'),
-                                    click: function () {
-                                        this.closeModal();
-                                    }
-                                },
-                                {
-                                    text: $.mage.__('Select BNPL'),
-                                    class: 'action primary select-bnpl',
-                                    click: function () {
-                                        $('#koin_redirect').click();
-                                        this.closeModal();
-                                    }
-                                }
-                            ]
-                        };
-                        modal(options, modalElement);
-                        modalElement.modal('openModal');
+                    if (window.KoinPopup) {
+                        KoinPopup.init({
+                            plataforma: "Magento",
+                            showContainerCustom: true,
+                        });
+                        KoinPopup.openModal({
+                            loja: window.bnplModalStoreName,
+                            parcelas: window.bnplModalInstallment ?? 6,
+                            onConfirm: function() {
+                                $('#koin_redirect').click();
+                            }});
                         return;
                     }
 
