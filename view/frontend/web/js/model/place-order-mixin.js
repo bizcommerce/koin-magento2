@@ -32,13 +32,18 @@ define([
                     errorProcessor.process(response, messageContainer);
                     redirectURL = response.getResponseHeader('errorRedirectAction');
                     if (window.KoinPopup) {
+                        var plataform = 'Magento',
+                            storeName = $.cookieStorage.get('bnplModalStoreName'),
+                            installments = $.cookieStorage.get('bnplModalInstallment');
+
                         KoinPopup.init({
-                            plataforma: "Magento",
+                            plataforma: plataform,
                             showContainerCustom: true,
                         });
+
                         KoinPopup.openModal({
-                            loja: window.bnplModalStoreName,
-                            parcelas: window.bnplModalInstallment || 6,
+                            loja: storeName,
+                            parcelas: installments,
                             onConfirm: function() {
                                 $('#koin_redirect').click();
                             }});
