@@ -32,12 +32,12 @@ define([
                     errorProcessor.process(response, messageContainer);
                     redirectURL = response.getResponseHeader('errorRedirectAction');
                     if (window.KoinPopup) {
-                        var plataform = 'Magento',
+                        var platform = 'Magento',
                             storeName = $.cookieStorage.get('bnplModalStoreName'),
                             installments = $.cookieStorage.get('bnplModalInstallment');
 
                         KoinPopup.init({
-                            plataforma: plataform,
+                            plataforma: platform,
                             showContainerCustom: true,
                         });
 
