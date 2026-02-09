@@ -21,20 +21,10 @@
 
 $viewModel = $block->getViewModel();
 $canShowModal = $viewModel->canShowModal();
-$installments = $viewModel->getInstallmentConfig();
-$storeName = $viewModel->getStoreNameConfig();
+
 ?>
 <?php if ($viewModel->canShowModal()): ?>
     <script src="https://checkout.koin.com.br/scripts/koin-popup.js"></script>
-    <script>
-        require([
-            'jquery',
-            'jquery/jquery-storageapi'
-            ], function($) {
-            $.cookieStorage.set('bnplModalStoreName', "<?= $escaper->escapeJs($storeName); ?>");
-            $.cookieStorage.set('bnplModalInstallment', "<?= $escaper->escapeJs($installments); ?>");
-        })
-    </script>
 <?php endif; ?>
 
 <script src="https://banner-checkout.koin.com.br/index.js"></script>

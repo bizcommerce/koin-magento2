@@ -29,17 +29,8 @@ class BnplModal implements ArgumentInterface
 {
     public function __construct(
         private Data $helper
-    ) {
-    }
-
-    public function getInstallmentConfig(): string
+    )
     {
-        return trim((string) $this->helper->getConfig('payment_error_modal_installment'));
-    }
-
-    public function getStoreNameConfig(): string
-    {
-        return trim((string) $this->helper->getConfig('payment_error_modal_store_name'));
     }
 
     public function canShowModal(): bool

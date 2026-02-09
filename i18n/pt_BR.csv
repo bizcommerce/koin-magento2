@@ -298,3 +298,4 @@
 "Enable Listener Mode","Ativar Modo Listener"
 "BNPL Modal Store Name","Nome da Loja do Modal BNPL"
 "Store name to be displayed in the BNPL modal.","Nome da loja a ser exibido no modal BNPL."
+"An error occurred while loading modal configuration.","Ocorreu um erro ao carregar a configuração do modal."
