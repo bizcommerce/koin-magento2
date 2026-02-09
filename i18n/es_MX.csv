@@ -295,3 +295,4 @@ Card Installments,Cuotas de la Tarjeta
 "Enable Listener Mode", "Habilitar Modo Listener"
 "BNPL Modal Store Name","Nombre de la Tienda del Modal BNPL"
 "Store name to be displayed in the BNPL modal.","Nombre de la tienda que se mostrará en el modal BNPL."
+"An error occurred while loading modal configuration.","Ocurrió un error al cargar la configuración del modal."

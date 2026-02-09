@@ -6,8 +6,8 @@ define([
     'Magento_Checkout/js/model/payment/place-order-hooks',
     'underscore',
     'jquery',
-    'Magento_Ui/js/modal/modal'
-], function (storage, errorProcessor, fullScreenLoader, customerData, hooks, _, $, modal) {
+    'mage/url'
+], function (storage, errorProcessor, fullScreenLoader, customerData, hooks, _, $, urlBuilder) {
     'use strict';
 
     return function (placeOrderAction) {
@@ -32,21 +32,39 @@ define([
                     errorProcessor.process(response, messageContainer);
                     redirectURL = response.getResponseHeader('errorRedirectAction');
                     if (window.KoinPopup) {
-                        var platform = 'Magento',
-                            storeName = $.cookieStorage.get('bnplModalStoreName'),
-                            installments = $.cookieStorage.get('bnplModalInstallment');
+                        var formKey = $.mage.cookies.get('form_key');
+                        var platform = 'Magento';
 
-                        KoinPopup.init({
-                            plataforma: platform,
-                            showContainerCustom: true,
+                        if (!formKey) {
+                            formKey = $('input[name="form_key"]').val();
+                        }
+
+                        $.ajax({
+                            url: urlBuilder.build('koin/bnplmodal/config'),
+                            type: 'GET',
+                            dataType: 'json',
+                            data: {
+                                form_key: formKey
+                            },
+                            async: false,
+                            showLoader: true,
+                            success: function (response) {
+                                if (response.success && response.config) {
+                                    KoinPopup.init({
+                                        plataforma: platform,
+                                        showContainerCustom: true,
+                                    });
+
+                                    KoinPopup.openModal({
+                                        loja: response.config.storeName || 'Magento Store',
+                                        parcelas: response.config.installments || 6,
+                                        onConfirm: function () {
+                                            $('#koin_redirect').click();
+                                        }
+                                    });
+                                }
+                            }
                         });
-
-                        KoinPopup.openModal({
-                            loja: storeName,
-                            parcelas: installments,
-                            onConfirm: function() {
-                                $('#koin_redirect').click();
-                            }});
                         return;
                     }
 
