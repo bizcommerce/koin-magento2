@@ -70,10 +70,11 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
         }
     }
 
-    private function isApproved(string $orderId): bool
+    private function hasReturn(string $orderId): bool
     {
         $order = $this->orderRepository->get($orderId);
-        return $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS) == AntifraudHelper::APPROVED_STATUS;
+        $antifraudStatus = $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS);
+        return $antifraudStatus == AntifraudHelper::APPROVED_STATUS || $antifraudStatus == AntifraudHelper::REJECTED_STATUS ;
     }
 
     private function sseDataChecking(string $orderId): Http
@@ -87,11 +88,13 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
         for ($i = 0; $i < $limit; $i++) {
             try {
                 $order = $this->orderRepository->get($orderId);
-                $isApproved = $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS) == AntifraudHelper::APPROVED_STATUS;
+                $antifraudStatus = $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS);
+                $hasReturn = $antifraudStatus == AntifraudHelper::APPROVED_STATUS ||
+                    $antifraudStatus == AntifraudHelper::REJECTED_STATUS;
 
                 $result = [
                     'order_id' => $order->getId(),
-                    'is_approved' => $isApproved,
+                    'has_return' => $hasReturn,
                 ];
 
                 $data = "event: koin-payment-antifraud-strategy\n" .
@@ -102,7 +105,7 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
                 ob_flush();
                 flush();
 
-                if ($isApproved) {
+                if ($hasReturn) {
                     break;
                 }
 
@@ -120,11 +123,11 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
     {
         /** @var \Magento\Framework\Controller\Result\Json $resultJson */
         $resultJson = $this->resultJsonFactory->create();
-        $isApproved = $this->isApproved($orderId);
+        $hasReturn = $this->hasReturn($orderId);
 
         return $resultJson->setData([
             'order_id' => $orderId,
-            'is_approved' => $isApproved,
+            'has_return' => $hasReturn,
         ]);
     }
 }
