@@ -70,11 +70,13 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
         }
     }
 
-    private function hasReturn(string $orderId): bool
+    private function hasReturn(string $orderId, ?\Magento\Sales\Api\Data\OrderInterface $order = null): bool
     {
-        $order = $this->orderRepository->get($orderId);
+        if (!$order) {
+            $order = $this->orderRepository->get($orderId);
+        }
         $antifraudStatus = $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS);
-        return $antifraudStatus == AntifraudHelper::APPROVED_STATUS || $antifraudStatus == AntifraudHelper::REJECTED_STATUS ;
+        return in_array($antifraudStatus, [AntifraudHelper::APPROVED_STATUS, AntifraudHelper::REJECTED_STATUS], true);
     }
 
     private function sseDataChecking(string $orderId): Http
@@ -88,9 +90,7 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
         for ($i = 0; $i < $limit; $i++) {
             try {
                 $order = $this->orderRepository->get($orderId);
-                $antifraudStatus = $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS);
-                $hasReturn = $antifraudStatus == AntifraudHelper::APPROVED_STATUS ||
-                    $antifraudStatus == AntifraudHelper::REJECTED_STATUS;
+                $hasReturn = $this->hasReturn($orderId, $order);
 
                 $result = [
                     'order_id' => $order->getId(),
