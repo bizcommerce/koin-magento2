@@ -17,8 +17,8 @@ define([
                     dataType: 'json',
                     showLoader: false,
                     success: (response) => {
-                        const isApproved = response?.is_approved === true;
-                        if (!isApproved) {
+                        const hasReturn = response?.has_return === true;
+                        if (!hasReturn) {
                             this.setupModal();
                             this.setupSSE();
                         }
@@ -55,7 +55,7 @@ define([
 
                 eventSource.addEventListener('koin-payment-antifraud-strategy', (event) => {
                     const data = JSON.parse(event.data);
-                    if (data?.is_approved) {
+                    if (data?.has_return) {
                         this.closeModal();
                         $(document.body).trigger('processStop');
                     }
