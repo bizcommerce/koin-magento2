@@ -64,7 +64,7 @@ class RefundRequest implements BuilderInterface
 
         /** @var Order $order */
         $order = $payment->getOrder();
-        $amountValue = $payment->getAmountOrdered();
+        $amountValue = $buildSubject['amount'] ?? $payment->getAmountOrdered();
 
         $request = new \stdClass();
         $request->transaction = $this->getTransaction($order);
