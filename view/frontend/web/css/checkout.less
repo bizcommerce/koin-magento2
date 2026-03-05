@@ -118,4 +118,127 @@
     }
 }
 
+// PCI Compliance Styles
+.koin-pci-container {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: 100%;
+}
 
+.koin-pci-loading {
+    text-align: center;
+    padding: 20px;
+}
+
+.koin-confirm-btn {
+    margin-bottom: 10px;
+}
+
+// Outline style buttons
+.koin-confirm-btn-outline {
+    background: transparent !important;
+    border: 2px solid #1979c3 !important;
+    color: #1979c3 !important;
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+
+    &:hover {
+        background: #1979c3 !important;
+        color: #fff !important;
+        border-color: #1979c3 !important;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.koin-edit-btn-outline {
+    background: transparent !important;
+    border: 2px solid #1979c3 !important;
+    color: #1979c3 !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+
+    &:before {
+        content: "\270E";
+        margin-right: 8px;
+        font-size: 14px;
+    }
+
+    &:hover {
+        background: #1979c3 !important;
+        color: #fff !important;
+        border-color: #1979c3 !important;
+    }
+}
+
+.koin-confirmed-card-display {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+
+    .koin-card-status {
+        color: #666;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+}
+
+.modal-popup.bnpl-modal._show {
+    .modal-inner-wrap:has(#bnpl-modal) {
+
+        .modal-content {
+            height: 100%;
+
+            #bnpl-modal {
+                height: 100%;
+            }
+        }
+    }
+}
+
+.modal-popup.koin-modal-antifraud-strategy._show {
+    .modal-inner-wrap {
+        width: 100% !important;
+        height: 100% !important;
+        position: fixed;
+        top: 50%;
+        left: 50% !important;
+        margin: 0 !important;
+        transform: translate(-50%, -50%);
+
+        #koin-modal-antifraud-strategy {
+            height: 100%;
+        }
+
+        .modal-content {
+            height: 100%;
+
+            #bnpl-modal {
+                height: 100%;
+            }
+
+            #koin-modal-iframe {
+                min-height: 30vh;
+            }
+        }
+    }
+}
+
+
+@media (min-width: 768px) {
+    .modal-popup.koin-modal-antifraud-strategy._show {
+        .modal-inner-wrap {
+            width: 80vw !important;
+            height: 95vh !important;
+        }
+    }
+}

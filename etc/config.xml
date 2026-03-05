@@ -38,6 +38,8 @@
                 <payments_uri_sandbox>https://api-sandbox.koin.com.br/</payments_uri_sandbox>
                 <antifraud_uri>https://api-antifraud.koin.com.br/</antifraud_uri>
                 <antifraud_uri_sandbox>https://api-sandbox.koin.com.br/</antifraud_uri_sandbox>
+                <pci_sdk_url>https://api-v1.koinsecure.com/checkout/static/scripts/sdk/tokenize.js</pci_sdk_url>
+                <pci_sdk_url_sandbox>https://portal-dev.koin.com.br/checkout/static/scripts/sdk/tokenize.js</pci_sdk_url_sandbox>
                 <secure>
                     <tokenize>v1/payment/tokenize</tokenize>
                 </secure>
@@ -63,6 +65,9 @@
             <customer>
                 <customer_type_company_value>pj</customer_type_company_value>
             </customer>
+            <fraud_analysis>
+                <active_strategy>0</active_strategy>
+            </fraud_analysis>
         </koin>
         <payment>
             <koin_redirect>
@@ -83,6 +88,9 @@
                 <specificcountry>BR</specificcountry>
                 <min_order_total>50</min_order_total>
                 <show_logo_on_checkout>1</show_logo_on_checkout>
+                <show_bnpl_product_banner>0</show_bnpl_product_banner>
+                <show_bnpl_cart_banner>0</show_bnpl_cart_banner>
+                <show_payment_error_modal>0</show_payment_error_modal>
                 <use_default_checkout_instructions>1</use_default_checkout_instructions>
                 <text_email_validation>Seu pedido foi recebido, e estamos aguardando a confirmação do seu e-mail para análise</text_email_validation>
                 <text_provider_review>Seu pedido foi recebido e encontra-se em análise com a nossa equipe</text_provider_review>

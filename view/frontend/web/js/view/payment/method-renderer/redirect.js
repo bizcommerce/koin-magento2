@@ -4,9 +4,11 @@
 define(
     [
         'Magento_Checkout/js/view/payment/default',
-        'mage/url'
+        'mage/url',
+        'jquery',
+        'jquery/jquery-storageapi'
     ],
-    function (Component, url) {
+    function (Component, url, $) {
         'use strict';
 
         return Component.extend({
@@ -22,7 +24,37 @@ define(
                     'taxvat'
                 ]);
 
+                // Auto-select this payment method if stored in checkout data
+                this.checkForPaymentPreselection();
+
                 return this;
+            },
+
+            /**
+             * Check checkout data for payment preselection using direct localStorage
+             */
+            checkForPaymentPreselection: function () {
+                try {
+                    var storageApi = $.initNamespaceStorage('mage-cache-storage').localStorage;
+                    var checkoutData = storageApi.get('checkout-data') || {};
+                    var storedPaymentMethod = checkoutData.selectedPaymentMethod;
+
+                    if (storedPaymentMethod === 'koin_redirect') {
+                        var self = this;
+                        setTimeout(function() {
+                            self.selectPaymentMethod();
+
+                            try {
+                                checkoutData.selectedPaymentMethod = null;
+                                storageApi.set('checkout-data', checkoutData);
+                            } catch (error) {
+                                console.warn('Koin BNPL: Could not clear stored payment method:', error);
+                            }
+                        }, 1000);
+                    }
+                } catch (error) {
+                    console.warn('Koin BNPL: Could not read stored payment method:', error);
+                }
             },
 
             getCode: function() {

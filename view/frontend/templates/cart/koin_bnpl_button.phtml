@@ -1,0 +1,30 @@
+<?php
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+
+/** @var \Koin\Payment\ViewModel\Cart\KoinBnplButton $viewModel */
+$viewModel = $block->getViewModel();
+?>
+
+<?php if ($viewModel->isEnabled()): ?>
+<div class="koin-bnpl-banner koin-cart-bnpl-button">
+    <button type="button"
+            class="koin-bnpl-button action primary checkout"
+            id="koin-cart-bnpl-btn"
+            data-mage-init='{"koinBnplCart": <?= $escaper->escapeHtmlAttr($viewModel->getJsonConfig()) ?>}'
+            title="<?= $escaper->escapeHtmlAttr(__('Proceed to Checkout with Koin')) ?>">
+        <span class="koin-text"><?= $escaper->escapeHtml(__('Allow Buy with')) ?> <img src="<?= $escaper->escapeUrl($viewModel->getLogoUrl()) ?>"
+                                                                                      alt="Koin"
+                                                                                      class="koin-logo"/></span>
+    </button>
+</div>
+<?php endif; ?>

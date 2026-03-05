@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Koin
+ * @package     Koin_Payment
+ *
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Koin_Payment::css/bnpl-banner.css"/>
+    </head>
+    <body>
+        <referenceBlock name="checkout.cart.methods.onepage.bottom">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Magento_Checkout::onepage/link.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceContainer name="checkout.cart.methods">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="koin.cart.bnpl.button"
+                   template="Koin_Payment::cart/koin_bnpl_button.phtml"
+                   after="checkout.cart.methods.onepage.bottom">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Koin\Payment\ViewModel\Cart\KoinBnplButton</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
