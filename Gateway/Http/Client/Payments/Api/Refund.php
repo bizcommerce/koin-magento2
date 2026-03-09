@@ -31,7 +31,7 @@ class Refund extends Client
     public function execute($data, $orderId, $status, $storeId = null): array
     {
         if (in_array($status, self::CANCEL_STATUS)) {
-            return $this->cancel([], $orderId, $storeId);
+            return $this->cancel(new \stdClass(), $orderId, $storeId);
         }
         return $this->refund($data, $orderId, $storeId);
     }
