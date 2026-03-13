@@ -30,7 +30,6 @@ $status = $antiFraud->getStatus();
                             <?= $block->escapeHtml(__($status)) ?>
                         </td>
                     </tr>
-                    <?php if ($status != \Koin\Payment\Gateway\Http\Client\Risk\Api::STATUS_QUEUED): ?>
                         <tr>
                             <td><?= $block->escapeHtml(__('Score')) ?></td>
                             <td>
@@ -49,7 +48,6 @@ $status = $antiFraud->getStatus();
                                 <?= $block->escapeHtml(__($antiFraud->getAntifraudId())) ?>
                             </td>
                         </tr>
-                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

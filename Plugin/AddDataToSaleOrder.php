@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Koin\Payment\Plugin;
 
+use Koin\Payment\Helper\Antifraud;
 use Magento\Sales\Api\OrderRepositoryInterface;
 
 class AddDataToSaleOrder
@@ -30,7 +31,7 @@ class AddDataToSaleOrder
         $extensionAttributes = $result->getExtensionAttributes();
 
         $extensionAttributes->setData('koin_antifraud_score', $result->getData('koin_antifraud_score'));
-        $extensionAttributes->setData('koin_antifraud_status', $result->getData('koin_antifraud_status'));
+        $extensionAttributes->setData(Antifraud::KOIN_ANTIFRAUD_STATUS, $result->getData(Antifraud::KOIN_ANTIFRAUD_STATUS));
 
         $result->setExtensionAttributes($extensionAttributes);
 

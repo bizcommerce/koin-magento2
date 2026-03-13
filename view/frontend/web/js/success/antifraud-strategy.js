@@ -5,13 +5,28 @@ define([
     'use strict';
 
     return function (config) {
-        const modalId = '#koin-modal-antifraud-strategy';
+        const modalId = '#koin-modal-antifraud-strategy',
+            modalElem = $(modalId);
         let eventSource;
 
         const koinModal = {
             init: function () {
-                this.setupModal();
-                this.setupSSE();
+                $.ajax({
+                    url: config.antifraudStrategyUrl,
+                    type: 'GET',
+                    dataType: 'json',
+                    showLoader: false,
+                    success: (response) => {
+                        const hasReturn = response?.has_return === true;
+                        if (!hasReturn) {
+                            this.setupModal();
+                            this.setupSSE();
+                        }
+                    },
+                    error: (error) => {
+                        console.log(error);
+                    }
+                });
             },
 
             setupModal: function () {
@@ -30,17 +45,17 @@ define([
                 modal(options, $(modalId));
                 $(modalId).modal('openModal');
 
-                $(modalId).on('modalclosed', () => {
+                modalElem.on('modalclosed', () => {
                     this.destroySSE();
                 });
             },
 
             setupSSE: function () {
-                eventSource = new EventSource(config.antifraudStrategyUrl);
+                eventSource = new EventSource(config.antifraudStrategyUrl.replace(/\/$/, '') + '?SSE=true');
 
                 eventSource.addEventListener('koin-payment-antifraud-strategy', (event) => {
                     const data = JSON.parse(event.data);
-                    if (data?.is_approved) {
+                    if (data?.has_return) {
                         this.closeModal();
                         $(document.body).trigger('processStop');
                     }
@@ -53,7 +68,7 @@ define([
             },
 
             closeModal: function () {
-                $(modalId).modal('closeModal');
+                modalElem.modal('closeModal');
                 this.destroySSE();
             },
 

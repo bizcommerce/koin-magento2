@@ -67,6 +67,7 @@
             </customer>
             <fraud_analysis>
                 <active_strategy>0</active_strategy>
+                <enable_listener>0</enable_listener>
             </fraud_analysis>
         </koin>
         <payment>
@@ -91,6 +92,8 @@
                 <show_bnpl_product_banner>0</show_bnpl_product_banner>
                 <show_bnpl_cart_banner>0</show_bnpl_cart_banner>
                 <show_payment_error_modal>0</show_payment_error_modal>
+                <payment_error_modal_store_name>Magento Store</payment_error_modal_store_name>
+                <payment_error_modal_installment>6</payment_error_modal_installment>
                 <use_default_checkout_instructions>1</use_default_checkout_instructions>
                 <text_email_validation>Seu pedido foi recebido, e estamos aguardando a confirmação do seu e-mail para análise</text_email_validation>
                 <text_provider_review>Seu pedido foi recebido e encontra-se em análise com a nossa equipe</text_provider_review>
