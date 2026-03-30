@@ -60,6 +60,7 @@ class NotificationService
         }
 
         $payment = $order->getPayment();
+        $wasNotified = false;
 
         // Only send notification if status has changed
         $lastNotificationStatus = $payment->getAdditionalInformation('koin_last_notification_status') ?? '';
@@ -71,15 +72,16 @@ class NotificationService
         if ($shouldNotifyOrder) {
             $payment->setAdditionalInformation('koin_last_notification_status', $notificationStatus);
             $this->notifyOrder($order, $notificationStatus);
+            $wasNotified = true;
         }
 
         if ($shouldNotifyAntifraud) {
             $payment->setAdditionalInformation('koin_antifraud_notification_status', $notificationStatus);
             $this->notifyAntifraud($order, $notificationStatus);
-
+            $wasNotified = true;
         }
 
-        if ($shouldNotifyAntifraud || $shouldNotifyOrder) {
+        if ($wasNotified) {
             try {
                 $this->orderRepository->save($order);
             } catch (\Exception $e) {
