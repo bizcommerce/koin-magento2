@@ -63,13 +63,28 @@ class NotificationService
 
         // Only send notification if status has changed
         $lastNotificationStatus = $payment->getAdditionalInformation('koin_last_notification_status') ?? '';
-        if ($lastNotificationStatus !== $notificationStatus) {
+        $shouldNotifyOrder = ($lastNotificationStatus !== $notificationStatus);
+
+        $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
+        $shouldNotifyAntifraud = ($antifraudNotificationStatus !== $notificationStatus);
+
+        if ($shouldNotifyOrder) {
+            $payment->setAdditionalInformation('koin_last_notification_status', $notificationStatus);
             $this->notifyOrder($order, $notificationStatus);
         }
 
-        $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
-        if ($antifraudNotificationStatus !== $notificationStatus) {
+        if ($shouldNotifyAntifraud) {
+            $payment->setAdditionalInformation('koin_antifraud_notification_status', $notificationStatus);
             $this->notifyAntifraud($order, $notificationStatus);
+
+        }
+
+        if ($shouldNotifyAntifraud || $shouldNotifyOrder) {
+            try {
+                $this->orderRepository->save($order);
+            } catch (\Exception $e) {
+                $this->helper->log('Failed to save notification status: ' . $e->getMessage());
+            }
         }
     }
 
@@ -154,7 +169,6 @@ class NotificationService
         if ($order->getPayment()->getMethod() == ConfigProvider::CODE) {
             try {
                 $this->helperOrder->notification($order, $status);
-                $this->updateNotificationStatus($order, 'koin_last_notification_status', $status);
             } catch (\Exception $e) {
                 $this->helper->log('Failed to send order notification: ' . $e->getMessage());
             }
@@ -173,30 +187,9 @@ class NotificationService
         if ($this->helper->getAntifraudConfig('active')) {
             try {
                 $this->helperAntifraud->notification($order, $status);
-                $this->updateNotificationStatus($order, 'koin_antifraud_notification_status', $status);
             } catch (\Exception $e) {
                 $this->helper->log('Failed to send antifraud notification: ' . $e->getMessage());
             }
-        }
-    }
-
-    /**
-     * Update notification status in payment additional information
-     *
-     * @param Order $order
-     * @param string $key
-     * @param string $value
-     * @return void
-     */
-    private function updateNotificationStatus(Order $order, string $key, string $value): void
-    {
-        $payment = $order->getPayment();
-        $payment->setAdditionalInformation($key, $value);
-
-        try {
-            $this->orderRepository->save($order);
-        } catch (\Exception $e) {
-            $this->helper->log('Failed to save notification status: ' . $e->getMessage());
         }
     }
 }
