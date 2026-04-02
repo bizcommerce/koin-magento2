@@ -53,17 +53,28 @@ class NotificationService
         }
 
         $payment = $order->getPayment();
+        $wasNotified = false;
 
         $lastNotificationStatus = $payment->getAdditionalInformation('koin_last_notification_status') ?? '';
         if ($lastNotificationStatus !== $notificationStatus) {
             $payment->setAdditionalInformation('koin_last_notification_status', $notificationStatus);
             $this->notifyOrder($order, $notificationStatus);
+            $wasNotified = true;
         }
 
         $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
         if ($antifraudNotificationStatus !== $notificationStatus) {
             $payment->setAdditionalInformation('koin_antifraud_notification_status', $notificationStatus);
             $this->notifyAntifraud($order, $notificationStatus);
+            $wasNotified = true;
+        }
+
+        if ($wasNotified) {
+            try {
+                $this->helperOrder->savePayment($payment);
+            } catch (\Exception $e) {
+                $this->helper->log('Failed to save notification status: ' . $e->getMessage());
+            }
         }
     }
 
