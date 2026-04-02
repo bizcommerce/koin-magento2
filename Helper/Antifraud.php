@@ -117,6 +117,8 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                             if ($response['status'] < 300) {
                                 $antifraud->setStatus(Api::STATUS_ABORTED);
                                 $this->antifraudRepository->save($antifraud);
+
+                                $order->getPayment()->setAdditionalInformation('koin_antifraud_notification_status', 'CANCELLED');
                             }
                         } else {
                             $requestData = [
@@ -126,6 +128,8 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                             ];
 
                             $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
+
+                            $order->getPayment()->setAdditionalInformation('koin_antifraud_notification_status', 'CANCELLED');
                         }
                     }
                 } catch (\Exception $e) {
@@ -293,23 +297,28 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         try {
             if (!$this->isListenerEnabled()) {
                 if ($status == self::APPROVED_STATUS) {
-                    $changeStatusApproved = $this->helperData->getAntifraudConfig('change_status_approved');
-                    $approvedStatus = false;
-
                     $captureApproved = $this->helperData->getAntifraudConfig('capture_approved_orders');
+                    $captured = false;
+                    $approvedStatus = false;
                     if ($captureApproved && $order->canInvoice()) {
                         $this->helperOrder->captureOrder($order);
+                        $captured = true;
                     }
 
-                    if ($changeStatusApproved) {
-                        $approvedStatus = $this->helperData->getAntifraudConfig('approved_status');
+                    if (!$captured) {
+                        $changeStatusApproved = $this->helperData->getAntifraudConfig('change_status_approved');
+                        if ($changeStatusApproved) {
+                            $approvedStatus = $this->helperData->getAntifraudConfig('approved_status');
+                        }
+
+                        $orderState = $this->helperOrder->getStatusState($approvedStatus);
+                        $order->setState($orderState);
                     }
 
-                    $message = __('The order was approved by Fraud Analysis', $order->getIncrementId());
-                    $orderState = $this->helperOrder->getStatusState($approvedStatus);
-
-                    $order->addCommentToStatusHistory($message, $approvedStatus);
-                    $order->setState($orderState);
+                    $order->addCommentToStatusHistory(
+                        __('The order was approved by Fraud Analysis', $order->getIncrementId()),
+                        $approvedStatus ?? ''
+                    );
                 } elseif ($status == self::REJECTED_STATUS) {
                     $cancelDenied = $this->helperData->getAntifraudConfig('cancel_denied_orders');
                     $changeStatusDenied = $this->helperData->getAntifraudConfig('change_status_denied');
