@@ -11,7 +11,6 @@ use Koin\Payment\Helper\Antifraud;
 use Koin\Payment\Helper\Data;
 use Koin\Payment\Helper\Order as HelperOrder;
 use Koin\Payment\Model\Ui\CreditCard\ConfigProvider;
-use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 
 class NotificationService
@@ -25,25 +24,19 @@ class NotificationService
     /** @var HelperOrder  */
     private $helperOrder;
 
-    /** @var OrderRepositoryInterface  */
-    private $orderRepository;
-
     /**
      * @param Data $helper
      * @param Antifraud $helperAntifraud
      * @param HelperOrder $helperOrder
-     * @param OrderRepositoryInterface $orderRepository
      */
     public function __construct(
         Data $helper,
         Antifraud $helperAntifraud,
-        HelperOrder $helperOrder,
-        OrderRepositoryInterface $orderRepository
+        HelperOrder $helperOrder
     ) {
         $this->helper = $helper;
         $this->helperAntifraud = $helperAntifraud;
         $this->helperOrder = $helperOrder;
-        $this->orderRepository = $orderRepository;
     }
 
     /**
@@ -62,20 +55,15 @@ class NotificationService
         $payment = $order->getPayment();
         $wasNotified = false;
 
-        // Only send notification if status has changed
         $lastNotificationStatus = $payment->getAdditionalInformation('koin_last_notification_status') ?? '';
-        $shouldNotifyOrder = ($lastNotificationStatus !== $notificationStatus);
-
-        $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
-        $shouldNotifyAntifraud = ($antifraudNotificationStatus !== $notificationStatus);
-
-        if ($shouldNotifyOrder) {
+        if ($lastNotificationStatus !== $notificationStatus) {
             $payment->setAdditionalInformation('koin_last_notification_status', $notificationStatus);
             $this->notifyOrder($order, $notificationStatus);
             $wasNotified = true;
         }
 
-        if ($shouldNotifyAntifraud) {
+        $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
+        if ($antifraudNotificationStatus !== $notificationStatus) {
             $payment->setAdditionalInformation('koin_antifraud_notification_status', $notificationStatus);
             $this->notifyAntifraud($order, $notificationStatus);
             $wasNotified = true;
@@ -83,7 +71,7 @@ class NotificationService
 
         if ($wasNotified) {
             try {
-                $this->orderRepository->save($order);
+                $this->helperOrder->savePayment($payment);
             } catch (\Exception $e) {
                 $this->helper->log('Failed to save notification status: ' . $e->getMessage());
             }
@@ -110,7 +98,6 @@ class NotificationService
      */
     public function sendNotificationForInvoice(Order $order): void
     {
-        // Check if order is fully invoiced
         if ($order->getTotalInvoiced() >= $order->getGrandTotal() || $order->getTotalDue() == 0) {
             $this->sendNotifications($order, 'COLLECTED');
         }
@@ -124,7 +111,6 @@ class NotificationService
      */
     public function sendNotificationForCreditmemo(Order $order): void
     {
-        // Check if it's a full or partial refund
         if ($order->getTotalRefunded() < $order->getGrandTotal()) {
             $this->sendNotifications($order, 'PARTIALLY_REFUNDED');
         } else {
@@ -149,7 +135,6 @@ class NotificationService
             case Order::STATE_CANCELED:
                 return 'CANCELLED';
             case Order::STATE_PROCESSING:
-                // Check if order is fully paid
                 if ($order->getTotalInvoiced() >= $order->getGrandTotal() || $order->getTotalDue() == 0) {
                     return 'COLLECTED';
                 }
