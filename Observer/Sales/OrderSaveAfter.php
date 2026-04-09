@@ -16,6 +16,8 @@ use Magento\Sales\Model\Order;
 
 class OrderSaveAfter implements ObserverInterface
 {
+    private static array $processingOrders = [];
+
     /**
      * @param Data $helper
      * @param Antifraud $helperAntifraud
@@ -36,6 +38,13 @@ class OrderSaveAfter implements ObserverInterface
     {
         /** @var Order $order */
         $order = $observer->getEvent()->getDataObject();
+
+        $orderId = $order->getId();
+        if (!$orderId || isset(self::$processingOrders[$orderId])) {
+            return;
+        }
+
+        self::$processingOrders[$orderId] = true;
         $originalState = $order->getOrigData('state');
 
         try {
@@ -48,6 +57,8 @@ class OrderSaveAfter implements ObserverInterface
             }
         } catch (\Exception $e) {
             $this->helper->log($e->getMessage());
+        } finally {
+            unset(self::$processingOrders[$orderId]);
         }
     }
 
