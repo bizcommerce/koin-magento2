@@ -36,6 +36,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Sales\Model\Order as SalesOrder;
 use Magento\Sales\Model\OrderRepository;
+use Magento\Sales\Model\ResourceModel\Order as OrderResourceModel;
 
 /**
  * Class Data
@@ -86,7 +87,8 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         protected Client $client,
         protected Api $api,
         protected DateTime $dateTime,
-        protected EncryptorInterface $encryptor
+        protected EncryptorInterface $encryptor,
+        protected OrderResourceModel $orderResourceModel
     ) {
         parent::__construct($context);
     }
@@ -355,7 +357,8 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
 
             $order->setData(self::KOIN_ANTIFRAUD_STATUS, $status);
             $order->setData('koin_antifraud_score', $score);
-            $this->orderRepository->save($order);
+            $this->orderResourceModel->saveAttribute($order, self::KOIN_ANTIFRAUD_STATUS);
+            $this->orderResourceModel->saveAttribute($order, 'koin_antifraud_score');
         } catch (\Exception $e) {
             $this->helperData->log($e->getMessage());
         }
