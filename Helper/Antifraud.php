@@ -306,7 +306,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                     $captureApproved = $this->helperData->getAntifraudConfig('capture_approved_orders');
                     $captured = false;
                     $approvedStatus = false;
-                    if ($captureApproved && $order->canInvoice() && $payment->getId()) {
+                    if ($captureApproved && $order->canInvoice() && $payment && $payment->getId()) {
                         $this->helperOrder->captureOrder($order);
                         $captured = true;
                     }
@@ -329,7 +329,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                     $cancelDenied = $this->helperData->getAntifraudConfig('cancel_denied_orders');
                     $changeStatusDenied = $this->helperData->getAntifraudConfig('change_status_denied');
                     $deniedStatus = false;
-                    if ($cancelDenied && $payment->getId()) {
+                    if ($cancelDenied && $payment && $payment->getId()) {
                         $deniedStatus = $this->helperData->getAntifraudConfig('denied_cancelled_status');
                         if ($order->canCancel()) {
                             $order->cancel();
