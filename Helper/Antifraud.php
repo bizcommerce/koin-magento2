@@ -291,18 +291,22 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
      * Update Order Status
      *
      * @param SalesOrder $order
-     * @param string $score
+     * @param string $status
      * @param int $score
+     * @param string|null $strategyLink
      */
     public function updateOrder($order, $status, $score, $strategyLink): void
     {
         try {
+            /** @var \Magento\Sales\Model\Order\Payment $payment */
+            $payment = $order->getPayment();
+
             if (!$this->isListenerEnabled()) {
                 if ($status == self::APPROVED_STATUS) {
                     $captureApproved = $this->helperData->getAntifraudConfig('capture_approved_orders');
                     $captured = false;
                     $approvedStatus = false;
-                    if ($captureApproved && $order->canInvoice()) {
+                    if ($captureApproved && $order->canInvoice() && $payment->getId()) {
                         $this->helperOrder->captureOrder($order);
                         $captured = true;
                     }
@@ -325,7 +329,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                     $cancelDenied = $this->helperData->getAntifraudConfig('cancel_denied_orders');
                     $changeStatusDenied = $this->helperData->getAntifraudConfig('change_status_denied');
                     $deniedStatus = false;
-                    if ($cancelDenied) {
+                    if ($cancelDenied && $payment->getId()) {
                         $deniedStatus = $this->helperData->getAntifraudConfig('denied_cancelled_status');
                         if ($order->canCancel()) {
                             $order->cancel();
@@ -342,23 +346,23 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                     $order->addCommentToStatusHistory($message, $deniedStatus);
                     $order->setState($orderState);
 
-                    /** @var \Magento\Sales\Model\Order\Payment $payment */
-                    $payment = $order->getPayment();
                     $payment->setIsFraudDetected(true);
-                    $this->helperOrder->savePayment($payment);
+                    if ($payment->getId()) {
+                        $this->helperOrder->savePayment($payment);
+                    }
                 }
             }
 
             if ($strategyLink) {
-                $payment = $order->getPayment();
                 $payment->setAdditionalInformation('koin_antifraud_strategy_link', $strategyLink);
-                $this->helperOrder->savePayment($payment);
+                if ($payment->getId()) {
+                    $this->helperOrder->savePayment($payment);
+                }
             }
 
             $order->setData(self::KOIN_ANTIFRAUD_STATUS, $status);
             $order->setData('koin_antifraud_score', $score);
-            $this->orderResourceModel->saveAttribute($order, self::KOIN_ANTIFRAUD_STATUS);
-            $this->orderResourceModel->saveAttribute($order, 'koin_antifraud_score');
+            $this->saveAntifraudAttributes($order, $status, $score);
         } catch (\Exception $e) {
             $this->helperData->log($e->getMessage());
         }
@@ -809,6 +813,28 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $installments > 0 ? $installments : 1;
+    }
+
+    protected function saveAntifraudAttributes(SalesOrder $order, string $status, $score): void
+    {
+        if (!$order->getId()) {
+            return;
+        }
+
+        try {
+            $connection = $this->orderResourceModel->getConnection();
+            $data = [self::KOIN_ANTIFRAUD_STATUS => $status];
+            if ($score !== null) {
+                $data['koin_antifraud_score'] = $score;
+            }
+            $connection->update(
+                $this->orderResourceModel->getMainTable(),
+                $data,
+                ['entity_id = ?' => (int)$order->getId()]
+            );
+        } catch (\Exception $e) {
+            $this->helperData->log($e->getMessage());
+        }
     }
 
     public function isListenerEnabled(): bool
