@@ -368,6 +368,30 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         }
     }
 
+    public function isEligibleForAnalysis(SalesOrder $order): bool
+    {
+        if (!$this->helperData->getAntifraudConfig('active')) {
+            return false;
+        }
+
+        if ($order->getData(self::KOIN_ANTIFRAUD_STATUS)) {
+            return false;
+        }
+
+        $paymentMethods = explode(',', $this->helperData->getAntifraudConfig('payment_methods'));
+        if (empty($paymentMethods) || !in_array($order->getPayment()->getMethod(), $paymentMethods)) {
+            return false;
+        }
+
+        $statuses = explode(',', $this->helperData->getAntifraudConfig('order_status'));
+        if (!in_array($order->getStatus(), $statuses)) {
+            return false;
+        }
+
+        $minOrderTotal = (float) $this->helperData->getAntifraudConfig('min_order_total');
+        return $order->getGrandTotal() >= $minOrderTotal;
+    }
+
     /**
      * @param $order
      * @return void

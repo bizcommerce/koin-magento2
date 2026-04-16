@@ -44,9 +44,10 @@ class NotificationService
      *
      * @param Order $order
      * @param string $notificationStatus
+     * @param bool $persistPayment
      * @return void
      */
-    public function sendNotifications(Order $order, string $notificationStatus): void
+    public function sendNotifications(Order $order, string $notificationStatus, bool $persistPayment = true): void
     {
         if (empty($notificationStatus)) {
             return;
@@ -69,7 +70,7 @@ class NotificationService
             $wasNotified = true;
         }
 
-        if ($wasNotified) {
+        if ($wasNotified && $persistPayment) {
             try {
                 $this->helperOrder->savePayment($payment);
             } catch (\Exception $e) {
@@ -82,12 +83,13 @@ class NotificationService
      * Send notification based on order state
      *
      * @param Order $order
+     * @param bool $persistPayment
      * @return void
      */
-    public function sendNotificationForOrderState(Order $order): void
+    public function sendNotificationForOrderState(Order $order, bool $persistPayment = true): void
     {
         $notificationStatus = $this->getNotificationStatusForState($order);
-        $this->sendNotifications($order, $notificationStatus);
+        $this->sendNotifications($order, $notificationStatus, $persistPayment);
     }
 
     /**
