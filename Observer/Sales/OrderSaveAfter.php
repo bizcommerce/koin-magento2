@@ -18,22 +18,13 @@ class OrderSaveAfter implements ObserverInterface
 {
     private static array $processingOrders = [];
 
-    /**
-     * @param Data $helper
-     * @param Antifraud $helperAntifraud
-     * @param NotificationService $notificationService
-     */
     public function __construct(
-        protected Data $helper,
-        protected Antifraud $helperAntifraud,
-        protected NotificationService $notificationService
-    )
-    {
+        private Data $helper,
+        private Antifraud $helperAntifraud,
+        private NotificationService $notificationService
+    ) {
     }
 
-    /**
-     * @param Observer $observer
-     */
     public function execute(Observer $observer): void
     {
         /** @var Order $order */
@@ -44,16 +35,20 @@ class OrderSaveAfter implements ObserverInterface
             return;
         }
 
+        if (!$order->getOrigData('entity_id')) {
+            return;
+        }
+
         self::$processingOrders[$orderId] = true;
-        $originalState = $order->getOrigData('state');
 
         try {
+            $originalState = $order->getOrigData('state');
             if ($originalState != $order->getState()) {
-                $this->notificationService->sendNotificationForOrderState($order);
+                $this->notificationService->sendNotificationForOrderState($order, true);
             }
 
-            if (!$order->getData(Antifraud::KOIN_ANTIFRAUD_STATUS)) {
-                $this->sendAntifraud($order);
+            if ($this->helperAntifraud->isEligibleForAnalysis($order)) {
+                $this->helperAntifraud->sendAnalysis($order);
             }
         } catch (\Exception $e) {
             $this->helper->log($e->getMessage());
@@ -61,30 +56,4 @@ class OrderSaveAfter implements ObserverInterface
             unset(self::$processingOrders[$orderId]);
         }
     }
-
-    /**
-     * @param Order $order
-     * @return void
-     * @throws \Exception
-     */
-    protected function sendAntifraud($order): void
-    {
-        if ($this->helper->getAntifraudConfig('active')) {
-            $paymentMethods = explode(',', $this->helper->getAntifraudConfig('payment_methods'));
-            $statuses = explode(',', $this->helper->getAntifraudConfig('order_status'));
-            $minOrderTotal = (float) $this->helper->getAntifraudConfig('min_order_total');
-
-            //@phpstan-ignore-next-line
-            if (!empty($paymentMethods)) {
-                if (in_array($order->getPayment()->getMethod(), $paymentMethods)) {
-                    if (in_array($order->getStatus(), $statuses)) {
-                        if ($order->getGrandTotal() >= $minOrderTotal) {
-                            $this->helperAntifraud->sendAnalysis($order);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 }
