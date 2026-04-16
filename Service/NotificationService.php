@@ -11,7 +11,10 @@ use Koin\Payment\Helper\Antifraud;
 use Koin\Payment\Helper\Data;
 use Koin\Payment\Helper\Order as HelperOrder;
 use Koin\Payment\Model\Ui\CreditCard\ConfigProvider;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\ResourceModel\Order\Payment as PaymentResourceModel;
 
 class NotificationService
 {
@@ -24,19 +27,31 @@ class NotificationService
     /** @var HelperOrder  */
     private $helperOrder;
 
+    /** @var PaymentResourceModel */
+    private $paymentResourceModel;
+
+    /** @var Json */
+    private $json;
+
     /**
      * @param Data $helper
      * @param Antifraud $helperAntifraud
      * @param HelperOrder $helperOrder
+     * @param PaymentResourceModel $paymentResourceModel
+     * @param Json $json
      */
     public function __construct(
         Data $helper,
         Antifraud $helperAntifraud,
-        HelperOrder $helperOrder
+        HelperOrder $helperOrder,
+        PaymentResourceModel $paymentResourceModel,
+        Json $json
     ) {
         $this->helper = $helper;
         $this->helperAntifraud = $helperAntifraud;
         $this->helperOrder = $helperOrder;
+        $this->paymentResourceModel = $paymentResourceModel;
+        $this->json = $json;
     }
 
     /**
@@ -44,10 +59,10 @@ class NotificationService
      *
      * @param Order $order
      * @param string $notificationStatus
-     * @param bool $persistPayment
+     * @param bool $useDirectUpdate
      * @return void
      */
-    public function sendNotifications(Order $order, string $notificationStatus, bool $persistPayment = true): void
+    public function sendNotifications(Order $order, string $notificationStatus, bool $useDirectUpdate = false): void
     {
         if (empty($notificationStatus)) {
             return;
@@ -70,9 +85,13 @@ class NotificationService
             $wasNotified = true;
         }
 
-        if ($wasNotified && $persistPayment) {
+        if ($wasNotified) {
             try {
-                $this->helperOrder->savePayment($payment);
+                if ($useDirectUpdate) {
+                    $this->savePaymentAdditionalInfoDirectly($payment);
+                } else {
+                    $this->helperOrder->savePayment($payment);
+                }
             } catch (\Exception $e) {
                 $this->helper->log('Failed to save notification status: ' . $e->getMessage());
             }
@@ -83,13 +102,13 @@ class NotificationService
      * Send notification based on order state
      *
      * @param Order $order
-     * @param bool $persistPayment
+     * @param bool $useDirectUpdate
      * @return void
      */
-    public function sendNotificationForOrderState(Order $order, bool $persistPayment = true): void
+    public function sendNotificationForOrderState(Order $order, bool $useDirectUpdate = false): void
     {
         $notificationStatus = $this->getNotificationStatusForState($order);
-        $this->sendNotifications($order, $notificationStatus, $persistPayment);
+        $this->sendNotifications($order, $notificationStatus, $useDirectUpdate);
     }
 
     /**
@@ -144,6 +163,30 @@ class NotificationService
             default:
                 return '';
         }
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order\Payment $payment
+     * @return void
+     * @throws LocalizedException
+     */
+    private function savePaymentAdditionalInfoDirectly($payment): void
+    {
+        if (!$payment->getId()) {
+            return;
+        }
+
+        $additionalInfo = $payment->getData('additional_information');
+        if (is_array($additionalInfo)) {
+            $additionalInfo = $this->json->serialize($additionalInfo);
+        }
+
+        $connection = $this->paymentResourceModel->getConnection();
+        $connection->update(
+            $this->paymentResourceModel->getMainTable(),
+            ['additional_information' => $additionalInfo],
+            ['entity_id = ?' => (int)$payment->getId()]
+        );
     }
 
     /**

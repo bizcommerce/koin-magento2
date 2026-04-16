@@ -44,7 +44,7 @@ class OrderSaveAfter implements ObserverInterface
         try {
             $originalState = $order->getOrigData('state');
             if ($originalState != $order->getState()) {
-                $this->notificationService->sendNotificationForOrderState($order, false);
+                $this->notificationService->sendNotificationForOrderState($order, true);
             }
 
             if ($this->helperAntifraud->isEligibleForAnalysis($order)) {
