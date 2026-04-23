@@ -10,7 +10,7 @@ namespace Koin\Payment\Service;
 use Koin\Payment\Helper\Antifraud;
 use Koin\Payment\Helper\Data;
 use Koin\Payment\Helper\Order as HelperOrder;
-use Koin\Payment\Model\Ui\CreditCard\ConfigProvider;
+use Koin\Payment\Model\Ui\CreditCard\ConfigProvider as CreditCardConfigProvider;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order;
@@ -18,6 +18,9 @@ use Magento\Sales\Model\ResourceModel\Order\Payment as PaymentResourceModel;
 
 class NotificationService
 {
+
+    private const CREDIT_CARD_ALLOWED_STATUSES = ['FINALIZED', 'CANCELLED'];
+
     /** @var Data  */
     private $helper;
 
@@ -68,15 +71,12 @@ class NotificationService
             return;
         }
 
+        if ($this->shouldSkipAntifraudNotification($order, $notificationStatus)) {
+            return;
+        }
+
         $payment = $order->getPayment();
         $wasNotified = false;
-
-        $lastNotificationStatus = $payment->getAdditionalInformation('koin_last_notification_status') ?? '';
-        if ($lastNotificationStatus !== $notificationStatus) {
-            $payment->setAdditionalInformation('koin_last_notification_status', $notificationStatus);
-            $this->notifyOrder($order, $notificationStatus);
-            $wasNotified = true;
-        }
 
         $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
         if ($antifraudNotificationStatus !== $notificationStatus) {
@@ -190,24 +190,6 @@ class NotificationService
     }
 
     /**
-     * Notify order with status
-     *
-     * @param Order $order
-     * @param string $status
-     * @return void
-     */
-    private function notifyOrder(Order $order, string $status): void
-    {
-        if ($order->getPayment()->getMethod() == ConfigProvider::CODE) {
-            try {
-                $this->helperOrder->notification($order, $status);
-            } catch (\Exception $e) {
-                $this->helper->log('Failed to send order notification: ' . $e->getMessage());
-            }
-        }
-    }
-
-    /**
      * Notify antifraud with status
      *
      * @param Order $order
@@ -216,12 +198,24 @@ class NotificationService
      */
     private function notifyAntifraud(Order $order, string $status): void
     {
-        if ($this->helper->getAntifraudConfig('active')) {
-            try {
-                $this->helperAntifraud->notification($order, $status);
-            } catch (\Exception $e) {
-                $this->helper->log('Failed to send antifraud notification: ' . $e->getMessage());
-            }
+        if (!$this->helper->getAntifraudConfig('active')) {
+            return;
         }
+
+        try {
+            $this->helperAntifraud->notification($order, $status);
+        } catch (\Exception $e) {
+            $this->helper->log('Failed to send antifraud notification: ' . $e->getMessage());
+        }
+    }
+
+    private function shouldSkipAntifraudNotification(Order $order, string $status): bool
+    {
+        $payment = $order->getPayment();
+        if (!$payment || $payment->getMethod() !== CreditCardConfigProvider::CODE) {
+            return false;
+        }
+
+        return !in_array($status, self::CREDIT_CARD_ALLOWED_STATUSES, true);
     }
 }
