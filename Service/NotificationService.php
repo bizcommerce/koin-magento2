@@ -19,7 +19,7 @@ use Magento\Sales\Model\ResourceModel\Order\Payment as PaymentResourceModel;
 class NotificationService
 {
 
-    private const CREDIT_CARD_ALLOWED_STATUSES = ['FINALIZED', 'CANCELLED'];
+    private const CREDIT_CARD_ALLOWED_STATUSES = ['FINALIZED', 'CANCELLED', 'REFUNDED', 'PARTIALLY_REFUNDED'];
 
     /** @var Data  */
     private $helper;
@@ -211,6 +211,10 @@ class NotificationService
 
     private function shouldSkipAntifraudNotification(Order $order, string $status): bool
     {
+        if ($this->helper->getAntifraudConfig('active')) {
+            return false;
+        }
+
         $payment = $order->getPayment();
         if (!$payment || $payment->getMethod() !== CreditCardConfigProvider::CODE) {
             return false;
