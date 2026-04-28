@@ -7,7 +7,6 @@ use Koin\Payment\Gateway\Http\Client\Payments\Refund;
 use Koin\Payment\Helper\Antifraud;
 use Koin\Payment\Helper\Data;
 use Koin\Payment\Helper\Order as HelperOrder;
-use Koin\Payment\Model\Ui\CreditCard\ConfigProvider as CcConfigProvider;
 use Koin\Payment\Service\NotificationService;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -38,10 +37,6 @@ class QuoteSubmitSuccess implements ObserverInterface
     private function processCapture(Order $order): void
     {
         $payment = $order->getPayment();
-
-        if ($payment->getMethod() !== CcConfigProvider::CODE) {
-            return;
-        }
 
         try {
             $apiStatus = $payment->getAdditionalInformation('status');
