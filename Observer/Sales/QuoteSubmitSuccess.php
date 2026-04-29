@@ -38,6 +38,10 @@ class QuoteSubmitSuccess implements ObserverInterface
     {
         $payment = $order->getPayment();
 
+        if (!str_starts_with($payment->getMethod(), 'koin_')) {
+            return;
+        }
+
         try {
             $apiStatus = $payment->getAdditionalInformation('status');
 
