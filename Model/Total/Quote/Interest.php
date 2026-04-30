@@ -65,7 +65,8 @@ class Interest extends AbstractTotal
         $installments = (int)$this->checkoutSession->getData('koin_installments');
         if ($installments > 1) {
             $grandTotal = $quote->getGrandTotal() - $quote->getKoinInterestAmount();
-            $installmentsPrice = $this->getInstallmentsPrice($quote, $grandTotal, $installments);
+            $ruleId = (int) $quote->getPayment()->getAdditionalInformation('rule_id');
+            $installmentsPrice = $this->getInstallmentsPrice($quote, $grandTotal, $installments, $ruleId);
             if ($installmentsPrice > $grandTotal) {
                 return $installmentsPrice - $grandTotal;
             }
@@ -74,18 +75,37 @@ class Interest extends AbstractTotal
         return 0;
     }
 
-    protected function getInstallmentsPrice(Quote $quote, float $grandTotal, int $installmentsNumber): float
-    {
+    protected function getInstallmentsPrice(
+        Quote $quote,
+        float $grandTotal,
+        int $installmentsNumber,
+        int $ruleId = 0
+    ): float {
         try {
             $ccNumber = (string) $this->session->getKoinCcNumber();
             $allInstallments = $this->helperInstallments->getAllInstallments($grandTotal, $ccNumber, $quote->getStoreId());
 
             $selectedInstallment = array_filter(
                 $allInstallments,
-                function ($installment) use ($installmentsNumber) {
-                    return $installment['installments'] == $installmentsNumber;
+                function ($installment) use ($installmentsNumber, $ruleId) {
+                    if ($installment['installments'] != $installmentsNumber) {
+                        return false;
+                    }
+                    if ($ruleId > 0) {
+                        return (int) ($installment['rule'] ?? 0) === $ruleId;
+                    }
+                    return true;
                 }
             );
+
+            if (empty($selectedInstallment) && $ruleId > 0) {
+                $selectedInstallment = array_filter(
+                    $allInstallments,
+                    function ($installment) use ($installmentsNumber) {
+                        return $installment['installments'] == $installmentsNumber;
+                    }
+                );
+            }
 
             $installment = $selectedInstallment;
             if (!empty($installment) && !isset($installment['total'])) {

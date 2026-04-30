@@ -109,8 +109,6 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
                 $cardToken = '';
             }
 
-            $this->updateInterest((int) $installments);
-
             /** @var Payment $paymentInfo */
             $paymentInfo = $this->readPaymentModelArgument($observer);
 
@@ -159,6 +157,8 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
 
             $ccNumberForRules = $isPciCompliance ? $ccBin : (string) $additionalData['cc_number'];
             $this->setRuleInformation($paymentInfo, (int) $installments, $ccNumberForRules);
+
+            $this->updateInterest($paymentInfo, (int) $installments);
         }
     }
 
@@ -183,10 +183,10 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
      * @throws NoSuchEntityException
      * @throws LocalizedException
      */
-    protected function updateInterest(int $installments): void
+    protected function updateInterest(Payment $paymentInfo, int $installments): void
     {
         $this->checkoutSession->setData('koin_installments', $installments);
-        $quote = $this->checkoutSession->getQuote();
+        $quote = $paymentInfo->getQuote() ?: $this->checkoutSession->getQuote();
         $quote->setTotalsCollectedFlag(false)->collectTotals();
     }
 
@@ -196,7 +196,7 @@ class CreditCardAssignObserver extends AbstractDataAssignObserver
      */
     public function setRuleInformation(Payment $paymentInfo, int $installments, string $ccNumber): void
     {
-        $quote = $this->checkoutSession->getQuote();
+        $quote = $paymentInfo->getQuote() ?: $this->checkoutSession->getQuote();
         $grandTotal = $quote->getGrandTotal() - (float) $quote->getKoinInterestAmount();
 
         $ruleId = $paymentInfo->getAdditionalInformation('rule_id')
