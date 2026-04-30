@@ -32,6 +32,7 @@ define([
         'Koin_Payment/js/model/credit-card-validation/credit-card-number-validator',
         'Magento_Checkout/js/model/totals',
         'Magento_Checkout/js/action/get-payment-information',
+        'Magento_Checkout/js/action/set-payment-information',
         'Magento_Payment/js/model/credit-card-validation/validator',
         'Magento_Checkout/js/model/payment/additional-validators',
         'mage/mage',
@@ -49,7 +50,8 @@ define([
         Component,
         cardNumberValidator,
         totals,
-        getPaymentInformationAction
+        getPaymentInformationAction,
+        setPaymentInformationAction
     ) {
         'use strict';
 
@@ -134,7 +136,46 @@ define([
                     self.updateInstallmentsValues();
                 });
 
+                // Refresh checkout totals when the customer changes installments,
+                // so the koin_interest_amount is persisted to the quote before placeOrder.
+                this.installmentsId.subscribe(function (value) {
+                    if (!value || value === '0') {
+                        return;
+                    }
+                    if (self.getCode() !== self.isChecked()) {
+                        return;
+                    }
+                    self.refreshTotalsFromSelectedInstallment();
+                });
+
                 return this;
+            },
+
+            /**
+             * Persist payment data into the quote and reload totals after the
+             * customer selects a different installment option.
+             */
+            refreshTotalsFromSelectedInstallment: function () {
+                var self = this;
+
+                if (!self.installmentsId() || self.installmentsId() === '0') {
+                    return;
+                }
+                if (self.getCode() !== self.isChecked()) {
+                    return;
+                }
+
+                totals.isLoading(true);
+                setPaymentInformationAction(self.messageContainer, self.getData())
+                    .done(function () {
+                        getPaymentInformationAction()
+                            .always(function () {
+                                totals.isLoading(false);
+                            });
+                    })
+                    .fail(function () {
+                        totals.isLoading(false);
+                    });
             },
 
             logoOnCheckout: function() {
