@@ -82,8 +82,6 @@ class FetchInfoHandler implements HandlerInterface
         $payment = $paymentData->getPayment();
         $order = $payment->getOrder();
 
-        $order = $this->helperOrder->updateInterestRate($order, $transaction);
-
         if (isset($transaction['status'])) {
             if (isset($transaction['status']['type'])) {
                 $koinStatus = $transaction['status']['type'];
