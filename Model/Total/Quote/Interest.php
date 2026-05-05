@@ -64,9 +64,11 @@ class Interest extends AbstractTotal
     {
         $installments = (int)$this->checkoutSession->getData('koin_installments');
         if ($installments > 1) {
-            $grandTotal = (float) array_sum($total->getAllTotalAmounts());
+            $grandTotal = (float) $quote->getGrandTotal() - (float) $quote->getKoinInterestAmount();
             if ($grandTotal <= 0) {
-                $grandTotal = (float) $quote->getGrandTotal() - (float) $quote->getKoinInterestAmount();
+                $totalAmounts = $total->getAllTotalAmounts();
+                unset($totalAmounts[$this->getCode()]);
+                $grandTotal = (float) array_sum($totalAmounts);
             }
             $ruleId = (int) $quote->getPayment()->getAdditionalInformation('rule_id');
             $installmentsPrice = $this->getInstallmentsPrice($quote, $grandTotal, $installments, $ruleId);
@@ -165,8 +167,8 @@ class Interest extends AbstractTotal
             $total->setKoinInterestAmount($interest);
             $total->setBaseKoinInterestAmount($interest);
 
-            $total->addTotalAmount($this->getCode(), $interest);
-            $total->addBaseTotalAmount($this->getCode(), $interest);
+            $total->setTotalAmount($this->getCode(), $interest);
+            $total->setBaseTotalAmount($this->getCode(), $interest);
 
             return $this;
         }
@@ -178,6 +180,8 @@ class Interest extends AbstractTotal
             $quote->setBaseKoinInterestAmount(0);
             $total->setKoinInterestAmount(0);
             $total->setBaseKoinInterestAmount(0);
+            $total->setTotalAmount($this->getCode(), 0);
+            $total->setBaseTotalAmount($this->getCode(), 0);
         }
 
         return $this;
