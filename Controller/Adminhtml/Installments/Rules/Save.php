@@ -126,7 +126,7 @@ class Save extends Rule
 
     protected function ensureStoreIds(array $data): array
     {
-        if (!empty($data['store_ids'])) {
+        if (isset($data['store_ids']) && $data['store_ids'] !== '' && $data['store_ids'] !== []) {
             return $data;
         }
 
