@@ -53,6 +53,8 @@ interface InstallmentsRulesInterface
     public const INTEREST_10_INSTALLMENTS = 'interest_10_installments';
     public const INTEREST_11_INSTALLMENTS = 'interest_11_installments';
     public const INTEREST_12_INSTALLMENTS = 'interest_12_installments';
+
+    public const MAX_INSTALLMENTS_PER_RULE = 12;
     public const PRIORITY = 'priority';
     public const CUSTOMER_GROUP_IDS = 'customer_group_ids';
     public const PRODUCT_SET_IDS = 'product_set_ids';

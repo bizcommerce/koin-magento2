@@ -20,6 +20,7 @@
 
 namespace Koin\Payment\Helper;
 
+use Koin\Payment\Api\Data\InstallmentsRulesInterface;
 use Koin\Payment\Model\InstallmentsRules\Validator;
 use Magento\Catalog\Model\Product;
 use Magento\Checkout\Model\Cart;
@@ -366,7 +367,7 @@ class Installments extends AbstractHelper
     }
 
     protected function getRulePerInstallmentRates(
-        \Koin\Payment\Model\InstallmentsRules $rule,
+        InstallmentsRulesInterface $rule,
         string $interestType
     ): array {
         if ($interestType !== 'per_installments') {
@@ -374,7 +375,7 @@ class Installments extends AbstractHelper
         }
 
         $rates = [];
-        for ($i = 1; $i <= 12; $i++) {
+        for ($i = 1; $i <= InstallmentsRulesInterface::MAX_INSTALLMENTS_PER_RULE; $i++) {
             $value = $rule->getInterestRateForInstallment($i);
             if ($value !== null) {
                 $rates[$i] = $value;
