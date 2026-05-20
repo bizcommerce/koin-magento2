@@ -30,6 +30,7 @@ use Magento\Framework\Registry;
 use Koin\Payment\Controller\Adminhtml\Installments\Rule;
 use Koin\Payment\Model\InstallmentsRulesFactory;
 use Magento\Framework\View\Result\PageFactory;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Class Save
@@ -51,15 +52,22 @@ class Save extends Rule
      */
     protected $resultJsonFactory;
 
+    /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
     public function __construct(
         Context $context,
         InstallmentsRulesRepository $ruleRepository,
         InstallmentsRulesFactory $rulesFactory,
         Registry $coreRegistry,
         HelperData $helperData,
-        PageFactory $resultPageFactory
+        PageFactory $resultPageFactory,
+        StoreManagerInterface $storeManager
     ) {
         $this->resultPageFactory = $resultPageFactory;
+        $this->storeManager = $storeManager;
         parent::__construct(
             $context,
             $ruleRepository,
@@ -80,6 +88,7 @@ class Save extends Rule
                 unset($rulesPostData['entity_id']);
             }
             $installmentsRule = $this->initRule();
+            $rulesPostData = $this->ensureStoreIds($rulesPostData);
             $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'store_ids');
             $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'customer_group_ids');
             $rulesPostData = $this->filterMultiSelectValues($rulesPostData, 'product_set_ids');
@@ -108,7 +117,25 @@ class Save extends Rule
 
     protected function filterMultiSelectValues(array $data, string $field): array
     {
-        $data[$field] = !empty($data[$field]) ? trim(implode(',', $data[$field])) : null;
+        if (isset($data[$field]) && is_array($data[$field])) {
+            $data[$field] = !empty($data[$field]) ? trim(implode(',', $data[$field])) : null;
+        }
+
+        return $data;
+    }
+
+    protected function ensureStoreIds(array $data): array
+    {
+        if (!empty($data['store_ids'])) {
+            return $data;
+        }
+
+        if ($this->storeManager->isSingleStoreMode()) {
+            $defaultStore = $this->storeManager->getDefaultStoreView();
+            if ($defaultStore !== null) {
+                $data['store_ids'] = [(string) $defaultStore->getId()];
+            }
+        }
 
         return $data;
     }
