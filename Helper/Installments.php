@@ -90,6 +90,7 @@ class Installments extends AbstractHelper
                     }
 
                     $interestType = $this->helper->getCcConfig('interest_type');
+                    $ruleInterestType = $rule->getInterestType() ?: $interestType;
 
                     $ruleInstallments = $this->getInstallments(
                         $rule->getMinimumInstallmentAmount(),
@@ -99,10 +100,11 @@ class Installments extends AbstractHelper
                         $rule->getMinInstallments() ?: 1,
                         $rule->getHasInterest(),
                         $rule->getInterestRate(),
-                        $rule->getInterestType() ?: $interestType,
+                        $ruleInterestType,
                         $rule->getId(),
                         $rule->getShowInstallments(),
-                        $rule->getDescription()
+                        $rule->getDescription(),
+                        $this->getRulePerInstallmentRates($rule, $ruleInterestType)
                     );
                     $allInstallments = array_merge($allInstallments, $ruleInstallments);
                 }
@@ -249,11 +251,16 @@ class Installments extends AbstractHelper
         int $installment,
         float $interestRate = 0,
         string $interestType = '',
-        int $installmentsWithoutInterest = 0
+        int $installmentsWithoutInterest = 0,
+        array $perInstallmentRates = []
     ): float {
         if ($installment > $installmentsWithoutInterest) {
             if ($interestType == 'per_installments') {
-                $interestRate = (float)$this->helper->getCcConfig('interest_' . $installment . '_installments');
+                if (array_key_exists($installment, $perInstallmentRates)) {
+                    $interestRate = (float)$perInstallmentRates[$installment];
+                } else {
+                    $interestRate = (float)$this->helper->getCcConfig('interest_' . $installment . '_installments');
+                }
             }
             return $interestRate / 100;
         }
@@ -277,7 +284,8 @@ class Installments extends AbstractHelper
         string $interestType,
         int $ruleId = 0,
         bool $showInstallments = false,
-        string $description = ''
+        string $description = '',
+        array $perInstallmentRates = []
     ): array {
         $allInstallments = [];
         if ($minInstallmentAmount > 0) {
@@ -296,7 +304,8 @@ class Installments extends AbstractHelper
                 $i,
                 $defaultInterestRate,
                 $interestType,
-                $installmentsWithoutInterest
+                $installmentsWithoutInterest,
+                $perInstallmentRates
             );
             $value = $this->getInstallmentPrice($total, $i, $hasInterest, $interestRate, $interestType);
             $grandTotal = $total;
@@ -354,6 +363,24 @@ class Installments extends AbstractHelper
             $this->logError($e->getMessage());
         }
         return 0;
+    }
+
+    protected function getRulePerInstallmentRates(
+        \Koin\Payment\Model\InstallmentsRules $rule,
+        string $interestType
+    ): array {
+        if ($interestType !== 'per_installments') {
+            return [];
+        }
+
+        $rates = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $value = $rule->getInterestRateForInstallment($i);
+            if ($value !== null) {
+                $rates[$i] = $value;
+            }
+        }
+        return $rates;
     }
 
     protected function getCartAttributeSetIds(): array
