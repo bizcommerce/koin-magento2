@@ -165,6 +165,10 @@ define([
                     return;
                 }
 
+                if (self.isPlaceOrderActionAllowed && self.isPlaceOrderActionAllowed() === false) {
+                    return;
+                }
+
                 totals.isLoading(true);
                 setPaymentInformationAction(self.messageContainer, self.getData())
                     .done(function () {
@@ -413,7 +417,11 @@ define([
             },
 
             handleKoinSuccess: function(data) {
-                this.cardToken(data.secure_token || '');
+                if (!data || !data.secure_token) {
+                    return;
+                }
+
+                this.cardToken(data.secure_token);
                 this.cardBin(data.bin || '');
                 this.cardLast4(data.last_four || '');
                 this.creditCardType(data.card_brand || '');
@@ -462,6 +470,10 @@ define([
                 this.isCardConfirmed(false);
                 this.showPciForm(true);
                 this.confirmedCardDisplay('');
+                this.cardToken('');
+                this.cardBin('');
+                this.cardLast4('');
+                this.creditCardType('');
 
                 // Reset installments dropdown
                 this.installments.removeAll();
@@ -477,22 +489,22 @@ define([
 
             tokenizeAndPlaceOrder: function() {
                 var self = this;
-                if (this.isPciCompliance) {
-                    if (this.isCardConfirmed()) {
-                        // Card already confirmed, place order directly
-                        this.placeOrder();
-                    } else {
-                        // Confirm card first, then place order
-                        this.koinCheckout.tokenize().then(function(data) {
-                            self.handleKoinSuccess(data);
-                            self.placeOrder();
-                        }).catch(function(error) {
-                            self.handleKoinError(error);
-                        });
-                    }
-                } else {
+                if (!this.isPciCompliance) {
                     this.placeOrder();
+                    return;
                 }
+
+                if (!this.koinCheckout) {
+                    return;
+                }
+
+                // Confirm card first, then place order
+                this.koinCheckout.tokenize().then(function (data) {
+                    self.handleKoinSuccess(data);
+                    self.placeOrder();
+                }).catch(function (error) {
+                    self.handleKoinError(error);
+                });
             },
 
             getCcIcons: function(type) {
