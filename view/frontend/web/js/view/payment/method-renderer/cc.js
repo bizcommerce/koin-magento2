@@ -489,6 +489,11 @@ define([
 
             tokenizeAndPlaceOrder: function() {
                 var self = this;
+
+                if (this.isPlaceOrderActionAllowed && this.isPlaceOrderActionAllowed() === false) {
+                    return;
+                }
+
                 if (!this.isPciCompliance) {
                     this.placeOrder();
                     return;
