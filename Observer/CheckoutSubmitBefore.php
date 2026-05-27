@@ -52,7 +52,7 @@ class CheckoutSubmitBefore implements ObserverInterface
 
         if (
             $quote->getPayment()
-            && str_contains($quote->getPayment()->getMethod(), 'koin')
+            && strpos($quote->getPayment()->getMethod(), 'koin_') === 0
         ) {
             $quote->reserveOrderId();
             $this->quoteRepository->save($quote);
