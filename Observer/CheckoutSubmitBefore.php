@@ -20,7 +20,6 @@
 
 namespace Koin\Payment\Observer;
 
-use Koin\Payment\Model\Ui\Pix\ConfigProvider;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -53,7 +52,7 @@ class CheckoutSubmitBefore implements ObserverInterface
 
         if (
             $quote->getPayment()
-            && $quote->getPayment()->getMethod() == ConfigProvider::CODE
+            && str_contains($quote->getPayment()->getMethod(), 'koin')
         ) {
             $quote->reserveOrderId();
             $this->quoteRepository->save($quote);
