@@ -17,28 +17,32 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="koin-fingerprint" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-despegar" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-koinlatam" type="host">*.koinlatam.com</value>
                 <value id="koin-src" type="host">*.koin.com.br</value>
                 <value id="koin-tagmanager" type="host">*.googletagmanager.com</value>
             </values>
         </policy>
         <policy id="frame-src">
             <values>
-                <value id="koin-fingerprint-frame" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-frame-despegar" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-frame-koinlatam" type="host">*.koinlatam.com</value>
                 <value id="koin-3ds-frame" type="host">*.koin.com.br</value>
                 <value id="koin-tagmanager-frame" type="host">*.googletagmanager.com</value>
             </values>
         </policy>
         <policy id="frame-ancestors">
             <values>
-                <value id="koin-fingerprint-frame-ancestors" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-frame-ancestors-despegar" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-frame-ancestors-koinlatam" type="host">*.koinlatam.com</value>
                 <value id="koin-3ds-frame-ancestors" type="host">*.koin.com.br</value>
                 <value id="koin-tagmanager-frame-ancestors" type="host">*.googletagmanager.com</value>
             </values>
         </policy>
         <policy id="img-src">
             <values>
-                <value id="koin-fingerprint-img" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-img-despegar" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-img-koinlatam" type="host">*.koinlatam.com</value>
                 <value id="koin-img" type="host">*.koin.com.br</value>
                 <value id="koin-tagmanager-img" type="host">*.googletagmanager.com</value>
                 <value id="koin-fonts-google-img" type="host">fonts.googleapis.com</value>
@@ -46,7 +50,8 @@
         </policy>
         <policy id="connect-src">
             <values>
-                <value id="koin-fingerprint-connect" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-connect-despegar" type="host">*.despegar.com</value>
+                <value id="koin-fingerprint-connect-koinlatam" type="host">*.koinlatam.com</value>
                 <value id="koin-tagmanager-connect" type="host">*.googletagmanager.com</value>
             </values>
         </policy>

@@ -10,12 +10,17 @@ namespace Koin\Payment\Service;
 use Koin\Payment\Helper\Antifraud;
 use Koin\Payment\Helper\Data;
 use Koin\Payment\Helper\Order as HelperOrder;
-use Koin\Payment\Model\Ui\CreditCard\ConfigProvider;
-use Magento\Sales\Api\OrderRepositoryInterface;
+use Koin\Payment\Model\Ui\CreditCard\ConfigProvider as CreditCardConfigProvider;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\ResourceModel\Order\Payment as PaymentResourceModel;
 
 class NotificationService
 {
+
+    private const CREDIT_CARD_ALLOWED_STATUSES = ['FINALIZED', 'CANCELLED', 'REFUNDED', 'PARTIALLY_REFUNDED'];
+
     /** @var Data  */
     private $helper;
 
@@ -25,25 +30,31 @@ class NotificationService
     /** @var HelperOrder  */
     private $helperOrder;
 
-    /** @var OrderRepositoryInterface  */
-    private $orderRepository;
+    /** @var PaymentResourceModel */
+    private $paymentResourceModel;
+
+    /** @var Json */
+    private $json;
 
     /**
      * @param Data $helper
      * @param Antifraud $helperAntifraud
      * @param HelperOrder $helperOrder
-     * @param OrderRepositoryInterface $orderRepository
+     * @param PaymentResourceModel $paymentResourceModel
+     * @param Json $json
      */
     public function __construct(
         Data $helper,
         Antifraud $helperAntifraud,
         HelperOrder $helperOrder,
-        OrderRepositoryInterface $orderRepository
+        PaymentResourceModel $paymentResourceModel,
+        Json $json
     ) {
         $this->helper = $helper;
         $this->helperAntifraud = $helperAntifraud;
         $this->helperOrder = $helperOrder;
-        $this->orderRepository = $orderRepository;
+        $this->paymentResourceModel = $paymentResourceModel;
+        $this->json = $json;
     }
 
     /**
@@ -51,25 +62,46 @@ class NotificationService
      *
      * @param Order $order
      * @param string $notificationStatus
+     * @param bool $useDirectUpdate
      * @return void
      */
-    public function sendNotifications(Order $order, string $notificationStatus): void
+    public function sendNotifications(Order $order, string $notificationStatus, bool $useDirectUpdate = false): void
     {
         if (empty($notificationStatus)) {
             return;
         }
 
-        $payment = $order->getPayment();
+        if ($this->shouldSkipAntifraudNotification($order, $notificationStatus)) {
+            return;
+        }
 
-        // Only send notification if status has changed
+        $payment = $order->getPayment();
+        $wasNotified = false;
+
         $lastNotificationStatus = $payment->getAdditionalInformation('koin_last_notification_status') ?? '';
         if ($lastNotificationStatus !== $notificationStatus) {
+            $payment->setAdditionalInformation('koin_last_notification_status', $notificationStatus);
             $this->notifyOrder($order, $notificationStatus);
+            $wasNotified = true;
         }
 
         $antifraudNotificationStatus = $payment->getAdditionalInformation('koin_antifraud_notification_status') ?? '';
         if ($antifraudNotificationStatus !== $notificationStatus) {
+            $payment->setAdditionalInformation('koin_antifraud_notification_status', $notificationStatus);
             $this->notifyAntifraud($order, $notificationStatus);
+            $wasNotified = true;
+        }
+
+        if ($wasNotified) {
+            try {
+                if ($useDirectUpdate) {
+                    $this->savePaymentAdditionalInfoDirectly($payment);
+                } else {
+                    $this->helperOrder->savePayment($payment);
+                }
+            } catch (\Exception $e) {
+                $this->helper->log('Failed to save notification status: ' . $e->getMessage());
+            }
         }
     }
 
@@ -77,12 +109,13 @@ class NotificationService
      * Send notification based on order state
      *
      * @param Order $order
+     * @param bool $useDirectUpdate
      * @return void
      */
-    public function sendNotificationForOrderState(Order $order): void
+    public function sendNotificationForOrderState(Order $order, bool $useDirectUpdate = false): void
     {
         $notificationStatus = $this->getNotificationStatusForState($order);
-        $this->sendNotifications($order, $notificationStatus);
+        $this->sendNotifications($order, $notificationStatus, $useDirectUpdate);
     }
 
     /**
@@ -93,7 +126,6 @@ class NotificationService
      */
     public function sendNotificationForInvoice(Order $order): void
     {
-        // Check if order is fully invoiced
         if ($order->getTotalInvoiced() >= $order->getGrandTotal() || $order->getTotalDue() == 0) {
             $this->sendNotifications($order, 'COLLECTED');
         }
@@ -107,7 +139,6 @@ class NotificationService
      */
     public function sendNotificationForCreditmemo(Order $order): void
     {
-        // Check if it's a full or partial refund
         if ($order->getTotalRefunded() < $order->getGrandTotal()) {
             $this->sendNotifications($order, 'PARTIALLY_REFUNDED');
         } else {
@@ -132,7 +163,6 @@ class NotificationService
             case Order::STATE_CANCELED:
                 return 'CANCELLED';
             case Order::STATE_PROCESSING:
-                // Check if order is fully paid
                 if ($order->getTotalInvoiced() >= $order->getGrandTotal() || $order->getTotalDue() == 0) {
                     return 'COLLECTED';
                 }
@@ -143,7 +173,30 @@ class NotificationService
     }
 
     /**
-     * Notify order with status
+     * @param \Magento\Sales\Model\Order\Payment $payment
+     * @return void
+     * @throws LocalizedException
+     */
+    private function savePaymentAdditionalInfoDirectly($payment): void
+    {
+        if (!$payment->getId()) {
+            return;
+        }
+
+        $additionalInfo = $payment->getData('additional_information');
+        if (is_array($additionalInfo)) {
+            $additionalInfo = $this->json->serialize($additionalInfo);
+        }
+
+        $connection = $this->paymentResourceModel->getConnection();
+        $connection->update(
+            $this->paymentResourceModel->getMainTable(),
+            ['additional_information' => $additionalInfo],
+            ['entity_id = ?' => (int)$payment->getId()]
+        );
+    }
+
+    /**
      *
      * @param Order $order
      * @param string $status
@@ -151,13 +204,14 @@ class NotificationService
      */
     private function notifyOrder(Order $order, string $status): void
     {
-        if ($order->getPayment()->getMethod() == ConfigProvider::CODE) {
-            try {
-                $this->helperOrder->notification($order, $status);
-                $this->updateNotificationStatus($order, 'koin_last_notification_status', $status);
-            } catch (\Exception $e) {
-                $this->helper->log('Failed to send order notification: ' . $e->getMessage());
-            }
+        if ($order->getPayment()->getMethod() !== CreditCardConfigProvider::CODE) {
+            return;
+        }
+
+        try {
+            $this->helperOrder->notification($order, $status);
+        } catch (\Exception $e) {
+            $this->helper->log('Failed to send order notification: ' . $e->getMessage());
         }
     }
 
@@ -170,33 +224,28 @@ class NotificationService
      */
     private function notifyAntifraud(Order $order, string $status): void
     {
-        if ($this->helper->getAntifraudConfig('active')) {
-            try {
-                $this->helperAntifraud->notification($order, $status);
-                $this->updateNotificationStatus($order, 'koin_antifraud_notification_status', $status);
-            } catch (\Exception $e) {
-                $this->helper->log('Failed to send antifraud notification: ' . $e->getMessage());
-            }
+        if (!$this->helper->getAntifraudConfig('active')) {
+            return;
+        }
+
+        try {
+            $this->helperAntifraud->notification($order, $status);
+        } catch (\Exception $e) {
+            $this->helper->log('Failed to send antifraud notification: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Update notification status in payment additional information
-     *
-     * @param Order $order
-     * @param string $key
-     * @param string $value
-     * @return void
-     */
-    private function updateNotificationStatus(Order $order, string $key, string $value): void
+    private function shouldSkipAntifraudNotification(Order $order, string $status): bool
     {
-        $payment = $order->getPayment();
-        $payment->setAdditionalInformation($key, $value);
-
-        try {
-            $this->orderRepository->save($order);
-        } catch (\Exception $e) {
-            $this->helper->log('Failed to save notification status: ' . $e->getMessage());
+        if ($this->helper->getAntifraudConfig('active')) {
+            return false;
         }
+
+        $payment = $order->getPayment();
+        if (!$payment || $payment->getMethod() !== CreditCardConfigProvider::CODE) {
+            return false;
+        }
+
+        return !in_array($status, self::CREDIT_CARD_ALLOWED_STATUSES, true);
     }
 }
