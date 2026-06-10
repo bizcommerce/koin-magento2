@@ -300,9 +300,11 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         try {
             /** @var \Magento\Sales\Model\Order\Payment $payment */
             $payment = $order->getPayment();
+            $orderStateChanged = false;
 
             if (!$this->isListenerEnabled()) {
                 if ($status == self::APPROVED_STATUS) {
+                    $orderStateChanged = true;
                     $captureApproved = $this->helperData->getAntifraudConfig('capture_approved_orders');
                     $captured = false;
                     $approvedStatus = false;
@@ -326,6 +328,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                         $approvedStatus ?? ''
                     );
                 } elseif ($status == self::REJECTED_STATUS) {
+                    $orderStateChanged = true;
                     $cancelDenied = $this->helperData->getAntifraudConfig('cancel_denied_orders');
                     $changeStatusDenied = $this->helperData->getAntifraudConfig('change_status_denied');
                     $deniedStatus = false;
@@ -362,7 +365,12 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
 
             $order->setData(self::KOIN_ANTIFRAUD_STATUS, $status);
             $order->setData('koin_antifraud_score', $score);
-            $this->saveAntifraudAttributes($order, $status, $score);
+
+            if ($orderStateChanged) {
+                $this->orderRepository->save($order);
+            } else {
+                $this->saveAntifraudAttributes($order, $status, $score);
+            }
         } catch (\Exception $e) {
             $this->helperData->log($e->getMessage());
         }
