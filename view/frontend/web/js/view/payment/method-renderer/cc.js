@@ -220,8 +220,8 @@ define([
                             'installments': installments,
                             'rule_id': ruleId,
                             'card_token': this.cardToken(),
-                            'cc_bin': this.cardBin() || this.koinCreditCardNumber()?.replace(/\D/g, '').substring(0, 6),
-                            'cc_last4': this.cardLast4() || this.koinCreditCardNumber()?.replace(/\D/g, '').slice(-4),
+                            'cc_bin': this.cardBin() || this.koinCreditCardNumber()?.replace(/\D/g, '')?.substring(0, 6),
+                            'cc_last4': this.cardLast4() || this.koinCreditCardNumber()?.replace(/\D/g, '')?.slice(-4),
                             'is_pci_compliance': true
                         }
                     };
@@ -514,6 +514,11 @@ define([
 
             tokenizeAndPlaceOrder: function() {
                 var self = this;
+
+                if (this.isPlaceOrderActionAllowed && this.isPlaceOrderActionAllowed() === false) {
+                    return;
+                }
+
                 if (!this.isPciCompliance) {
                     this.placeOrder();
                     return;
