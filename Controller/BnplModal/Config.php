@@ -50,7 +50,7 @@ class Config implements HttpGetActionInterface
                 'storeName' => $this->getStoreNameConfig(),
             ];
         } catch (\Exception $e) {
-            $this->logger->critical($e);
+            $this->logger->critical($e->getMessage(), ['exception' => $e]);
             $data['message'] = __('An error occurred while loading configuration.');
             return $result->setData($data);
         }
