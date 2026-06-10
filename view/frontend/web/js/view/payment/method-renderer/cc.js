@@ -80,7 +80,8 @@ define([
                 isKoinSdkLoaded: ko.observable(false),
                 isCardConfirmed: ko.observable(false),
                 confirmedCardDisplay: ko.observable(''),
-                showPciForm: ko.observable(true)
+                showPciForm: ko.observable(true),
+                isPlacingOrder: false
             },
 
             /** @inheritdoc */
@@ -157,6 +158,10 @@ define([
              */
             refreshTotalsFromSelectedInstallment: function () {
                 var self = this;
+
+                if (self.isPlacingOrder) {
+                    return;
+                }
 
                 if (!self.installmentsId() || self.installmentsId() === '0') {
                     return;
@@ -286,6 +291,9 @@ define([
 
                     //I need to change it to a POST with body
                     self.debounceTimer = setTimeout(() => {
+                        if (self.isPlacingOrder) {
+                            return;
+                        }
                         totals.isLoading(true);
                         fetch(self.retrieveInstallmentsUrl(), {
                             method: 'POST',
@@ -485,6 +493,23 @@ define([
             formatConfirmedCard: function() {
                 const cardBin = this.cardBin().substring(0, 4) + " " + this.cardBin().substring(4, 6);
                 return cardBin + '** **** ' + (this.cardLast4() || '');
+            },
+
+            /**
+             * @inheritdoc
+             */
+            placeOrder: function () {
+                this.isPlacingOrder = true;
+                return this._super.apply(this, arguments);
+            },
+
+            /** @inheritdoc */
+            getPlaceOrderDeferredObject: function () {
+                var self = this;
+
+                return this._super().fail(function () {
+                    self.isPlacingOrder = false;
+                });
             },
 
             tokenizeAndPlaceOrder: function() {
