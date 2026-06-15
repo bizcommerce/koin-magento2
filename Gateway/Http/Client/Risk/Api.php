@@ -23,7 +23,6 @@ class Api
     const STATUS_DENIED = 'denied';
     const STATUS_APPROVED = 'approved';
     const STATUS_RECEIVED = 'received';
-    const STATUS_QUEUED = 'queued';
     const STATUS_ERROR = 'error';
     const STATUS_ABORTED = 'aborted';
 

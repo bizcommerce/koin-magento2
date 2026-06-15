@@ -99,7 +99,6 @@ Settings,Configuraciones
 Fraud Analysis,Análisis de Fraude
 Cancel Denied Orders,Cancelar Pedidos Denegados
 Change Status Denied Orders,Cambiar Estado de Pedidos Denegados
-Manage Queue,Administrar Cola
 Anti Fraud ID,ID Antifraude
 Evaluation ID,ID de Evaluación
 Analysis Type,Tipo de Análisis
@@ -119,7 +118,6 @@ Status used to denied but not cancelled orders,Estado utilizado para pedidos den
 denied,denegado
 approved,aprobado
 received,recibido
-queued,en cola
 Method,Método
 The order was approved by Fraud Analysis,El pedido fue aprobado por el Análisis de Fraude
 The order was repproved by Fraud Analysis,El pedido fue denegado por el Análisis de Fraude
@@ -287,9 +285,15 @@ Card Installments,Cuotas de la Tarjeta
 "Change Card","Cambiar Tarjeta"
 "Show BNPL Modal After Other Payment Methods Fail","Mostrar Modal BNPL Después de que Otros Métodos de Pago Fallen"
 "If set to Yes, a modal with instructions will be displayed when other payment methods are unsuccessful.","Si se establece en Sí, se mostrará un modal con instrucciones cuando otros métodos de pago no tengan éxito."
-"BNPL Modal Instructions","Instrucciones del Modal BNPL"
-"Instructions to be shown in BNPL modal, it can be HTML","Instrucciones que se mostrarán en el modal BNPL, puede contener HTML"
+"BNPL Modal Installments","Cuotas del Modal BNPL"
+"Number of installments to be displayed in the BNPL modal.","Número de cuotas que se mostrarán en el modal BNPL."
 "Close","Cerrar"
 "Select BNPL","Seleccionar BNPL"
 "Enable Antifraud Strategies on Success Page","Activar Estrategias Antifraude en la Página de Éxito"
 "If 'Yes', the payment method using Koin Antifraud will display a validation for the final customer.","Si 'Sí', el método de pago que utiliza Koin Antifraud mostrará una validación para el cliente final."
+"If set to 'Yes', the order status will not be updated when the order is approved or denied.","Si se establece en 'Sí', el estado del pedido no se actualizará cuando el pedido sea aprobado o rechazado."
+"Enable Listener Mode", "Habilitar Modo Listener"
+"BNPL Modal Store Name","Nombre de la Tienda del Modal BNPL"
+"Store name to be displayed in the BNPL modal.","Nombre de la tienda que se mostrará en el modal BNPL."
+"An error occurred while loading modal configuration.","Ocurrió un error al cargar la configuración del modal."
+"Updated","Actualizado"

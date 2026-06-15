@@ -32,6 +32,7 @@ define([
         'Koin_Payment/js/model/credit-card-validation/credit-card-number-validator',
         'Magento_Checkout/js/model/totals',
         'Magento_Checkout/js/action/get-payment-information',
+        'Magento_Checkout/js/action/set-payment-information',
         'Magento_Payment/js/model/credit-card-validation/validator',
         'Magento_Checkout/js/model/payment/additional-validators',
         'mage/mage',
@@ -49,7 +50,8 @@ define([
         Component,
         cardNumberValidator,
         totals,
-        getPaymentInformationAction
+        getPaymentInformationAction,
+        setPaymentInformationAction
     ) {
         'use strict';
 
@@ -78,7 +80,8 @@ define([
                 isKoinSdkLoaded: ko.observable(false),
                 isCardConfirmed: ko.observable(false),
                 confirmedCardDisplay: ko.observable(''),
-                showPciForm: ko.observable(true)
+                showPciForm: ko.observable(true),
+                isPlacingOrder: false
             },
 
             /** @inheritdoc */
@@ -134,7 +137,54 @@ define([
                     self.updateInstallmentsValues();
                 });
 
+                // Refresh checkout totals when the customer changes installments,
+                // so the koin_interest_amount is persisted to the quote before placeOrder.
+                this.installmentsId.subscribe(function (value) {
+                    if (!value || value === '0') {
+                        return;
+                    }
+                    if (self.getCode() !== self.isChecked()) {
+                        return;
+                    }
+                    self.refreshTotalsFromSelectedInstallment();
+                });
+
                 return this;
+            },
+
+            /**
+             * Persist payment data into the quote and reload totals after the
+             * customer selects a different installment option.
+             */
+            refreshTotalsFromSelectedInstallment: function () {
+                var self = this;
+
+                if (self.isPlacingOrder) {
+                    return;
+                }
+
+                if (!self.installmentsId() || self.installmentsId() === '0') {
+                    return;
+                }
+                if (self.getCode() !== self.isChecked()) {
+                    return;
+                }
+
+                if (self.isPlaceOrderActionAllowed && self.isPlaceOrderActionAllowed() === false) {
+                    return;
+                }
+
+                totals.isLoading(true);
+                setPaymentInformationAction(self.messageContainer, self.getData())
+                    .done(function () {
+                        getPaymentInformationAction()
+                            .always(function () {
+                                totals.isLoading(false);
+                            });
+                    })
+                    .fail(function () {
+                        totals.isLoading(false);
+                    });
             },
 
             logoOnCheckout: function() {
@@ -158,7 +208,6 @@ define([
                 const iRule = this.installmentsId() ? this.installmentsId().split('-') : '';
                 const installments = iRule[0] || '1';
                 const ruleId = iRule[1] || '0';
-
                 if (this.isPciCompliance) {
                     return {
                         'method': this.item.method,
@@ -171,8 +220,8 @@ define([
                             'installments': installments,
                             'rule_id': ruleId,
                             'card_token': this.cardToken(),
-                            'cc_bin': this.cardBin(),
-                            'cc_last4': this.cardLast4(),
+                            'cc_bin': this.cardBin() || this.koinCreditCardNumber()?.replace(/\D/g, '')?.substring(0, 6),
+                            'cc_last4': this.cardLast4() || this.koinCreditCardNumber()?.replace(/\D/g, '')?.slice(-4),
                             'is_pci_compliance': true
                         }
                     };
@@ -242,6 +291,9 @@ define([
 
                     //I need to change it to a POST with body
                     self.debounceTimer = setTimeout(() => {
+                        if (self.isPlacingOrder) {
+                            return;
+                        }
                         totals.isLoading(true);
                         fetch(self.retrieveInstallmentsUrl(), {
                             method: 'POST',
@@ -373,7 +425,11 @@ define([
             },
 
             handleKoinSuccess: function(data) {
-                this.cardToken(data.secure_token || '');
+                if (!data || !data.secure_token) {
+                    return;
+                }
+
+                this.cardToken(data.secure_token);
                 this.cardBin(data.bin || '');
                 this.cardLast4(data.last_four || '');
                 this.creditCardType(data.card_brand || '');
@@ -422,6 +478,10 @@ define([
                 this.isCardConfirmed(false);
                 this.showPciForm(true);
                 this.confirmedCardDisplay('');
+                this.cardToken('');
+                this.cardBin('');
+                this.cardLast4('');
+                this.creditCardType('');
 
                 // Reset installments dropdown
                 this.installments.removeAll();
@@ -435,24 +495,46 @@ define([
                 return cardBin + '** **** ' + (this.cardLast4() || '');
             },
 
+            /**
+             * @inheritdoc
+             */
+            placeOrder: function () {
+                this.isPlacingOrder = true;
+                return this._super.apply(this, arguments);
+            },
+
+            /** @inheritdoc */
+            getPlaceOrderDeferredObject: function () {
+                var self = this;
+
+                return this._super().fail(function () {
+                    self.isPlacingOrder = false;
+                });
+            },
+
             tokenizeAndPlaceOrder: function() {
                 var self = this;
-                if (this.isPciCompliance) {
-                    if (this.isCardConfirmed()) {
-                        // Card already confirmed, place order directly
-                        this.placeOrder();
-                    } else {
-                        // Confirm card first, then place order
-                        this.koinCheckout.tokenize().then(function(data) {
-                            self.handleKoinSuccess(data);
-                            self.placeOrder();
-                        }).catch(function(error) {
-                            self.handleKoinError(error);
-                        });
-                    }
-                } else {
-                    this.placeOrder();
+
+                if (this.isPlaceOrderActionAllowed && this.isPlaceOrderActionAllowed() === false) {
+                    return;
                 }
+
+                if (!this.isPciCompliance) {
+                    this.placeOrder();
+                    return;
+                }
+
+                if (!this.koinCheckout) {
+                    return;
+                }
+
+                // Confirm card first, then place order
+                this.koinCheckout.tokenize().then(function (data) {
+                    self.handleKoinSuccess(data);
+                    self.placeOrder();
+                }).catch(function (error) {
+                    self.handleKoinError(error);
+                });
             },
 
             getCcIcons: function(type) {

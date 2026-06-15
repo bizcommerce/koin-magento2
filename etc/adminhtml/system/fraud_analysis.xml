@@ -42,6 +42,9 @@
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <config_path>koin/fraud_analysis/cancel_denied_orders</config_path>
             <comment>If 'yes', it'll trigger a refund command to payment method provider, it depends on availability of the payment method to send refund commands to the issuer</comment>
+            <depends>
+                <field id="enable_listener">0</field>
+            </depends>
         </field>
 
         <field id="denied_cancelled_status" translate="label comment" type="select" sortOrder="121" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -50,6 +53,7 @@
             <config_path>koin/fraud_analysis/denied_cancelled_status</config_path>
             <depends>
                 <field id="cancel_denied_orders">1</field>
+                <field id="enable_listener">0</field>
             </depends>
             <comment>When the order is denied by Koin and cancelled at the store, it'll update the order to that status</comment>
         </field>
@@ -60,6 +64,7 @@
             <config_path>koin/fraud_analysis/change_status_denied</config_path>
             <depends>
                 <field id="cancel_denied_orders">0</field>
+                <field id="enable_listener">0</field>
             </depends>
             <comment>When the order is denied by Koin, it'll update the chosen status</comment>
         </field>
@@ -87,14 +92,25 @@
             <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
             <config_path>koin/fraud_analysis/change_status_approved</config_path>
             <comment>When the order is approved by Koin, it'll update the order status</comment>
+            <depends>
+                <field id="enable_listener">0</field>
+            </depends>
         </field>
 
-        <field id="approved_status" translate="label comment" type="select" sortOrder="132" showInDefault="1" showInWebsite="1" showInStore="1">
+        <field id="enable_listener" translate="label comment" type="select" sortOrder="132" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Enable Listener Mode</label>
+            <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+            <config_path>koin/fraud_analysis/enable_listener</config_path>
+            <comment>If set to 'Yes', the order status will not be updated when the order is approved or denied.</comment>
+        </field>
+
+        <field id="approved_status" translate="label comment" type="select" sortOrder="133" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Approved Order Status</label>
             <source_model>Koin\Payment\Model\Config\Source\Order\ProcessingComplete</source_model>
             <config_path>koin/fraud_analysis/approved_status</config_path>
             <depends>
                 <field id="change_status_approved">1</field>
+                <field id="enable_listener">0</field>
             </depends>
             <comment>Status used to approved orders</comment>
         </field>

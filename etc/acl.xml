@@ -19,7 +19,6 @@
                 <resource id="Magento_Sales::sales">
                     <resource id="Koin_Payment::menu" title="Koin" translate="title" sortOrder="1000">
                         <resource id="Koin_Payment::callbacks" title="CallBacks"/>
-                        <resource id="Koin_Payment::queue" title="Manage Queue"/>
                         <resource id="Koin_Payment::fraud_analysis" title="Fraud Analysis"/>
                         <resource id="Koin_Payment::requests" title="Requests e Responses"/>
                         <resource id="Koin_Payment::installments_rules" title="Installments Rules"/>

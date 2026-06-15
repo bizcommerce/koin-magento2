@@ -409,7 +409,6 @@
             <argument name="collections" xsi:type="array">
                 <item name="koin_payment_callback_listing_data_source" xsi:type="string">KoinPaymentCallbackCollection</item>
                 <item name="koin_payment_fraudanalysis_listing_data_source" xsi:type="string">KoinPaymentFraudAnalysisCollection</item>
-                <item name="koin_payment_queue_listing_data_source" xsi:type="string">KoinPaymentQueueCollection</item>
                 <item name="koin_payment_request_listing_data_source" xsi:type="string">KoinPaymentRequestCollection</item>
                 <item name="koin_payment_installments_rules_listing_data_source" xsi:type="string">KoinPaymentInstallmentsRulesCollection</item>
             </argument>
@@ -425,12 +424,6 @@
         <arguments>
             <argument name="mainTable" xsi:type="string">koin_antifraud</argument>
             <argument name="resourceModel" xsi:type="string">Koin\Payment\Model\ResourceModel\Antifraud</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="KoinPaymentQueueCollection" type="Koin\Payment\Ui\DataProvider\Queue\Listing\Collection">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">koin_queue</argument>
-            <argument name="resourceModel" xsi:type="string">Koin\Payment\Model\ResourceModel\Queue</argument>
         </arguments>
     </virtualType>
     <virtualType name="KoinPaymentRequestCollection" type="Koin\Payment\Ui\DataProvider\Request\Listing\Collection">

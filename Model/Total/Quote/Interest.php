@@ -60,12 +60,18 @@ class Interest extends AbstractTotal
      * @param $quote
      * @return float
      */
-    protected function getInterestAmount($quote): float
+    protected function getInterestAmount($quote, Total $total): float
     {
         $installments = (int)$this->checkoutSession->getData('koin_installments');
         if ($installments > 1) {
-            $grandTotal = $quote->getGrandTotal() - $quote->getKoinInterestAmount();
-            $installmentsPrice = $this->getInstallmentsPrice($quote, $grandTotal, $installments);
+            $grandTotal = (float) $quote->getGrandTotal() - (float) $quote->getKoinInterestAmount();
+            if ($grandTotal <= 0) {
+                $totalAmounts = $total->getAllTotalAmounts();
+                unset($totalAmounts[$this->getCode()]);
+                $grandTotal = (float) array_sum($totalAmounts);
+            }
+            $ruleId = (int) $quote->getPayment()->getAdditionalInformation('rule_id');
+            $installmentsPrice = $this->getInstallmentsPrice($quote, $grandTotal, $installments, $ruleId);
             if ($installmentsPrice > $grandTotal) {
                 return $installmentsPrice - $grandTotal;
             }
@@ -74,18 +80,37 @@ class Interest extends AbstractTotal
         return 0;
     }
 
-    protected function getInstallmentsPrice(Quote $quote, float $grandTotal, int $installmentsNumber): float
-    {
+    protected function getInstallmentsPrice(
+        Quote $quote,
+        float $grandTotal,
+        int $installmentsNumber,
+        int $ruleId = 0
+    ): float {
         try {
             $ccNumber = (string) $this->session->getKoinCcNumber();
             $allInstallments = $this->helperInstallments->getAllInstallments($grandTotal, $ccNumber, $quote->getStoreId());
 
             $selectedInstallment = array_filter(
                 $allInstallments,
-                function ($installment) use ($installmentsNumber) {
-                    return $installment['installments'] == $installmentsNumber;
+                function ($installment) use ($installmentsNumber, $ruleId) {
+                    if ($installment['installments'] != $installmentsNumber) {
+                        return false;
+                    }
+                    if ($ruleId > 0) {
+                        return (int) ($installment['rule'] ?? 0) === $ruleId;
+                    }
+                    return true;
                 }
             );
+
+            if (empty($selectedInstallment) && $ruleId > 0) {
+                $selectedInstallment = array_filter(
+                    $allInstallments,
+                    function ($installment) use ($installmentsNumber) {
+                        return $installment['installments'] == $installmentsNumber;
+                    }
+                );
+            }
 
             $installment = $selectedInstallment;
             if (!empty($installment) && !isset($installment['total'])) {
@@ -133,7 +158,7 @@ class Interest extends AbstractTotal
                 return $this;
             }
 
-            $interest = $this->getInterestAmount($quote);
+            $interest = $this->getInterestAmount($quote, $total);
 
             $quote->setKoinInterestAmount($interest);
             $quote->setBaseKoinInterestAmount($interest);
@@ -142,11 +167,24 @@ class Interest extends AbstractTotal
             $total->setKoinInterestAmount($interest);
             $total->setBaseKoinInterestAmount($interest);
 
-            $total->addTotalAmount($this->getCode(), $interest);
-            $total->addBaseTotalAmount($this->getCode(), $interest);
+            $total->setTotalAmount($this->getCode(), $interest);
+            $total->setBaseTotalAmount($this->getCode(), $interest);
 
             return $this;
         }
+
+        if ((float) $quote->getKoinInterestAmount() > 0
+            || (float) $quote->getBaseKoinInterestAmount() > 0
+        ) {
+            $quote->setKoinInterestAmount(0);
+            $quote->setBaseKoinInterestAmount(0);
+            $total->setKoinInterestAmount(0);
+            $total->setBaseKoinInterestAmount(0);
+            $total->setTotalAmount($this->getCode(), 0);
+            $total->setBaseTotalAmount($this->getCode(), 0);
+        }
+
+        return $this;
     }
 
     /**

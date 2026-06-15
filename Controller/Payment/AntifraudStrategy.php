@@ -50,51 +50,14 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
     public function execute()
     {
         $orderId = $this->getRequest()->getParam('oId');
+        $isSSE = $this->getRequest()->getParam('SSE');
 
         if (!$orderId || !$this->validateRequest($orderId)) {
             $this->response->setHttpResponseCode(403);
             return $this->response;
         }
 
-        $this->response->setHeader('Content-Type', 'text/event-stream', true);
-        $this->response->setHeader('Connection', 'keep-alive', true);
-        $this->response->setHeader('Cache-Control', 'no-cache', true);
-        $this->response->setHeader('X-Accel-Buffering', 'no', true);
-
-        $limit = 60;
-        for ($i = 0; $i < $limit; $i++) {
-            try {
-                $order = $this->orderRepository->get($orderId);
-                $isApproved = $order->getData('koin_antifraud_status') == AntifraudHelper::APPROVED_STATUS;
-
-                $result = [
-                    'order_id' => $order->getId(),
-                    'is_approved' => $isApproved,
-                ];
-
-                $data = "event: koin-payment-antifraud-strategy\n" .
-                    "data: " . $this->json->serialize($result) . "\n\n";
-
-                $this->response->appendBody($data);
-                $this->response->sendResponse();
-
-                ob_flush();
-                flush();
-
-                if ($isApproved) {
-                    break;
-                }
-
-                sleep(5);
-
-            } catch (\Exception $e) {
-                $this->response->setBody("event: error\ndata: " . $this->json->serialize(['error' => $e->getMessage()]) . "\n\n");
-                $this->response->sendResponse();
-                return $this->response;
-            }
-        }
-
-        return $this->response;
+        return $isSSE ? $this->sseDataChecking($orderId) : $this->dataChecking($orderId);
     }
 
     private function validateRequest(int|string $orderId): bool
@@ -105,5 +68,66 @@ class AntifraudStrategy extends Action implements HttpGetActionInterface
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
             return false;
         }
+    }
+
+    private function hasReturn(string $orderId, ?\Magento\Sales\Api\Data\OrderInterface $order = null): bool
+    {
+        if (!$order) {
+            $order = $this->orderRepository->get($orderId);
+        }
+        $antifraudStatus = $order->getData(AntifraudHelper::KOIN_ANTIFRAUD_STATUS);
+        return in_array($antifraudStatus, [AntifraudHelper::APPROVED_STATUS, AntifraudHelper::REJECTED_STATUS], true);
+    }
+
+    private function sseDataChecking(string $orderId): Http
+    {
+        $this->response->setHeader('Content-Type', 'text/event-stream', true);
+        $this->response->setHeader('Connection', 'keep-alive', true);
+        $this->response->setHeader('Cache-Control', 'no-cache', true);
+        $this->response->setHeader('X-Accel-Buffering', 'no', true);
+
+        $limit = 60;
+        for ($i = 0; $i < $limit; $i++) {
+            try {
+                $order = $this->orderRepository->get($orderId);
+                $hasReturn = $this->hasReturn($orderId, $order);
+
+                $result = [
+                    'order_id' => $order->getId(),
+                    'has_return' => $hasReturn,
+                ];
+
+                $data = "event: koin-payment-antifraud-strategy\n" .
+                    "data: " . $this->json->serialize($result) . "\n\n";
+
+                $this->response->appendBody($data);
+                $this->response->sendResponse();
+                ob_flush();
+                flush();
+
+                if ($hasReturn) {
+                    break;
+                }
+
+                sleep(5);
+            } catch (\Exception $e) {
+                $this->response->setBody("event: error\ndata: " . $this->json->serialize(['error' => $e->getMessage()]) . "\n\n");
+                $this->response->sendResponse();
+                return $this->response;
+            }
+        }
+        return $this->response;
+    }
+
+    private function dataChecking(string $orderId): \Magento\Framework\Controller\Result\Json
+    {
+        /** @var \Magento\Framework\Controller\Result\Json $resultJson */
+        $resultJson = $this->resultJsonFactory->create();
+        $hasReturn = $this->hasReturn($orderId);
+
+        return $resultJson->setData([
+            'order_id' => $orderId,
+            'has_return' => $hasReturn,
+        ]);
     }
 }

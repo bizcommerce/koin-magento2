@@ -166,3 +166,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - feat: Creating a bnpl modal after payment fail
 - feat: Implement the antifraud strategies
 - fix: installments error when saving data
+
+### v2.14.0:
+- feat: create Listener mode in the antifraud
+
+### v2.15.0:
+- fix: add bin on payment additional data and remove the queue listing page
+- fix: change bin length verification to 6 or greater

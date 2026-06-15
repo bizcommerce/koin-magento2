@@ -36,6 +36,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Sales\Model\Order as SalesOrder;
 use Magento\Sales\Model\OrderRepository;
+use Magento\Sales\Model\ResourceModel\Order as OrderResourceModel;
 
 /**
  * Class Data
@@ -50,6 +51,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
     public const PAYMENT_METHOD_CREDIT_CARD = 'CreditCard';
     public const PAYMENT_METHOD_CASH = 'Cash';
     public const DEFAULT_TYPE = 'Ecommerce';
+    public const KOIN_ANTIFRAUD_STATUS = 'koin_antifraud_status';
 
     /**
      * Data constructor.
@@ -85,7 +87,8 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         protected Client $client,
         protected Api $api,
         protected DateTime $dateTime,
-        protected EncryptorInterface $encryptor
+        protected EncryptorInterface $encryptor,
+        protected OrderResourceModel $orderResourceModel
     ) {
         parent::__construct($context);
     }
@@ -116,6 +119,8 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                             if ($response['status'] < 300) {
                                 $antifraud->setStatus(Api::STATUS_ABORTED);
                                 $this->antifraudRepository->save($antifraud);
+
+                                $order->getPayment()->setAdditionalInformation('koin_antifraud_notification_status', 'CANCELLED');
                             }
                         } else {
                             $requestData = [
@@ -125,6 +130,8 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                             ];
 
                             $this->notify($evaluationId, $requestData, ['field' => 'EVALUATION_ID'], $order->getStoreId());
+
+                            $order->getPayment()->setAdditionalInformation('koin_antifraud_notification_status', 'CANCELLED');
                         }
                     }
                 } catch (\Exception $e) {
@@ -284,69 +291,113 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
      * Update Order Status
      *
      * @param SalesOrder $order
-     * @param string $score
+     * @param string $status
      * @param int $score
+     * @param string|null $strategyLink
      */
     public function updateOrder($order, $status, $score, $strategyLink): void
     {
         try {
-            if ($status == self::APPROVED_STATUS) {
-                $changeStatusApproved = $this->helperData->getAntifraudConfig('change_status_approved');
-                $approvedStatus = false;
+            /** @var \Magento\Sales\Model\Order\Payment $payment */
+            $payment = $order->getPayment();
+            $orderStateChanged = false;
 
-                $captureApproved = $this->helperData->getAntifraudConfig('capture_approved_orders');
-                if ($captureApproved && $order->canInvoice()) {
-                    $this->helperOrder->captureOrder($order);
-                }
-
-                if ($changeStatusApproved) {
-                    $approvedStatus = $this->helperData->getAntifraudConfig('approved_status');
-                }
-
-                $message = __('The order was approved by Fraud Analysis', $order->getIncrementId());
-                $orderState = $this->helperOrder->getStatusState($approvedStatus);
-
-                $order->addCommentToStatusHistory($message, $approvedStatus);
-                $order->setState($orderState);
-            } elseif ($status == self::REJECTED_STATUS) {
-                $cancelDenied = $this->helperData->getAntifraudConfig('cancel_denied_orders');
-                $changeStatusDenied = $this->helperData->getAntifraudConfig('change_status_denied');
-                $deniedStatus = false;
-                if ($cancelDenied) {
-                    $deniedStatus = $this->helperData->getAntifraudConfig('denied_cancelled_status');
-                    if ($order->canCancel()) {
-                        $order->cancel();
-                    } else {
-                        $this->helperOrder->credimemoOrder($order);
+            if (!$this->isListenerEnabled()) {
+                if ($status == self::APPROVED_STATUS) {
+                    $orderStateChanged = true;
+                    $captureApproved = $this->helperData->getAntifraudConfig('capture_approved_orders');
+                    $captured = false;
+                    $approvedStatus = false;
+                    if ($captureApproved && $order->canInvoice() && $payment && $payment->getId()) {
+                        $this->helperOrder->captureOrder($order);
+                        $captured = true;
                     }
-                } elseif ($changeStatusDenied) {
-                    $deniedStatus = $this->helperData->getAntifraudConfig('denied_status');
+
+                    if (!$captured) {
+                        $changeStatusApproved = $this->helperData->getAntifraudConfig('change_status_approved');
+                        if ($changeStatusApproved) {
+                            $approvedStatus = $this->helperData->getAntifraudConfig('approved_status');
+                        }
+
+                        $orderState = $this->helperOrder->getStatusState($approvedStatus);
+                        $order->setState($orderState);
+                    }
+
+                    $order->addCommentToStatusHistory(
+                        __('The order was approved by Fraud Analysis', $order->getIncrementId()),
+                        $approvedStatus ?? ''
+                    );
+                } elseif ($status == self::REJECTED_STATUS) {
+                    $orderStateChanged = true;
+                    $cancelDenied = $this->helperData->getAntifraudConfig('cancel_denied_orders');
+                    $changeStatusDenied = $this->helperData->getAntifraudConfig('change_status_denied');
+                    $deniedStatus = false;
+                    if ($cancelDenied && $payment && $payment->getId()) {
+                        $deniedStatus = $this->helperData->getAntifraudConfig('denied_cancelled_status');
+                        if ($order->canCancel()) {
+                            $order->cancel();
+                        } else {
+                            $this->helperOrder->credimemoOrder($order);
+                        }
+                    } elseif ($changeStatusDenied) {
+                        $deniedStatus = $this->helperData->getAntifraudConfig('denied_status');
+                    }
+
+                    $orderState = $this->helperOrder->getStatusState($deniedStatus);
+                    $message = __('The order %1 was repproved by Fraud Analysis', $order->getIncrementId());
+
+                    $order->addCommentToStatusHistory($message, $deniedStatus);
+                    $order->setState($orderState);
+
+                    $payment->setIsFraudDetected(true);
+                    if ($payment->getId()) {
+                        $this->helperOrder->savePayment($payment);
+                    }
                 }
-
-                $orderState = $this->helperOrder->getStatusState($deniedStatus);
-                $message = __('The order %1 was repproved by Fraud Analysis', $order->getIncrementId());
-
-                $order->addCommentToStatusHistory($message, $deniedStatus);
-                $order->setState($orderState);
-
-                /** @var \Magento\Sales\Model\Order\Payment $payment */
-                $payment = $order->getPayment();
-                $payment->setIsFraudDetected(true);
-                $this->helperOrder->savePayment($payment);
             }
 
             if ($strategyLink) {
-                $payment = $order->getPayment();
                 $payment->setAdditionalInformation('koin_antifraud_strategy_link', $strategyLink);
-                $this->helperOrder->savePayment($payment);
+                if ($payment->getId()) {
+                    $this->helperOrder->savePayment($payment);
+                }
             }
 
-            $order->setData('koin_antifraud_status', $status);
+            $order->setData(self::KOIN_ANTIFRAUD_STATUS, $status);
             $order->setData('koin_antifraud_score', $score);
-            $this->orderRepository->save($order);
+
+            if ($orderStateChanged) {
+                $this->orderRepository->save($order);
+            } else {
+                $this->saveAntifraudAttributes($order, $status, $score);
+            }
         } catch (\Exception $e) {
             $this->helperData->log($e->getMessage());
         }
+    }
+
+    public function isEligibleForAnalysis(SalesOrder $order): bool
+    {
+        if (!$this->helperData->getAntifraudConfig('active')) {
+            return false;
+        }
+
+        if ($order->getData(self::KOIN_ANTIFRAUD_STATUS)) {
+            return false;
+        }
+
+        $paymentMethods = explode(',', $this->helperData->getAntifraudConfig('payment_methods'));
+        if (empty($paymentMethods) || !in_array($order->getPayment()->getMethod(), $paymentMethods)) {
+            return false;
+        }
+
+        $statuses = explode(',', $this->helperData->getAntifraudConfig('order_status'));
+        if (!in_array($order->getStatus(), $statuses)) {
+            return false;
+        }
+
+        $minOrderTotal = (float) $this->helperData->getAntifraudConfig('min_order_total');
+        return $order->getGrandTotal() >= $minOrderTotal;
     }
 
     /**
@@ -360,7 +411,6 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             throw new \Exception(__('Order not found.'));
         }
         $antifraud = $this->antifraudFactory->create();
-        $antifraud->setStatus(Api::STATUS_QUEUED);
         $antifraud->setIncrementId($order->getIncrementId());
         $antifraud->setSessionId($order->getData('koin_antifraud_fingerprint'));
 
@@ -373,6 +423,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
                     ],
                     'reference_id' => $order->getIncrementId(),
                     'country_code' => $this->helperData->getDefaultCountryCode(),
+                    'listener_mode' => $this->isListenerEnabled(),
                     'redirected' => false
                 ],
                 'buyer' => $this->getBuyerData($order),
@@ -501,7 +552,6 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             Api::STATUS_DENIED,
             Api::STATUS_APPROVED,
             Api::STATUS_RECEIVED,
-            Api::STATUS_QUEUED,
             Api::STATUS_ABORTED
         ];
     }
@@ -534,9 +584,9 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             if ($address->getVatId()) {
                 $taxVat = $address->getVatId();
             }
-            $taxVat = $order->getPayment()->getAdditionalInformation('koin_customer_taxvat') ?: $taxVat;
         }
 
+        $taxVat = $order->getPayment()->getAdditionalInformation('koin_customer_taxvat') ?: $taxVat;
         $documentType = self::DEFAULT_DOCUMENT_TYPE;
         if ($this->helperData->validateCnpj((string) $taxVat)) {
             $documentType = 'cnpj';
@@ -751,7 +801,7 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
             }
         }
 
-        return (is_numeric($ccBin) && strlen($ccBin) == 6) ? $ccBin : null;
+        return (is_numeric($ccBin) && strlen($ccBin) >= 6) ? $ccBin : null;
     }
 
 
@@ -797,4 +847,30 @@ class Antifraud extends \Magento\Framework\App\Helper\AbstractHelper
         return $installments > 0 ? $installments : 1;
     }
 
+    protected function saveAntifraudAttributes(SalesOrder $order, string $status, $score): void
+    {
+        if (!$order->getId()) {
+            return;
+        }
+
+        try {
+            $connection = $this->orderResourceModel->getConnection();
+            $data = [self::KOIN_ANTIFRAUD_STATUS => $status];
+            if ($score !== null) {
+                $data['koin_antifraud_score'] = $score;
+            }
+            $connection->update(
+                $this->orderResourceModel->getMainTable(),
+                $data,
+                ['entity_id = ?' => (int)$order->getId()]
+            );
+        } catch (\Exception $e) {
+            $this->helperData->log($e->getMessage());
+        }
+    }
+
+    public function isListenerEnabled(): bool
+    {
+        return (bool) $this->helperData->getAntifraudConfig('enable_listener');
+    }
 }
