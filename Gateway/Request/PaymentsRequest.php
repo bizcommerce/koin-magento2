@@ -180,7 +180,7 @@ class PaymentsRequest
 
         $this->isTaxVatRequired($customerTaxVat);
 
-        $payerData->document = $customerTaxVat ? $this->getDocument($customerTaxVat) : '';
+        $payerData->document = ($customerTaxVat !== null && trim($customerTaxVat) !== '') ? $this->getDocument($customerTaxVat) : '';
 
         $phoneNumber = $this->helper->formatPhoneNumber($address->getTelephone() ?: '');
         $payerData->phone = new \stdClass();
@@ -212,7 +212,7 @@ class PaymentsRequest
 
         $this->isTaxVatRequired($customerTaxVat);
 
-        $buyerData->document = $customerTaxVat ? $this->getDocument($customerTaxVat) : '';
+        $buyerData->document = ($customerTaxVat !== null && trim($customerTaxVat) !== '') ? $this->getDocument($customerTaxVat) : '';
 
         $phoneNumber = $this->helper->formatPhoneNumber($address->getTelephone() ?: '');
         $buyerData->phone = new \stdClass();
@@ -230,7 +230,8 @@ class PaymentsRequest
      */
     private function isTaxVatRequired(?string $customerTaxVat): void
     {
-        if (!$customerTaxVat && $this->helper->getGeneralConfig('taxvat_required')) {
+        if ($this->helper->getGeneralConfig('taxvat_required') &&
+            ($customerTaxVat === null || trim($customerTaxVat) === '')) {
             throw new LocalizedException(__('Customer taxvat is required.'));
         }
     }
