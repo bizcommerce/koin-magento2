@@ -306,3 +306,6 @@
 "Interest orders with 10 installments","Interest orders with 10 installments"
 "Interest orders with 11 installments","Interest orders with 11 installments"
 "Interest orders with 12 installments","Interest orders with 12 installments"
+"Is Taxvat Field Required on Checkout?","Is Taxvat Field Required on Checkout?"
+"If enabled, the customer must fill the Taxvat field on checkout","If enabled, the customer must fill the Taxvat field on checkout"
+"Customer taxvat is required.","Customer taxvat is required."

@@ -258,7 +258,7 @@
                     </div>
                 </div>
 
-                <div class="field number required" data-bind="attr: {id: getCode() + '_taxat'}">
+                <div class="field number" data-bind="attr: {id: getCode() + '_taxat'}, css: {required: isTaxvatRequired()}">
                     <label data-bind="attr: {for: getCode() + '_taxvat'}" class="label">
                         <span><!-- ko i18n: 'Customer Taxvat' --><!-- /ko --></span>
                     </label>
@@ -272,7 +272,7 @@
                                         title: $t('Customer Taxvat'),
                                         maxlength: 11,
                                         'data-container': getCode() + '-taxvat',
-                                        'data-validate': JSON.stringify({'required':true, 'required-number':true})
+                                        'data-validate': JSON.stringify({'required': isTaxvatRequired(), 'required-number':true})
                                       },
                                       value: taxvat,
                                       valueUpdate: 'keyup' "/>

@@ -313,3 +313,6 @@
 "Interest orders with 10 installments","Juros para pedidos com 10 parcelas"
 "Interest orders with 11 installments","Juros para pedidos com 11 parcelas"
 "Interest orders with 12 installments","Juros para pedidos com 12 parcelas"
+"Is Taxvat Field Required on Checkout?","O Campo Taxvat é Obrigatório no Checkout?"
+"If enabled, the customer must fill the Taxvat field on checkout","Se habilitado, o cliente deve preencher o campo CPF no checkout"
+"Customer taxvat is required.","O CPF do cliente é obrigatório."
