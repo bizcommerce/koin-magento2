@@ -310,3 +310,6 @@ Card Installments,Cuotas de la Tarjeta
 "Interest orders with 10 installments","Interés para pedidos con 10 cuotas"
 "Interest orders with 11 installments","Interés para pedidos con 11 cuotas"
 "Interest orders with 12 installments","Interés para pedidos con 12 cuotas"
+"Is Taxvat Field Required on Checkout?","¿El Campo de Documento es Obligatorio en el Checkout?"
+"If enabled, the customer must fill the Taxvat field on checkout","Si está habilitado, el cliente debe completar el campo Documento en el checkout"
+"Customer taxvat is required.","El documento del cliente es obligatorio."

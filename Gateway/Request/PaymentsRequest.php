@@ -24,6 +24,7 @@ use Koin\Payment\Gateway\Http\Client\Payments\Api;
 use Koin\Payment\Helper\Data;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
@@ -153,6 +154,9 @@ class PaymentsRequest
         return $transaction;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getPayerData(Order $order): \stdClass
     {
         $payerData = new \stdClass();
@@ -173,7 +177,10 @@ class PaymentsRequest
 
         $payerData->full_name = $fullName;
         $payerData->email = $order->getCustomerEmail();
-        $payerData->document = $this->getDocument($customerTaxVat);
+
+        $this->isTaxVatRequired($customerTaxVat);
+
+        $payerData->document = ($customerTaxVat !== null && trim($customerTaxVat) !== '') ? $this->getDocument($customerTaxVat) : '';
 
         $phoneNumber = $this->helper->formatPhoneNumber($address->getTelephone() ?: '');
         $payerData->phone = new \stdClass();
@@ -187,6 +194,7 @@ class PaymentsRequest
 
     /**
      * @param Order $order
+     * @throws \Exception
      */
     public function getBuyerData(Order $order): \stdClass
     {
@@ -201,7 +209,10 @@ class PaymentsRequest
         $buyerData->first_name = $order->getCustomerFirstname();
         $buyerData->last_name = $order->getCustomerLastname();
         $buyerData->email = $order->getCustomerEmail();
-        $buyerData->document = $this->getDocument($customerTaxVat);
+
+        $this->isTaxVatRequired($customerTaxVat);
+
+        $buyerData->document = ($customerTaxVat !== null && trim($customerTaxVat) !== '') ? $this->getDocument($customerTaxVat) : '';
 
         $phoneNumber = $this->helper->formatPhoneNumber($address->getTelephone() ?: '');
         $buyerData->phone = new \stdClass();
@@ -211,6 +222,18 @@ class PaymentsRequest
         $buyerData->address = $this->getAddress($address);
 
         return $buyerData;
+    }
+
+    /**
+     * @param string|null $customerTaxVat
+     * @throws LocalizedException
+     */
+    private function isTaxVatRequired(?string $customerTaxVat): void
+    {
+        if ($this->helper->getGeneralConfig('taxvat_required') &&
+            ($customerTaxVat === null || trim($customerTaxVat) === '')) {
+            throw new LocalizedException(__('Customer taxvat is required.'));
+        }
     }
 
     /**
