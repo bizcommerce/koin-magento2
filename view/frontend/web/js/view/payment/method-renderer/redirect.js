@@ -61,7 +61,7 @@ define(
                 return 'koin_redirect';
             },
 
-            isTaxvatRequired: function() {
+            showTaxvatField: function() {
                 return !!window.checkoutConfig.payment?.koin?.taxvat_required;
             },
 

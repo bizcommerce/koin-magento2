@@ -199,7 +199,7 @@ define([
                 return this.item.method;
             },
 
-            isTaxvatRequired: function() {
+            showTaxvatField: function() {
                 return !!window.checkoutConfig.payment?.koin?.taxvat_required;
             },
 
