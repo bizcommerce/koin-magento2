@@ -22,13 +22,13 @@ namespace Koin\Payment\Gateway\Request;
 
 use Koin\Payment\Gateway\Http\Client\Payments\Api;
 use Koin\Payment\Helper\Data;
+use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Payment\Gateway\ConfigInterface;
-use Magento\Catalog\Api\CategoryRepositoryInterface;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Sales\Api\Data\OrderItemInterface;
 use Magento\Sales\Model\Order;
 
@@ -152,6 +152,50 @@ class PaymentsRequest
         $transaction->amount->value = round((float) $amount, 2);
 
         return $transaction;
+    }
+
+    protected function getBreakdown(Order $order): \stdClass
+    {
+        $currencyCode = $this->getOrderCurrencyCode($order);
+
+        $breakdown = new \stdClass();
+
+        $breakdown->items = new \stdClass();
+        $breakdown->items->currency_code = $currencyCode;
+        $breakdown->items->value = (float) $order->getSubtotal();
+
+        $breakdown->shipping = new \stdClass();
+        $breakdown->shipping->currency_code = $currencyCode;
+        $breakdown->shipping->value = (float) $order->getShippingAmount();
+
+        $breakdown->taxes = new \stdClass();
+        $breakdown->taxes->currency_code = $currencyCode;
+        $breakdown->taxes->value = (float) $order->getTaxAmount();
+        $breakdown->taxes->base = (float) $order->getSubtotal();
+        $breakdown->taxes->tax_details = $this->getTaxDetails($order);
+
+        return $breakdown;
+    }
+
+    protected function getTaxDetails(Order $order): array
+    {
+        $taxDetails = [];
+        try {
+            $appliedTaxes = $order->getExtensionAttributes()?->getAppliedTaxes() ?? [];
+            foreach ($appliedTaxes as $tax) {
+                foreach ($tax->getExtensionAttributes()?->getRates() ?? [] as $rate) {
+                    $detail = new \stdClass();
+                    $detail->type = $rate->getCode() ?: '';
+                    $detail->value = (float) $tax->getAmount();
+                    $detail->percentage = (float) $rate->getPercent();
+                    $detail->base = (float) $order->getSubtotal();
+                    $taxDetails[] = $detail;
+                }
+            }
+        } catch (\Exception $e) {
+            $this->helper->log($e->getMessage());
+        }
+        return $taxDetails;
     }
 
     /**
