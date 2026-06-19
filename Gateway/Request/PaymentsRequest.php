@@ -182,14 +182,29 @@ class PaymentsRequest
         $taxDetails = [];
         try {
             $appliedTaxes = $order->getExtensionAttributes()?->getAppliedTaxes() ?? [];
+            $base = (float) ($order->getSubtotal() +  $order->getDiscountAmount() + $order->getShippingDiscountAmount());
             foreach ($appliedTaxes as $tax) {
-                foreach ($tax->getExtensionAttributes()?->getRates() ?? [] as $rate) {
+                $rates = $tax->getExtensionAttributes()?->getRates() ?? [];
+                if (empty($rates)) {
                     $detail = new \stdClass();
-                    $detail->type = $rate->getCode() ?: '';
+                    $detail->type = $tax->getCode() ?: '';
                     $detail->value = (float) $tax->getAmount();
-                    $detail->percentage = (float) $rate->getPercent();
-                    $detail->base = (float) $order->getSubtotal();
+                    $detail->percentage = (float) $tax->getPercent();
+                    $detail->base = $base;
                     $taxDetails[] = $detail;
+                } else {
+                    $taxPercent = (float) $tax->getPercent();
+                    foreach ($rates as $rate) {
+                        $detail = new \stdClass();
+                        $detail->type = $rate->getCode() ?: '';
+                        $ratePercent = (float) $rate->getPercent();
+                        $detail->value = $taxPercent > 0
+                            ? round((float) ($tax->getAmount() * ($ratePercent / $taxPercent)), 2)
+                            : 0.0;
+                        $detail->percentage = $ratePercent;
+                        $detail->base = $base;
+                        $taxDetails[] = $detail;
+                    }
                 }
             }
         } catch (\Exception $e) {
