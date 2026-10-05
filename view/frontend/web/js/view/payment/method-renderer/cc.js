@@ -33,6 +33,10 @@ define([
         'Magento_Checkout/js/model/totals',
         'Magento_Checkout/js/action/get-payment-information',
         'Magento_Checkout/js/action/set-payment-information',
+        'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/model/full-screen-loader',
+        'mage/url',
+        'Koin_Payment/js/model/gateway-timeout',
         'Magento_Payment/js/model/credit-card-validation/validator',
         'Magento_Checkout/js/model/payment/additional-validators',
         'mage/mage',
@@ -51,7 +55,11 @@ define([
         cardNumberValidator,
         totals,
         getPaymentInformationAction,
-        setPaymentInformationAction
+        setPaymentInformationAction,
+        quote,
+        fullScreenLoader,
+        urlBuilder,
+        gatewayTimeout
     ) {
         'use strict';
 
@@ -70,6 +78,7 @@ define([
                 installmentsId: '',
                 showInstallmentsWarning: ko.observable(true),
                 debounceTimer: null,
+                lastInstallmentsBaseTotal: null,
                 isPciCompliance: window.checkoutConfig.payment.koin_cc.enable_pci_compliance || false,
                 pciClientKey: window.checkoutConfig.payment.koin_cc.pci_client_key || '',
                 pciLanguage: window.checkoutConfig.payment.koin_cc.pci_language || 'pt',
@@ -81,7 +90,9 @@ define([
                 isCardConfirmed: ko.observable(false),
                 confirmedCardDisplay: ko.observable(''),
                 showPciForm: ko.observable(true),
-                isPlacingOrder: false
+                isPlacingOrder: false,
+                placedOrderCheckInterval: 5000,
+                placedOrderCheckAttempts: 3
             },
 
             /** @inheritdoc */
@@ -137,6 +148,18 @@ define([
                     self.updateInstallmentsValues();
                 });
 
+                this.lastInstallmentsBaseTotal = this.getInstallmentsBaseTotal(quote.totals());
+                quote.totals.subscribe(function (quoteTotals) {
+                    var baseTotal = self.getInstallmentsBaseTotal(quoteTotals);
+
+                    if (baseTotal === null || baseTotal === self.lastInstallmentsBaseTotal) {
+                        return;
+                    }
+
+                    self.lastInstallmentsBaseTotal = baseTotal;
+                    self.updateInstallmentsValues(true);
+                });
+
                 // Refresh checkout totals when the customer changes installments,
                 // so the koin_interest_amount is persisted to the quote before placeOrder.
                 this.installmentsId.subscribe(function (value) {
@@ -185,6 +208,28 @@ define([
                     .fail(function () {
                         totals.isLoading(false);
                     });
+            },
+
+            /**
+             * @param {Object} quoteTotals
+             * @returns {String|null}
+             */
+            getInstallmentsBaseTotal: function (quoteTotals) {
+                var segments,
+                    grandTotal,
+                    interest = 0;
+
+                if (!quoteTotals) {
+                    return null;
+                }
+
+                segments = quoteTotals['total_segments'] || [];
+                grandTotal = _.findWhere(segments, {code: 'grand_total'});
+                grandTotal = grandTotal ? grandTotal.value : quoteTotals['grand_total'];
+                interest = _.findWhere(segments, {code: 'koin_interest'});
+                interest = interest ? interest.value : 0;
+
+                return (parseFloat(grandTotal || 0) - parseFloat(interest || 0)).toFixed(2);
             },
 
             logoOnCheckout: function() {
@@ -284,7 +329,10 @@ define([
                 return customer.isLoggedIn();
             },
 
-            updateInstallmentsValues: function() {
+            /**
+             * @param {Boolean} keepSelection re-select the current installment after reload
+             */
+            updateInstallmentsValues: function(keepSelection) {
 
                 var self = this;
                 if (self.koinCreditCardNumber().length >= 6) {
@@ -298,6 +346,8 @@ define([
                         if (self.isPlacingOrder) {
                             return;
                         }
+                        var selectedId = keepSelection ? self.installmentsId() : null;
+
                         totals.isLoading(true);
                         fetch(self.retrieveInstallmentsUrl(), {
                             method: 'POST',
@@ -316,6 +366,14 @@ define([
                                 self.hasInstallments(true);
                                 self.showInstallmentsWarning(false);
                             });
+
+                            if (selectedId && _.findWhere(json, {id: selectedId})) {
+                                if (self.installmentsId() === selectedId) {
+                                    self.installmentsId.valueHasMutated();
+                                } else {
+                                    self.installmentsId(selectedId);
+                                }
+                            }
 
                             getPaymentInformationAction().done(function () {
                                 totals.isLoading(false);
@@ -522,11 +580,75 @@ define([
 
             /** @inheritdoc */
             getPlaceOrderDeferredObject: function () {
-                var self = this;
+                var self = this,
+                    deferred = $.Deferred();
 
-                return this._super().fail(function () {
-                    self.isPlacingOrder = false;
-                });
+                this._super()
+                    .done(function () {
+                        deferred.resolve.apply(deferred, arguments);
+                    })
+                    .fail(function (response) {
+                        self.isPlacingOrder = false;
+                        if (!gatewayTimeout.is(response)) {
+                            deferred.reject.apply(deferred, arguments);
+                            return;
+                        }
+
+                        fullScreenLoader.startLoader();
+                        self.waitForPlacedOrder(self.placedOrderCheckAttempts)
+                            .done(function () {
+                                deferred.resolve();
+                            })
+                            .fail(function () {
+                                self.messageContainer.addErrorMessage({
+                                    message: $t('We could not confirm your order. Please check your e-mail or your order history before trying again.')
+                                });
+                                deferred.reject(response);
+                            })
+                            .always(function () {
+                                fullScreenLoader.stopLoader();
+                            });
+                    });
+
+                return deferred.promise();
+            },
+
+            /**
+             * Polls the store until the order of the current quote is found or the attempts run out
+             */
+            waitForPlacedOrder: function (attempts) {
+                var self = this,
+                    deferred = $.Deferred(),
+                    check = function (remaining) {
+                        $.ajax({
+                            url: urlBuilder.build('koin/payment/placedOrder'),
+                            type: 'GET',
+                            dataType: 'json',
+                            cache: false,
+                            data: {quote_id: quote.getQuoteId()}
+                        }).done(function (result) {
+                            if (result && result.placed) {
+                                deferred.resolve();
+                            } else {
+                                retry(remaining);
+                            }
+                        }).fail(function () {
+                            retry(remaining);
+                        });
+                    },
+                    retry = function (remaining) {
+                        if (remaining <= 1) {
+                            deferred.reject();
+                            return;
+                        }
+                        setTimeout(function () {
+                            check(remaining - 1);
+                        }, self.placedOrderCheckInterval);
+                    };
+
+                check(attempts);
+
+                return deferred.promise();
             },
 
             tokenizeAndPlaceOrder: function() {

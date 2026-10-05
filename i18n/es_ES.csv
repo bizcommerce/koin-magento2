@@ -324,3 +324,4 @@ Card Installments,Cuotas de la Tarjeta
 "The transaction was declined due to an unexpected error.","La operación fue rechazada debido a un error inesperado."
 "The transaction was declined because the card is reported as stolen (fraud). Please try a different card.","La operación fue rechazada porque la tarjeta fue reportada como robada (fraude). Por favor, intenta con una tarjeta diferente."
 "The transaction was declined due to a processing error. The acquirer and supplier are working on it.","La operación fue rechazada debido a un error de procesamiento. El adquirente y el proveedor están trabajando en su resolución."
+"We could not confirm your order. Please check your e-mail or your order history before trying again.","No pudimos confirmar tu pedido. Revisa tu correo electrónico o tu historial de pedidos antes de intentarlo nuevamente."

@@ -320,3 +320,4 @@
 "The transaction was declined due to an unexpected error.","The transaction was declined due to an unexpected error."
 "The transaction was declined because the card is reported as stolen (fraud). Please try a different card.","The transaction was declined because the card is reported as stolen (fraud). Please try a different card."
 "The transaction was declined due to a processing error. The acquirer and supplier are working on it.","The transaction was declined due to a processing error. The acquirer and supplier are working on it."
+"We could not confirm your order. Please check your e-mail or your order history before trying again.","We could not confirm your order. Please check your e-mail or your order history before trying again."
