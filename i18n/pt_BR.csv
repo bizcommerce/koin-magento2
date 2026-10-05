@@ -327,3 +327,4 @@
 "The transaction was declined due to an unexpected error.","A transação foi recusada devido a um erro inesperado."
 "The transaction was declined because the card is reported as stolen (fraud). Please try a different card.","A transação foi recusada porque o cartão foi reportado como roubado (fraude). Por favor, tente um cartão diferente."
 "The transaction was declined due to a processing error. The acquirer and supplier are working on it.","A transação foi recusada devido a um erro de processamento. O adquirente e o fornecedor estão trabalhando na resolução."
+"We could not confirm your order. Please check your e-mail or your order history before trying again.","Não foi possível confirmar seu pedido. Verifique seu e-mail ou seu histórico de pedidos antes de tentar novamente."

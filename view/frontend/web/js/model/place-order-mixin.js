@@ -6,8 +6,10 @@ define([
     'Magento_Checkout/js/model/payment/place-order-hooks',
     'underscore',
     'jquery',
-    'mage/url'
-], function (storage, errorProcessor, fullScreenLoader, customerData, hooks, _, $, urlBuilder) {
+    'mage/url',
+    'Koin_Payment/js/model/payment-message-registry',
+    'Koin_Payment/js/model/gateway-timeout'
+], function (storage, errorProcessor, fullScreenLoader, customerData, hooks, _, $, urlBuilder, paymentMessageRegistry, gatewayTimeout) {
     'use strict';
 
     return function (placeOrderAction) {
@@ -29,7 +31,13 @@ define([
                 serviceUrl, JSON.stringify(payload), true, 'application/json', headers
             ).fail(
                 function (response) {
-                    errorProcessor.process(response, messageContainer);
+                    var localContainer = paymentMessageRegistry.get(method);
+
+                    if (method === 'koin_cc' && gatewayTimeout.is(response)) {
+                        return;
+                    }
+
+                    errorProcessor.process(response, localContainer || messageContainer);
                     redirectURL = response.getResponseHeader('errorRedirectAction');
                     if (window.KoinPopup) {
                         var formKey = $.mage.cookies.get('form_key');

@@ -11,6 +11,9 @@ var config = {
         mixins: {
             'Magento_Checkout/js/model/place-order': {
                 'Koin_Payment/js/model/place-order-mixin': true
+            },
+            'Magento_Checkout/js/view/payment/default': {
+                'Koin_Payment/js/model/payment-default-mixin': true
             }
         }
     }
